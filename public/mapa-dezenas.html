@@ -4,15 +4,12 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>📊 Mapa das Dezenas - Sistema de Loterias</title>
-        <!-- ✅ ADICIONAR ESTA LINHA: -->
         <script src="js/config.js"></script>
 
-        <!-- Bootstrap 5 CSS -->
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
             rel="stylesheet"
         />
-        <!-- Bootstrap Icons -->
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
@@ -46,7 +43,7 @@
                 --info-bg: #f0f4ff;
                 --info-text: #556070;
 
-                --number-off-bg: #d1d5db;
+                --number-off-bg: #e1e1e1;
                 --number-off-text: #999999;
 
                 --stats-bg: #f3f4f6;
@@ -62,6 +59,9 @@
                 --temp-text: #1f2937;
 
                 --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+                --cores-check-border: #d1d5db;
+                --cores-check-bg: #ffffff;
             }
 
             html[data-theme="dark"] {
@@ -101,6 +101,9 @@
                 --temp-text: #f9fafb;
 
                 --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+                --cores-check-border: #4b5563;
+                --cores-check-bg: #1f2937;
             }
 
             body {
@@ -193,23 +196,6 @@
                 margin: 0;
             }
 
-            .btn-voltar {
-                padding: 12px 24px;
-                background: #667eea;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                font-size: 1rem;
-                cursor: pointer;
-                text-decoration: none;
-                display: inline-block;
-                transition: opacity 0.3s;
-            }
-
-            .btn-voltar:hover {
-                opacity: 0.9;
-            }
-
             /* Controles */
             .controles-container {
                 background: var(--card-bg);
@@ -276,6 +262,74 @@
 
             .btn-atualizar:hover {
                 opacity: 0.9;
+            }
+
+            /* ===== CORES DAS BOLAS - Checkbox ===== */
+            .cores-bolas-wrapper {
+                display: none;
+                margin-top: 15px;
+                padding-top: 15px;
+                border-top: 1px solid var(--card-border);
+                transition: border-color 0.3s ease;
+            }
+
+            .cores-bolas-label {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+                user-select: none;
+                padding: 8px 14px;
+                border-radius: 8px;
+                border: 2px solid var(--cores-check-border);
+                background: var(--cores-check-bg);
+                transition:
+                    border-color 0.25s,
+                    background 0.25s,
+                    box-shadow 0.25s;
+            }
+
+            .cores-bolas-label:hover {
+                border-color: var(--cor-loteria, #667eea);
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+            }
+
+            .cores-bolas-label.ativo {
+                border-color: var(--cor-loteria, #667eea);
+                background: color-mix(
+                    in srgb,
+                    var(--cor-loteria, #667eea) 8%,
+                    var(--cores-check-bg)
+                );
+            }
+
+            #chk-cores-bolas {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+                accent-color: var(--cor-loteria, #667eea);
+                flex-shrink: 0;
+            }
+
+            .cores-bolas-texto {
+                font-weight: 600;
+                font-size: 0.9rem;
+                color: var(--text-primary);
+                transition: color 0.25s;
+            }
+
+            /* Mini preview das cores */
+            .cores-preview {
+                display: flex;
+                gap: 3px;
+                align-items: center;
+            }
+
+            .cores-preview span {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                flex-shrink: 0;
             }
 
             /* Tabela */
@@ -361,9 +415,10 @@
                 border-radius: 20%;
                 font-weight: bold;
                 margin: 0 auto;
+                border: 1px solid transparent;
                 transition:
-                    background 0.3s ease,
-                    color 0.3s ease;
+                    background 0.25s ease,
+                    color 0.25s ease;
             }
 
             .numero-cell.sorteado {
@@ -374,13 +429,6 @@
             .numero-cell.nao-sorteado {
                 background: var(--number-off-bg);
                 color: var(--number-off-text);
-            }
-
-            /* Destaque para Dupla-Sena */
-            .sorteio-label {
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-left: 5px;
             }
 
             .loading {
@@ -400,11 +448,9 @@
                 20% {
                     content: ".";
                 }
-
                 40% {
                     content: "..";
                 }
-
                 60%,
                 100% {
                     content: "...";
@@ -416,29 +462,23 @@
                 h1 {
                     font-size: 1.1rem;
                 }
-
                 .controles-container {
                     padding: 10px;
                 }
-
                 .controles-grid {
                     grid-template-columns: 1fr;
                 }
-
                 .tabela-container {
                     padding: 15px;
                 }
-
                 thead th {
                     padding: 10px 5px;
                     font-size: 0.8rem;
                 }
-
                 tbody td {
                     padding: 8px 5px;
                     font-size: 0.75rem;
                 }
-
                 .numero-cell {
                     width: 35px;
                     height: 35px;
@@ -468,13 +508,11 @@
                 color: var(--temp-text);
                 font-weight: bold;
             }
-
             .temp-M {
                 background: var(--temp-m);
                 color: var(--temp-text);
                 font-weight: bold;
             }
-
             .temp-F {
                 background: var(--temp-f);
                 color: var(--temp-text);
@@ -486,10 +524,26 @@
                 color: var(--stats-label);
                 font-weight: 700;
             }
-
             .linha-estatistica td:first-child {
                 background: var(--stats-bg);
                 color: var(--stats-label);
+            }
+
+            /* ===== Select com ícone ===== */
+            .select-com-icone {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .select-com-icone img {
+                width: 24px;
+                height: 24px;
+                flex-shrink: 0;
+            }
+
+            .select-com-icone select {
+                flex: 1;
             }
         </style>
     </head>
@@ -528,14 +582,12 @@
                 <div class="controles-grid">
                     <div class="form-group">
                         <label for="loteria-select">Loteria:</label>
-
                         <div class="select-com-icone">
                             <img
                                 id="icone-loteria"
                                 src="image/favicon-lf-32.png"
                                 alt="Loteria"
                             />
-
                             <select
                                 id="loteria-select"
                                 onchange="mudarLoteria()"
@@ -543,7 +595,6 @@
                                 <option value="">
                                     -- Selecione uma loteria --
                                 </option>
-
                                 <option value="lotofacil">Lotofácil</option>
                                 <option value="megasena">Mega-Sena</option>
                                 <option value="quina">Quina</option>
@@ -582,6 +633,25 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- ===== CORES DAS BOLAS SORTEADAS ===== -->
+                <div class="cores-bolas-wrapper" id="cores-bolas-wrapper">
+                    <label
+                        class="cores-bolas-label"
+                        id="cores-bolas-label"
+                        for="chk-cores-bolas"
+                    >
+                        <input
+                            type="checkbox"
+                            id="chk-cores-bolas"
+                            onchange="toggleCoresBolas()"
+                        />
+                        <span class="cores-bolas-texto"
+                            >🎨 Cores das Bolas Sorteadas</span
+                        >
+                        <div class="cores-preview" id="cores-preview"></div>
+                    </label>
+                </div>
             </div>
 
             <!-- Tabela -->
@@ -604,6 +674,7 @@
         </div>
 
         <script>
+            // ===== CONFIG DAS LOTERIAS =====
             const LOTERIAS_CONFIG = {
                 megasena: {
                     nome: "Mega-Sena",
@@ -639,7 +710,7 @@
                     max: 50,
                     endpoint: "/duplasena",
                     cor: "#A61324",
-                    doisSorteios: true, // ⭐ FLAG ESPECIAL
+                    doisSorteios: true,
                 },
                 timemania: {
                     nome: "Timemania",
@@ -666,24 +737,18 @@
 
             let loteriaAtual = null;
 
-            // ✅ Pegar token do localStorage
+            // ===== AUTH =====
             function getToken() {
                 return localStorage.getItem("token");
             }
-
-            // ✅ Criar headers com autenticação
             function getHeaders() {
-                const token = getToken();
                 return {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${getToken()}`,
                     "Content-Type": "application/json",
                 };
             }
-
-            // ✅ Verificar se está autenticado
             function verificarAutenticacao() {
-                const token = getToken();
-                if (!token) {
+                if (!getToken()) {
                     alert("Você precisa fazer login para acessar esta página!");
                     window.location.href = "login.html";
                     return false;
@@ -691,11 +756,11 @@
                 return true;
             }
 
+            // ===== MUDAR LOTERIA =====
             function mudarLoteria() {
                 const select = document.getElementById("loteria-select");
                 const loteriaId = select.value;
 
-                // Ícones das loterias
                 const icones = {
                     lotofacil: "image/favicon-lf-32.png",
                     megasena: "image/favicon-ms-32.png",
@@ -708,51 +773,115 @@
                 };
 
                 const iconeLoteria = document.getElementById("icone-loteria");
+                const wrapper = document.getElementById("cores-bolas-wrapper");
+                const chk = document.getElementById("chk-cores-bolas");
 
-                // Nenhuma loteria selecionada
                 if (!loteriaId) {
                     loteriaAtual = null;
-
                     document.getElementById("btn-atualizar").disabled = true;
-
                     document.getElementById("tabela-container").style.display =
                         "none";
-
                     document.documentElement.style.setProperty(
                         "--cor-loteria",
                         "#667eea",
                     );
-
-                    // Ícone padrão
                     iconeLoteria.src = "image/favicon-lf-32.png";
-
+                    wrapper.style.display = "none";
+                    chk.checked = false;
                     atualizarTituloLoteria();
-
                     return;
                 }
 
-                // Atualiza loteria atual
                 loteriaAtual = LOTERIAS_CONFIG[loteriaId];
-
-                // Atualiza cor do tema
                 document.documentElement.style.setProperty(
                     "--cor-loteria",
                     loteriaAtual.cor,
                 );
 
-                // Atualiza favicon do select
-                if (icones[loteriaId]) {
-                    iconeLoteria.src = icones[loteriaId];
-                }
+                if (icones[loteriaId]) iconeLoteria.src = icones[loteriaId];
 
                 atualizarTituloLoteria();
-
                 document.getElementById("btn-atualizar").disabled = false;
+
+                // Exibir checkbox de cores
+                wrapper.style.display = "block";
+
+                // Restaurar estado salvo
+                const saved = localStorage.getItem(`coresBolas_${loteriaId}`);
+                chk.checked = saved === "1";
+                atualizarEstiloCheckbox(chk.checked);
+                atualizarPreviewCores(loteriaId);
             }
 
+            // ===== CORES DAS BOLAS - Toggle =====
+            function toggleCoresBolas() {
+                const chk = document.getElementById("chk-cores-bolas");
+                const loteriaId =
+                    document.getElementById("loteria-select").value;
+                const ativo = chk.checked;
+
+                localStorage.setItem(
+                    `coresBolas_${loteriaId}`,
+                    ativo ? "1" : "0",
+                );
+                atualizarEstiloCheckbox(ativo);
+                aplicarCoresBolas(ativo);
+            }
+
+            function aplicarCoresBolas(ativar) {
+                const loteriaId =
+                    document.getElementById("loteria-select").value;
+                const mapa = CORES_BOLAS[loteriaId] || null;
+
+                document
+                    .querySelectorAll(".numero-cell.sorteado")
+                    .forEach((div) => {
+                        if (ativar && mapa) {
+                            const num = parseInt(div.dataset.numero);
+                            const cor = mapa[num];
+                            if (cor) {
+                                div.style.background = cor.bg;
+                                div.style.color = cor.text;
+                                div.style.borderColor = cor.border;
+                                div.style.boxShadow = `0 2px 6px ${cor.bg}88`;
+                            }
+                        } else {
+                            div.style.background = "";
+                            div.style.color = "";
+                            div.style.borderColor = "";
+                            div.style.boxShadow = "";
+                        }
+                    });
+            }
+
+            function atualizarEstiloCheckbox(ativo) {
+                const label = document.getElementById("cores-bolas-label");
+                if (ativo) {
+                    label.classList.add("ativo");
+                } else {
+                    label.classList.remove("ativo");
+                }
+            }
+
+            // Mini preview com as primeiras 10 cores da loteria
+            function atualizarPreviewCores(loteriaId) {
+                const preview = document.getElementById("cores-preview");
+                preview.innerHTML = "";
+                const mapa = CORES_BOLAS[loteriaId];
+                if (!mapa) return;
+
+                const nums = Object.keys(mapa).slice(0, 10).map(Number);
+                nums.forEach((n) => {
+                    const span = document.createElement("span");
+                    span.style.background = mapa[n].bg;
+                    span.title = `Dezena ${n}`;
+                    preview.appendChild(span);
+                });
+            }
+
+            // ===== TEMA =====
             function aplicarTema(tema) {
                 document.documentElement.setAttribute("data-theme", tema);
-
                 const btnTema = document.getElementById("btn-tema");
                 if (btnTema) {
                     if (tema === "dark") {
@@ -763,9 +892,7 @@
                         btnTema.title = "Ativar modo noturno";
                     }
                 }
-
                 localStorage.setItem("temaMapaDezenas", tema);
-
                 atualizarTituloLoteria();
             }
 
@@ -773,8 +900,7 @@
                 const temaAtual =
                     document.documentElement.getAttribute("data-theme") ||
                     "light";
-                const novoTema = temaAtual === "dark" ? "light" : "dark";
-                aplicarTema(novoTema);
+                aplicarTema(temaAtual === "dark" ? "light" : "dark");
             }
 
             function atualizarTituloLoteria() {
@@ -782,31 +908,28 @@
                 const temaAtual =
                     document.documentElement.getAttribute("data-theme") ||
                     "light";
-
                 if (!titulo) return;
 
                 if (!loteriaAtual) {
                     const corTexto =
                         temaAtual === "dark" ? "#ffffff" : "#667eea";
-
                     titulo.innerHTML = `
-            <i class="bi bi-bar-chart-fill" style="color:#667eea;"></i>
-            <span style="color:${corTexto};">Mapa das Dezenas</span>
-        `;
+                        <i class="bi bi-bar-chart-fill" style="color:#667eea;"></i>
+                        <span style="color:${corTexto};">Mapa das Dezenas</span>
+                    `;
                     return;
                 }
 
                 const corTexto =
                     temaAtual === "dark" ? "#ffffff" : loteriaAtual.cor;
-
                 titulo.innerHTML = `
-        <i class="bi bi-bar-chart-fill" style="color:${loteriaAtual.cor};"></i>
-        <span style="color:${corTexto};">Mapa das Dezenas - ${loteriaAtual.nome}</span>
-    `;
+                    <i class="bi bi-bar-chart-fill" style="color:${loteriaAtual.cor};"></i>
+                    <span style="color:${corTexto};">Mapa das Dezenas - ${loteriaAtual.nome}</span>
+                `;
             }
 
+            // ===== CARREGAR TABELA =====
             async function carregarTabela() {
-                // ✅ Verificar autenticação
                 if (!verificarAutenticacao()) return;
 
                 const tabelaContainer =
@@ -822,13 +945,11 @@
                 tabela.style.display = "none";
 
                 try {
-                    // ✅ Adicionar token na requisição
                     const response = await fetch(
                         `${API_URL}${loteriaAtual.endpoint}?limit=${qtdConcursos}`,
                         { headers: getHeaders() },
                     );
 
-                    // ✅ Verificar status
                     if (!response.ok) {
                         if (response.status === 401) {
                             alert("Sessão expirada. Faça login novamente.");
@@ -847,10 +968,7 @@
                     }
 
                     const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error("Erro ao buscar dados");
-                    }
+                    if (!data.success) throw new Error("Erro ao buscar dados");
 
                     criarTabelaMapa(data.data);
 
@@ -862,24 +980,20 @@
                 }
             }
 
+            // ===== CRIAR TABELA =====
             function criarTabelaMapa(concursos) {
                 colunasSelecionadas.clear();
 
                 const thead = document.getElementById("thead-mapa");
                 const tbody = document.getElementById("tbody-mapa");
-
-                // Limpar
                 thead.innerHTML = "";
                 tbody.innerHTML = "";
 
-                // INVERTER A ORDEM - do menor para o maior (mais antigo em cima)
                 concursos = concursos.reverse();
 
-                // Criar cabeçalho
                 const trHead = document.createElement("tr");
                 trHead.innerHTML = "<th>Concurso</th>";
 
-                // Adicionar colunas para cada dezena
                 for (let i = loteriaAtual.min; i <= loteriaAtual.max; i++) {
                     const th = document.createElement("th");
                     th.textContent =
@@ -888,38 +1002,34 @@
                             : i;
                     trHead.appendChild(th);
                 }
-
                 thead.appendChild(trHead);
 
-                // Criar linhas de dados
                 concursos.forEach((concurso) => {
-                    // ⭐ DUPLA-SENA: Criar 2 linhas (1º e 2º sorteio)
                     if (loteriaAtual.doisSorteios) {
-                        // Primeiro sorteio
                         criarLinhaConcurso(
                             concurso,
                             concurso.dezenas_1 || [],
                             `#${concurso.concurso} (1º)`,
                         );
-
-                        // Segundo sorteio
                         criarLinhaConcurso(
                             concurso,
                             concurso.dezenas_2 || [],
                             `#${concurso.concurso} (2º)`,
                         );
                     } else {
-                        // Outras loterias: 1 linha normal
-                        const dezenasSorteadas = concurso.dezenas || [];
                         criarLinhaConcurso(
                             concurso,
-                            dezenasSorteadas,
+                            concurso.dezenas || [],
                             `#${concurso.concurso}`,
                         );
                     }
                 });
 
                 gerarEstatisticasMapa();
+
+                // Aplicar cores se checkbox estiver marcado
+                const chk = document.getElementById("chk-cores-bolas");
+                if (chk && chk.checked) aplicarCoresBolas(true);
             }
 
             function criarLinhaConcurso(
@@ -930,31 +1040,28 @@
                 const tbody = document.getElementById("tbody-mapa");
                 const tr = document.createElement("tr");
 
-                // Concurso
                 const tdConcurso = document.createElement("td");
                 tdConcurso.textContent = labelConcurso;
                 tr.appendChild(tdConcurso);
 
-                // Dezenas
                 for (let i = loteriaAtual.min; i <= loteriaAtual.max; i++) {
                     const td = document.createElement("td");
                     const div = document.createElement("div");
                     div.className = "numero-cell";
 
                     const foiSorteado = dezenasSorteadas.includes(i);
+                    const numStr =
+                        loteriaAtual.min === 0
+                            ? i.toString().padStart(2, "0")
+                            : i;
 
                     if (foiSorteado) {
                         div.classList.add("sorteado");
-                        div.textContent =
-                            loteriaAtual.min === 0
-                                ? i.toString().padStart(2, "0")
-                                : i;
+                        div.dataset.numero = i; // ← chave para as cores
+                        div.textContent = numStr;
                     } else {
                         div.classList.add("nao-sorteado");
-                        div.textContent =
-                            loteriaAtual.min === 0
-                                ? i.toString().padStart(2, "0")
-                                : i;
+                        div.textContent = numStr;
                     }
 
                     td.appendChild(div);
@@ -964,6 +1071,7 @@
                 tbody.appendChild(tr);
             }
 
+            // ===== ESTATÍSTICAS =====
             function gerarEstatisticasMapa() {
                 const tbody = document.getElementById("tbody-mapa");
                 const linhas = Array.from(tbody.querySelectorAll("tr"));
@@ -975,7 +1083,6 @@
                 const atraso = Array(totalDezenas).fill(0);
                 const sequencia = Array(totalDezenas).fill(0);
 
-                // === FREQUÊNCIA e SEQUÊNCIA ===
                 linhas.forEach((tr) => {
                     Array.from(tr.querySelectorAll(".numero-cell")).forEach(
                         (cell, idx) => {
@@ -989,19 +1096,17 @@
                     );
                 });
 
-                // === ATRASOS (de baixo para cima) ===
                 for (let i = 0; i < totalDezenas; i++) {
-                    let atrasoCount = 0;
+                    let count = 0;
                     for (let j = linhas.length - 1; j >= 0; j--) {
                         const cell =
                             linhas[j].querySelectorAll(".numero-cell")[i];
                         if (cell.classList.contains("sorteado")) break;
-                        atrasoCount++;
+                        count++;
                     }
-                    atraso[i] = atrasoCount;
+                    atraso[i] = count;
                 }
 
-                // === TEMPERATURA ===
                 const media = (totalConcursos * 15) / totalDezenas;
                 const temperatura = freq.map((f) => {
                     if (f >= media + 2) return "Q";
@@ -1014,7 +1119,6 @@
                 criarLinhaEstatistica("Freq.", freq);
                 criarLinhaTemperatura(temperatura);
 
-                // 🔥 SALVAR ESTATÍSTICAS NO LOCALSTORAGE
                 localStorage.setItem(
                     "estatisticasMapa",
                     JSON.stringify({
@@ -1035,18 +1139,13 @@
             function criarLinhaEstatistica(label, valores) {
                 const tbody = document.getElementById("tbody-mapa");
                 const tr = document.createElement("tr");
-
-                // 👇 classe só para estatística
                 tr.classList.add("linha-estatistica");
 
                 const tdLabel = document.createElement("td");
                 tdLabel.textContent = label;
-
-                // 👇 escurecer apenas essas
                 if (["Atrasos", "Freq.", "Frequência"].includes(label)) {
                     tdLabel.classList.add("estatistica-destaque");
                 }
-
                 tr.appendChild(tdLabel);
 
                 valores.forEach((v) => {
@@ -1061,15 +1160,11 @@
             function criarLinhaTemperatura(valores) {
                 const tbody = document.getElementById("tbody-mapa");
                 const tr = document.createElement("tr");
-
-                // 👇 classe só para estatística
                 tr.classList.add("linha-estatistica");
 
                 const tdLabel = document.createElement("td");
                 tdLabel.textContent = "Temp.";
-
                 tdLabel.classList.add("estatistica-destaque");
-
                 tr.appendChild(tdLabel);
 
                 valores.forEach((v) => {
@@ -1082,6 +1177,7 @@
                 tbody.appendChild(tr);
             }
 
+            // ===== SELEÇÃO DE COLUNA =====
             let colunasSelecionadas = new Set();
 
             document
@@ -1092,55 +1188,37 @@
 
                     const ths = Array.from(th.parentElement.children);
                     const colunaIndex = ths.indexOf(th);
-
-                    // Ignorar a coluna "Concurso"
                     if (colunaIndex === 0) return;
 
                     const tabela = document.getElementById("tabela-mapa");
                     const todasLinhas = Array.from(
                         tabela.querySelectorAll("tbody tr"),
                     );
-
-                    // ✅ Ignorar linhas estatísticas (últimas 4)
                     const linhas = todasLinhas.slice(0, -4);
 
                     const ativa = colunasSelecionadas.has(colunaIndex);
-
-                    // Alternar estado
                     if (ativa) {
                         colunasSelecionadas.delete(colunaIndex);
                     } else {
                         colunasSelecionadas.add(colunaIndex);
                     }
 
-                    // Atualizar header
                     th.classList.toggle("coluna-ativa", !ativa);
-
-                    // Atualizar células
                     linhas.forEach((tr) => {
                         const td = tr.children[colunaIndex];
-                        if (td) {
-                            td.classList.toggle("coluna-ativa", !ativa);
-                        }
+                        if (td) td.classList.toggle("coluna-ativa", !ativa);
                     });
                 });
-
-            function alternarTema() {
-                const temaAtual =
-                    document.documentElement.getAttribute("data-theme") ||
-                    "light";
-                const novoTema = temaAtual === "dark" ? "light" : "dark";
-                aplicarTema(novoTema);
-            }
         </script>
+
         <script src="js/auth-check.js"></script>
+
         <script>
             window.addEventListener("DOMContentLoaded", () => {
                 const temaSalvo = localStorage.getItem("temaMapaDezenas");
                 const prefereEscuro = window.matchMedia(
                     "(prefers-color-scheme: dark)",
                 ).matches;
-
                 aplicarTema(temaSalvo || (prefereEscuro ? "dark" : "light"));
 
                 if (verificarAutenticacao()) {
@@ -1148,5 +1226,6 @@
                 }
             });
         </script>
+        <script src="js/cores-bolas.js"></script>
     </body>
 </html>
