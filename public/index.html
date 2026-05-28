@@ -1002,6 +1002,16 @@
                     <span class="menu-badge badge-pro">PRO</span>
                 </a>
 
+                <!-- Notificações por Email -->
+                <a
+                    href="#"
+                    class="menu-item"
+                    onclick="toggleNotificacoes(event)"
+                >
+                    <i class="bi bi-bell-fill" id="icon-notificacao"></i>
+                    <span id="label-notificacao">Ativar Notificações</span>
+                </a>
+
                 <div class="menu-divider"></div>
 
                 <!-- Configurações -->
@@ -1411,6 +1421,71 @@
                 location.href = "login.html";
             }
 
+            async function carregarStatusNotificacao() {
+                const token = localStorage.getItem("token");
+                if (!token) return;
+
+                try {
+                    const res = await fetch(
+                        `${API_URL}/api/notificacoes/status`,
+                        {
+                            headers: { Authorization: `Bearer ${token}` },
+                        },
+                    );
+                    const data = await res.json();
+                    atualizarBotaoNotificacao(data.inscrito);
+                } catch (err) {
+                    console.error("Erro ao verificar notificações:", err);
+                }
+            }
+
+            function atualizarBotaoNotificacao(inscrito) {
+                const icon = document.getElementById("icon-notificacao");
+                const label = document.getElementById("label-notificacao");
+
+                if (inscrito) {
+                    icon.className = "bi bi-bell-slash-fill";
+                    icon.style.color = "#ffd700";
+                    label.textContent = "Desativar Notificações";
+                } else {
+                    icon.className = "bi bi-bell-fill";
+                    icon.style.color = "";
+                    label.textContent = "Ativar Notificações";
+                }
+            }
+
+            async function toggleNotificacoes(event) {
+                event.preventDefault();
+                const token = localStorage.getItem("token");
+                if (!token) return;
+
+                const label = document.getElementById("label-notificacao");
+                const inscrito = label.textContent.includes("Desativar");
+
+                const endpoint = inscrito
+                    ? "/api/notificacoes/cancelar"
+                    : "/api/notificacoes/inscrever";
+
+                try {
+                    const res = await fetch(`${API_URL}${endpoint}`, {
+                        method: "POST",
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        atualizarBotaoNotificacao(!inscrito);
+                        alert(
+                            inscrito
+                                ? "🔕 Notificações desativadas."
+                                : "🔔 Notificações ativadas! Você receberá avisos de novos resultados da Lotofácil.",
+                        );
+                    }
+                } catch (err) {
+                    console.error("Erro ao alterar notificações:", err);
+                }
+            }
+
             // ========== CARREGAR RESULTADOS (OTIMIZADO) ==========
             async function carregarResultados() {
                 console.log("⚡ Carregando resultados otimizado...");
@@ -1698,6 +1773,7 @@
                 }
 
                 await verificarPlanoUsuario();
+                await carregarStatusNotificacao();
                 carregarResultados();
                 setInterval(carregarResultados, 5 * 60 * 1000);
             });
