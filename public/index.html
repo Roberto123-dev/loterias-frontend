@@ -755,14 +755,19 @@
                 text-align: center;
                 font-weight: bold;
                 padding: 6px 12px;
+                border-style: solid;
+                border-width: 1px;
+                border-color: #ab0101;
                 border-radius: 10px;
                 font-size: 0.8rem;
                 display: inline-block;
             }
 
             .status-acumulou {
-                background: #16a34a;
-                color: white;
+                background: #ffe400;
+                color: #ab0101;
+                font-weight: bold;
+                font-size: 0.9rem;
             }
 
             .status-ganhador {
@@ -1546,7 +1551,7 @@
                 const acumulou = resultado.acumulou === true;
 
                 const statusTexto = acumulou
-                    ? "🔥 ACUMULOU !!!"
+                    ? "*** ACUMULOU ***"
                     : "🎉 TEVE GANHADOR";
 
                 const statusClasse = acumulou
