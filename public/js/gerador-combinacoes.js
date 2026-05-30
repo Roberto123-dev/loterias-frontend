@@ -314,14 +314,20 @@ function atualizarIconeDezena(btn) {
 // ============================================
 
 // ── Alterna o modo de seleção ──
-function setModo(modo) {
-    modoSelecao = modo;
-    document
-        .getElementById("btn-modo-variavel")
-        .classList.toggle("ativo", modo === "variavel");
-    document
-        .getElementById("btn-modo-fixa")
-        .classList.toggle("ativo", modo === "fixa");
+function toggleModo() {
+    modoSelecao = modoSelecao === "variavel" ? "fixa" : "variavel";
+    const btn = document.getElementById("btn-modo-toggle");
+    const icone = btn.querySelector("i");
+
+    if (modoSelecao === "fixa") {
+        icone.className = "bi bi-plus-circle";
+        btn.classList.add("ativo");
+        btn.title = "Modo: Fixa (clique para Variável)";
+    } else {
+        icone.className = "bi bi-hand-thumbs-up-fill";
+        btn.classList.remove("ativo");
+        btn.title = "Modo: Variável (clique para Fixa)";
+    }
 }
 
 // ── toggleDezena respeita o modo ──
