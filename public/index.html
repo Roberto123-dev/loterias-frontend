@@ -85,26 +85,27 @@
             }
 
             .sidebar-header {
-                padding: 20px;
-                background: #1a252f;
+                padding: 2px 2px;
+                background: linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                ); /* ajusta pro roxo exato da sua marca */
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             }
 
-            .sidebar-logo {
-                font-size: 1.5rem;
-                font-weight: bold;
-                color: #667eea;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                transition: all 0.3s;
+            .sidebar-brand {
+                display: block;
+                flex: 1;
             }
 
-            .sidebar.collapsed .sidebar-logo span {
-                display: none;
+            .sidebar-brand-logo {
+                max-width: 100%;
+                height: auto;
+                display: block;
             }
 
             .toggle-btn {
@@ -217,10 +218,26 @@
                 left: 70px;
             }
 
-            .top-bar-left h1 {
-                font-size: 1.5rem;
-                color: #2c3e50;
+            h1.brand-logo {
                 margin: 0;
+                line-height: 0; /* tira o espaço extra que o h1 cria */
+                display: flex;
+                align-items: center;
+            }
+
+            .brand-logo a {
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+            }
+
+            .brand-logo-img {
+                width: 32px;
+                height: 32px;
+                display: block;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #000000;
             }
 
             .top-bar-right {
@@ -898,11 +915,13 @@
         <!-- ============= SIDEBAR ============= -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="bi bi-dice-5-fill"></i>
-                    <span>Loterias</span>
-                </div>
-                <!-- Botão toggle apenas desktop -->
+                <a href="index.html" class="sidebar-brand">
+                    <img
+                        src="ROBERTO (3).png"
+                        alt="Roberto Loterias - Sua sorte, nossa missão"
+                        class="sidebar-brand-logo"
+                    />
+                </a>
                 <button class="toggle-btn" onclick="toggleSidebar()">
                     <i class="bi bi-list"></i>
                 </button>
@@ -1068,7 +1087,6 @@
                 <button class="mobile-menu-btn" onclick="openMobileMenu()">
                     <i class="bi bi-list"></i>
                 </button>
-                <h1>🎰 Roberto Loterias</h1>
             </div>
             <div class="top-bar-right">
                 <span id="badge-plano" class="badge-plano"></span>
@@ -1207,6 +1225,14 @@
             let planoUsuario = "free";
             let modalUpgrade;
 
+            function getUsuario() {
+                try {
+                    return JSON.parse(localStorage.getItem("usuario"));
+                } catch {
+                    return null;
+                }
+            }
+
             // ========== MENU MOBILE ==========
             function openMobileMenu() {
                 document.getElementById("sidebar").classList.add("mobile-open");
@@ -1257,16 +1283,25 @@
             }
 
             async function verificarPlanoUsuario() {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    planoUsuario = "free";
+                    atualizarBadgePlano("free");
+                    atualizarMenuBadges("free");
+                    return { plano: "free" };
+                }
                 try {
-                    const token = localStorage.getItem("token");
                     const response = await fetch(
                         `${API_URL}/api/planos/meu-plano`,
                         {
                             headers: { Authorization: `Bearer ${token}` },
                         },
                     );
+                    if (!response.ok)
+                        throw new Error(`HTTP ${response.status}`);
+
                     const data = await response.json();
-                    if (data.success) {
+                    if (data?.success && data.data?.plano) {
                         planoUsuario = data.data.plano;
                         localStorage.setItem("plano", planoUsuario);
                         atualizarBadgePlano(planoUsuario);
@@ -1300,7 +1335,7 @@
             }
 
             function mostrarModalUpgrade() {
-                modalUpgrade.show();
+                if (modalUpgrade) modalUpgrade.show();
             }
 
             function verificarPlanoENavegar(url, event) {
@@ -1314,7 +1349,7 @@
             }
 
             function fazerUpgrade() {
-                const usuario = JSON.parse(localStorage.getItem("usuario"));
+                const usuario = getUsuario();
 
                 if (!usuario) {
                     alert(
@@ -1473,26 +1508,32 @@
                 }
             }
 
+            let isTogglingNotif = false;
+
             async function toggleNotificacoes(event) {
                 event.preventDefault();
+                if (isTogglingNotif) return;
+
                 const token = localStorage.getItem("token");
                 if (!token) return;
 
                 const label = document.getElementById("label-notificacao");
+                if (!label) return;
                 const inscrito = label.textContent.includes("Desativar");
-
                 const endpoint = inscrito
                     ? "/api/notificacoes/cancelar"
                     : "/api/notificacoes/inscrever";
 
+                isTogglingNotif = true;
                 try {
                     const res = await fetch(`${API_URL}${endpoint}`, {
                         method: "POST",
                         headers: { Authorization: `Bearer ${token}` },
                     });
-                    const data = await res.json();
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-                    if (data.success) {
+                    const data = await res.json();
+                    if (data?.success) {
                         atualizarBotaoNotificacao(!inscrito);
                         alert(
                             inscrito
@@ -1502,55 +1543,63 @@
                     }
                 } catch (err) {
                     console.error("Erro ao alterar notificações:", err);
+                } finally {
+                    isTogglingNotif = false;
                 }
             }
 
             // ========== CARREGAR RESULTADOS (OTIMIZADO) ==========
+            let isLoadingResultados = false;
+
             async function carregarResultados() {
-                console.log("⚡ Carregando resultados otimizado...");
-                const inicio = performance.now();
+                if (isLoadingResultados) return; // trava a corrida com o setInterval
+                isLoadingResultados = true;
 
                 const container = document.getElementById("loterias-container");
-                container.innerHTML = "";
+                if (!container) {
+                    isLoadingResultados = false;
+                    return;
+                }
 
                 try {
-                    // 🚀 UMA ÚNICA REQUISIÇÃO
                     const response = await fetch(
                         `${API_URL}/api/resultados/ultimos-todos`,
                     );
-                    const data = await response.json();
+                    if (!response.ok)
+                        throw new Error(`HTTP ${response.status}`);
 
-                    if (!data.success) {
-                        throw new Error("Erro ao buscar resultados");
+                    const data = await response.json();
+                    if (!data || !data.success || !data.data) {
+                        throw new Error("Resposta inválida do servidor");
                     }
 
-                    const tempo = performance.now() - inicio;
-                    console.log(`✅ Carregado em ${tempo.toFixed(0)}ms`);
                     console.log(`📦 Cache: ${data.cached ? "SIM ⚡" : "NÃO"}`);
 
                     const resultados = data.data;
 
-                    // Renderizar cards usando os dados já prontos
-                    for (const loteria of LOTERIAS) {
+                    // monta tudo numa string só e troca o DOM uma única vez
+                    const html = LOTERIAS.map((loteria) => {
                         const resultado = resultados[loteria.id];
-                        if (!resultado) continue;
-
-                        // total = concurso atual (já vem no payload)
-                        const total = resultado.concurso;
-
-                        container.innerHTML += criarCardLoteria(
+                        if (!resultado) return "";
+                        return criarCardLoteria(
                             loteria,
                             resultado,
-                            total,
+                            resultado.concurso,
                         );
-                    }
+                    }).join("");
+
+                    container.innerHTML = html;
                 } catch (error) {
                     console.error("❌ Erro ao carregar resultados:", error);
-                    container.innerHTML = `
-      <div class="loading">
-        ❌ Erro ao carregar resultados
-      </div>
-    `;
+                    // só mostra erro se ainda não tiver card na tela (não apaga dados bons)
+                    if (
+                        !container.children.length ||
+                        container.querySelector(".loading")
+                    ) {
+                        container.innerHTML = `<div class="loading">❌ Erro ao carregar resultados</div>`;
+                    }
+                } finally {
+                    isLoadingResultados = false;
                 }
             }
 
@@ -1681,8 +1730,6 @@
                 const premiacoes =
                     resultado.premiacoes || resultado.listaRateioPremio || [];
 
-                console.log("Premiações recebidas:", resultado.premiacoes);
-
                 let premiacaoHTML = "";
 
                 if (premiacoes.length > 0) {
@@ -1762,37 +1809,41 @@
 
             // ========== INICIALIZAÇÃO ==========
             window.addEventListener("DOMContentLoaded", async () => {
-                // Inicializar modal Bootstrap
-                modalUpgrade = new bootstrap.Modal(
-                    document.getElementById("modalUpgrade"),
-                );
+                try {
+                    const modalEl = document.getElementById("modalUpgrade");
+                    if (window.bootstrap?.Modal && modalEl) {
+                        modalUpgrade = new bootstrap.Modal(modalEl);
+                    }
+                } catch (e) {
+                    console.error("Falha ao iniciar o modal:", e);
+                }
 
-                const user = JSON.parse(localStorage.getItem("usuario"));
+                const user = getUsuario();
                 if (user) {
-                    document.getElementById("nome-usuario").textContent =
-                        `👤 ${user.nome}`;
+                    const nomeEl = document.getElementById("nome-usuario");
+                    if (nomeEl) nomeEl.textContent = `👤 ${user.nome}`;
                 }
 
                 const token = localStorage.getItem("token");
                 if (token) {
                     const payload = parseJwt(token);
                     if (payload && payload.role === "admin") {
-                        document.getElementById("btn-admin").style.display =
-                            "inline-block";
+                        const adminEl = document.getElementById("btn-admin");
+                        if (adminEl) adminEl.style.display = "inline-block";
                     }
                 }
 
                 const urlParams = new URLSearchParams(window.location.search);
-                const abrirUpgrade = urlParams.get("upgrade");
-
-                if (abrirUpgrade === "1") {
-                    setTimeout(() => {
-                        mostrarModalUpgrade();
-                    }, 400); // pequeno delay para garantir que o modal está carregado
+                if (urlParams.get("upgrade") === "1") {
+                    setTimeout(() => mostrarModalUpgrade(), 400);
                 }
 
-                await verificarPlanoUsuario();
-                await carregarStatusNotificacao();
+                // plano e notificações são independentes → paralelo
+                await Promise.allSettled([
+                    verificarPlanoUsuario(),
+                    carregarStatusNotificacao(),
+                ]);
+
                 carregarResultados();
                 setInterval(carregarResultados, 5 * 60 * 1000);
             });
