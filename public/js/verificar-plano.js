@@ -1,44 +1,44 @@
 // Verificar plano do usuário
 async function verificarPlanoUsuario() {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/api/planos/meu-plano`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${API_URL}/api/planos/meu-plano`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (data.success) {
-      // Salvar plano no localStorage
-      localStorage.setItem("plano", data.data.plano);
-      return data.data;
+        if (data.success) {
+            // Salvar plano no localStorage
+            localStorage.setItem("plano", data.data.plano);
+            return data.data;
+        }
+
+        return { plano: "free" };
+    } catch (error) {
+        console.error("Erro ao verificar plano:", error);
+        return { plano: "free" };
     }
-
-    return { plano: "free" };
-  } catch (error) {
-    console.error("Erro ao verificar plano:", error);
-    return { plano: "free" };
-  }
 }
 
 // Verificar se tem permissão para acessar recurso
 function temPermissao(recurso) {
-  const plano = localStorage.getItem("plano") || "free";
+    const plano = localStorage.getItem("plano") || "free";
 
-  const recursos = {
-    free: ["verResultados"],
-    pro: ["verResultados", "conferirJogos", "mapaDezenas", "verDetalhes"],
-  };
+    const recursos = {
+        free: ["verResultados"],
+        pro: ["verResultados", "conferirJogos", "mapaDezenas", "verDetalhes"],
+    };
 
-  return recursos[plano]?.includes(recurso) || false;
+    return recursos[plano]?.includes(recurso) || false;
 }
 
 // Mostrar modal de upgrade
 function mostrarModalUpgrade() {
-  const modal = document.createElement("div");
-  modal.innerHTML = `
+    const modal = document.createElement("div");
+    modal.innerHTML = `
     <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 9999;">
       <div style="background: white; padding: 40px; border-radius: 15px; max-width: 500px; text-align: center;">
         <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
@@ -67,38 +67,10 @@ function mostrarModalUpgrade() {
     </div>
   `;
 
-  modal.id = "modal-upgrade";
-  document.body.appendChild(modal);
+    modal.id = "modal-upgrade";
+    document.body.appendChild(modal);
 }
 
 function fecharModal() {
-  document.getElementById("modal-upgrade")?.remove();
-}
-
-async function fazerUpgrade() {
-  // Por enquanto, upgrade direto (depois integrar pagamento)
-  try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/api/planos/upgrade`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ duracao: 30 }), // 30 dias
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      localStorage.setItem("plano", "pro");
-      alert("✅ Upgrade realizado com sucesso! Recarregue a página.");
-      location.reload();
-    } else {
-      alert("❌ Erro ao fazer upgrade: " + data.message);
-    }
-  } catch (error) {
-    console.error("Erro:", error);
-    alert("❌ Erro ao processar upgrade");
-  }
+    document.getElementById("modal-upgrade")?.remove();
 }
