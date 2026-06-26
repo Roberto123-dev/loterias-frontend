@@ -327,26 +327,35 @@
             /* ============= CARDS DE LOTERIA ============= */
             .loterias-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 25px;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
                 margin-top: 20px;
+            }
+
+            .card-prize {
+                font-size: 1.4rem;
+                font-weight: 800;
+                color: #1e1e2e;
+                line-height: 1.2;
+                word-break: break-word;
             }
 
             .loteria-card {
                 background: white;
-                border-radius: 15px;
-                padding: 25px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-                transition:
-                    transform 0.3s,
-                    box-shadow 0.3s;
+                border-radius: 14px;
+                padding: 20px 18px 16px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+                transition: transform 0.25s, box-shadow 0.25s;
                 position: relative;
                 overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
             }
 
             .loteria-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+                transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
             }
 
             .loteria-card::before {
@@ -356,12 +365,6 @@
                 left: 0;
                 right: 0;
                 height: 5px;
-            }
-
-            .ultimo-concurso hr {
-                margin: 15px 0;
-                border: none;
-                border-top: 1px solid #ddd;
             }
 
             /* Cores das loterias */
@@ -397,218 +400,64 @@
                 background: #6bccef;
             }
 
-            .loteria-header {
+            .card-top {
                 display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 5px;
+                align-items: center;
+                gap: 12px;
             }
 
-            .loteria-titulo {
+            .card-meta {
                 display: flex;
-                align-items: baseline;
-                gap: 12px;
-                flex-wrap: wrap;
+                flex-direction: column;
+                gap: 3px;
+                min-width: 0;
             }
 
             .loteria-name {
-                font-size: 1.5rem;
-                font-weight: bold;
-                color: #333;
+                font-size: 1.0rem;
+                font-weight: 700;
+                color: #1e1e2e;
                 margin: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
-            .loteria-icon {
-                font-size: 1.5rem;
+            .card-icon {
+                width: 52px;
+                height: 52px;
+                object-fit: contain;
+                flex-shrink: 0;
             }
 
             .concurso-numero {
-                font-size: 1rem;
-                font-weight: bold;
-                color: #666;
+                font-size: 0.78rem;
+                font-weight: 500;
+                color: #888;
                 margin: 0;
-            }
-
-            .dezenas {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                justify-content: center;
-            }
-
-            .dezenas.lotofacil {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                width: 100%;
-            }
-
-            .dezenas.lotofacil .linha-dezenas {
-                display: flex;
-                justify-content: center;
-                gap: 8px;
-                flex-wrap: nowrap;
-            }
-
-            .dezenas.lotomania,
-            .dezenas.lotofacil {
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-                width: 100%;
-            }
-
-            .dezenas.lotofacil .linha-dezenas {
-                display: grid;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .dezenas.lotofacil .linha-1 {
-                grid-template-columns: repeat(8, minmax(0, 1fr));
-                gap: 6px;
-            }
-
-            .dezenas.lotofacil .linha-2 {
-                grid-template-columns: repeat(7, minmax(0, 1fr));
-                gap: 6px;
-                width: calc(100% - 12.5%);
-                margin: 0 auto;
-            }
-
-            .dezenas.lotofacil .bola {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 1 / 1;
-                min-width: 0;
-                font-size: clamp(0.68rem, 0.85vw, 0.9rem);
-            }
-
-            .dezenas.lotomania .linha-dezenas {
-                display: grid;
-                grid-template-columns: repeat(10, minmax(0, 1fr));
-                gap: 4px;
-                width: 100%;
-            }
-
-            .dezenas.lotomania .bola {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 1 / 1;
-                min-width: 0;
-                font-size: clamp(0.62rem, 0.9vw, 0.82rem);
-            }
-
-            .bola {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                color: white;
-                font-size: 0.9rem;
-            }
-
-            .megasena .bola {
-                background: #209869;
-            }
-
-            .lotofacil .bola {
-                background: #930089;
-            }
-
-            .quina .bola {
-                background: #260085;
-            }
-
-            .lotomania .bola {
-                background: #f78100;
-            }
-
-            .duplasena .bola {
-                background: #a61324;
-            }
-
-            .timemania .bola {
-                background: #00ff48;
-                color: #333;
-            }
-
-            .diadasorte .bola {
-                background: #cb852b;
-            }
-
-            .maismilionaria .bola {
-                background: #6bccef;
-            }
-
-            .trevo {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                color: white;
-                font-size: 0.9rem;
-                background: #4caf50;
-            }
-
-            .mes-sorte {
-                background: #fff3e0;
-                padding: 10px;
-                border-radius: 8px;
-                margin-top: 10px;
-                border-left: 3px solid #cb852b;
-                font-size: 0.85rem;
-                color: #666;
-            }
-
-            .stats {
-                display: flex;
-                justify-content: space-around;
-                padding-top: 15px;
-                border-top: 1px solid #eee;
-            }
-
-            .stat {
-                text-align: center;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-                font-weight: bold;
-                color: #667eea;
-            }
-
-            .stat-label {
-                font-size: 0.8rem;
-                color: #999;
             }
 
             .btn-ver-mais {
                 width: 100%;
-                padding: 12px;
+                padding: 10px;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
                 border: none;
                 border-radius: 8px;
-                font-size: 1rem;
-                font-weight: bold;
+                font-size: 0.88rem;
+                font-weight: 600;
                 cursor: pointer;
-                transition: opacity 0.3s;
-                margin-top: 15px;
+                transition: opacity 0.2s;
+                margin-top: auto;
             }
 
             .btn-ver-mais:hover {
-                opacity: 0.9;
+                opacity: 0.88;
             }
 
             .btn-ver-mais.bloqueado {
-                background: #ccc;
+                background: #d1d5db;
+                color: #6b7280;
                 cursor: not-allowed;
             }
 
@@ -719,22 +568,25 @@
 
                 /* Cards mobile */
                 .loterias-grid {
-                    grid-template-columns: 1fr;
-                    gap: 15px;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
                 }
 
                 .loteria-card {
-                    padding: 20px;
+                    padding: 14px 12px 12px;
                 }
 
                 .loteria-name {
-                    font-size: 1.3rem;
+                    font-size: 0.88rem;
                 }
 
-                .bola {
-                    width: 35px;
-                    height: 35px;
-                    font-size: 0.85rem;
+                .card-icon {
+                    width: 40px;
+                    height: 40px;
+                }
+
+                .card-prize {
+                    font-size: 1.1rem;
                 }
 
                 /* Ocultar toggle desktop no mobile */
@@ -747,29 +599,6 @@
                     width: 100%;
                 }
 
-                .dezenas.lotofacil .linha-dezenas,
-                .dezenas.lotomania .linha-dezenas {
-                    gap: 6px;
-                }
-
-                .loteria-card.lotomania .dezenas.lotomania .linha-dezenas {
-                    gap: 4px;
-                }
-
-                .dezenas.lotomania .bola {
-                    width: 33px;
-                    height: 33px;
-                    font-size: 0.8rem;
-                }
-
-                .dezenas.lotofacil .linha-1,
-                .dezenas.lotofacil .linha-2 {
-                    gap: 5px;
-                }
-
-                .dezenas.lotofacil .bola {
-                    font-size: 1rem;
-                }
             }
 
             /* Desktop: mostrar sidebar, ocultar backdrop e botão mobile */
@@ -803,28 +632,25 @@
             }
 
             .status-concurso {
-                margin: 8px 0 12px;
-                text-align: center;
-                font-weight: bold;
-                padding: 6px 12px;
-                border-style: solid;
-                border-width: 1px;
-                border-color: #ab0101;
-                border-radius: 10px;
-                font-size: 0.8rem;
                 display: inline-block;
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 0.70rem;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                border: none;
+                align-self: flex-start;
             }
 
             .status-acumulou {
-                background: #ffe400;
-                color: #ab0101;
-                font-weight: bold;
-                font-size: 0.9rem;
+                background: #fef08a;
+                color: #92400e;
             }
 
             .status-ganhador {
-                background: #dc2626;
-                color: white;
+                background: #fee2e2;
+                color: #b91c1c;
             }
 
             .news-bar {
@@ -864,63 +690,16 @@
                 }
             }
 
-            .premiacao {
-                margin-top: 20px;
-                /* afasta das bolinhas */
-                padding-top: 15px;
-                border-top: 1px solid #e5e5e5;
+            @media (min-width: 769px) and (max-width: 1100px) {
+                .loterias-grid { grid-template-columns: repeat(2, 1fr); }
             }
 
-            .premiacao-titulo {
-                font-weight: bold;
-                font-size: 1rem;
-                margin-bottom: 10px;
-                padding-bottom: 6px;
-                border-bottom: 2px solid #eee;
-                color: #333;
-                text-align: center;
-                color: #444;
+            @media (min-width: 1101px) and (max-width: 1400px) {
+                .loterias-grid { grid-template-columns: repeat(3, 1fr); }
             }
 
-            .faixa-premio {
-                padding: 5px 0;
-                border-bottom: 1px solid #f0f0f0;
-            }
-
-            .faixa-topo {
-                font-weight: bold;
-                font-size: 0.9rem;
-                color: #333;
-                margin-bottom: 4px;
-                background: #00ff48;
-            }
-
-            .faixa-info {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                font-size: 0.85rem;
-            }
-
-            .ganhadores {
-                color: #666;
-            }
-
-            .valor {
-                font-weight: bold;
-                color: #16a34a;
-            }
-
-            .estimativa {
-                margin-top: 8px;
-                margin-bottom: 10px;
-                background: #fff3cd;
-                color: #856404;
-                padding: 6px 10px;
-                border-radius: 8px;
-                font-size: 0.85rem;
-                text-align: center;
-                font-weight: 600;
+            @media (max-width: 380px) {
+                .loterias-grid { grid-template-columns: 1fr; }
             }
         </style>
     </head>
@@ -1624,169 +1403,31 @@
                 }
             }
 
+            function formatarPremio(valor) {
+                if (!valor || valor <= 0) return "—";
+                if (valor >= 1_000_000) {
+                    const m = valor / 1_000_000;
+                    return "R$ " + m.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 1
+                    }) + " milhões";
+                }
+                if (valor >= 1_000) {
+                    return "R$ " + (valor / 1_000).toLocaleString("pt-BR", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 1
+                    }) + " mil";
+                }
+                return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+            }
+
             function criarCardLoteria(loteria, resultado, total) {
-                const dezenas = resultado.dezenas_1 || resultado.dezenas || [];
-                const dezenas2 = resultado.dezenas_2 || [];
-                const trevos = resultado.trevos || [];
-                const mesSorte = resultado.mes_sorte;
-                const timeCoracao = resultado.time_coracao;
-
-                // 🔥 STATUS DO CONCURSO
                 const acumulou = resultado.acumulou === true;
+                const statusTexto = acumulou ? "ACUMULOU" : "TEVE GANHADOR";
+                const statusClasse = acumulou ? "status-acumulou" : "status-ganhador";
 
-                const statusTexto = acumulou
-                    ? "*** ACUMULOU ***"
-                    : "🎉 TEVE GANHADOR";
-
-                const statusClasse = acumulou
-                    ? "status-acumulou"
-                    : "status-ganhador";
-
-                let bolasHTML = "";
-
-                const formatarBola = (num) => String(num).padStart(2, "0");
-
-                if (loteria.id === "lotofacil") {
-                    const linha1 = dezenas
-                        .slice(0, 8)
-                        .map(
-                            (num) =>
-                                `<div class="bola">${formatarBola(num)}</div>`,
-                        )
-                        .join("");
-
-                    const linha2 = dezenas
-                        .slice(8, 15)
-                        .map(
-                            (num) =>
-                                `<div class="bola">${formatarBola(num)}</div>`,
-                        )
-                        .join("");
-
-                    bolasHTML = `
-                    <div class="linha-dezenas linha-1">
-                    ${linha1}
-                    </div>
-                    <div class="linha-dezenas linha-2">
-                    ${linha2}
-                    </div>
-                `;
-                } else if (loteria.id === "lotomania") {
-                    const linha1 = dezenas
-                        .slice(0, 10)
-                        .map(
-                            (num) =>
-                                `<div class="bola">${formatarBola(num)}</div>`,
-                        )
-                        .join("");
-
-                    const linha2 = dezenas
-                        .slice(10, 20)
-                        .map(
-                            (num) =>
-                                `<div class="bola">${formatarBola(num)}</div>`,
-                        )
-                        .join("");
-
-                    bolasHTML = `
-                    <div class="linha-dezenas linha-1">
-                    ${linha1}
-                    </div>
-                    <div class="linha-dezenas linha-2">
-                    ${linha2}
-                    </div>
-                `;
-                } else {
-                    bolasHTML = dezenas
-                        .map(
-                            (num) =>
-                                `<div class="bola">${formatarBola(num)}</div>`,
-                        )
-                        .join("");
-                }
-
-                const bolas2HTML =
-                    dezenas2.length > 0
-                        ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;">
-          <div style="font-size: 0.8rem; color: #999; margin-bottom: 8px;">2º Sorteio:</div>
-          <div class="dezenas">
-            ${dezenas2.map((num) => `<div class="bola">${num}</div>`).join("")}
-          </div>
-        </div>`
-                        : "";
-
-                const trevosHTML =
-                    trevos.length > 0
-                        ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;">
-          <div style="font-size: 0.8rem; color: #999; margin-bottom: 8px;">Trevos da Sorte:</div>
-          <div class="dezenas">
-            ${trevos.map((t) => `<div class="trevo">🍀 ${t}</div>`).join("")}
-          </div>
-        </div>`
-                        : "";
-
-                const mesSorteHTML = mesSorte
-                    ? `<div class="mes-sorte"><strong>Mês da Sorte:</strong> ${mesSorte}</div>`
-                    : "";
-
-                const timeCoracaoHTML = timeCoracao
-                    ? `<div class="mes-sorte"><strong>Time do Coração:</strong> ${timeCoracao}</div>`
-                    : "";
-
-                const estimativa =
-                    Number(resultado.valor_estimado_proximo) || 0;
-
-                const estimativaHTML =
-                    estimativa > 0
-                        ? `<div class="estimativa">
-            💰 Próximo prêmio estimado:
-            <strong>${estimativa.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-            })}</strong>
-        </div>`
-                        : "";
-
-                // 💰 PREMIAÇÃO (NOVA PARTE)
-                const premiacoes =
-                    resultado.premiacoes || resultado.listaRateioPremio || [];
-
-                let premiacaoHTML = "";
-
-                if (premiacoes.length > 0) {
-                    premiacaoHTML = `
-      <div class="premiacao">
-          <div class="premiacao-titulo">
-            💰 Premiação
-          </div>
-        ${premiacoes
-            .map(
-                (faixa, index) => `
-          <div class="faixa-premio">
-            <div class="faixa-topo">
-              ${index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
-              ${faixa.descricaoFaixa}
-            </div>
-          
-            <div class="faixa-info">
-              <span class="ganhadores">
-                ${Number(faixa.numeroDeGanhadores).toLocaleString("pt-BR")} ganhadores
-              </span>
-
-              <span class="valor">
-                ${Number(faixa.valorPremio || 0).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                })}
-              </span>
-            </div>
-          </div>
-        `,
-            )
-            .join("")}
-      </div>
-    `;
-                }
+                const estimativa = Number(resultado.valor_estimado_proximo) || 0;
+                const prizeHTML = formatarPremio(estimativa);
 
                 const btnDetalhes =
                     planoUsuario === "pro"
@@ -1794,38 +1435,19 @@
                         : `<button class="btn-ver-mais bloqueado" onclick="mostrarModalUpgrade()">Ver Detalhes 🔒</button>`;
 
                 return `
-    <div class="loteria-card ${loteria.id}">
-        <div class="loteria-header">
-        <div class="loteria-titulo">
+<div class="loteria-card ${loteria.id}">
+    <div class="card-top">
+        <img class="card-icon" src="${loteria.icon}" alt="${loteria.nome}" width="52" height="52" />
+        <div class="card-meta">
             <div class="loteria-name">${loteria.nome}</div>
             <div class="concurso-numero">Concurso ${resultado.concurso}</div>
         </div>
-        <div class="loteria-icon">
-            <img src="${loteria.icon}" alt="${loteria.nome}" />
-        </div>
-        </div>
-      <div class="ultimo-concurso">
-
-        <div class="status-concurso ${statusClasse}">
-          ${statusTexto}
-        </div>
-
-        ${estimativaHTML}
-
-        <div class="dezenas ${loteria.id}">
-          ${bolasHTML}
-        </div>
-
-        ${bolas2HTML}
-        ${trevosHTML}
-        ${mesSorteHTML}
-        ${timeCoracaoHTML}
-        ${premiacaoHTML}
-      </div>
-
-      ${btnDetalhes}
     </div>
-  `;
+    <div class="card-prize">${prizeHTML}</div>
+    <div class="status-concurso ${statusClasse}">${statusTexto}</div>
+    ${btnDetalhes}
+</div>
+`;
             }
 
             // ========== INICIALIZAÇÃO ==========
