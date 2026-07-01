@@ -10,6 +10,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 6,
         maxDezenas: 60,
         dezenasObrigatorias: 6,
+        colunas: 10,
     },
     lotofacil: {
         nome: "Lotofácil",
@@ -18,6 +19,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 15,
         maxDezenas: 25,
         dezenasObrigatorias: 15,
+        colunas: 5,
     },
     quina: {
         nome: "Quina",
@@ -26,6 +28,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 5,
         maxDezenas: 80,
         dezenasObrigatorias: 5,
+        colunas: 10,
     },
     lotomania: {
         nome: "Lotomania",
@@ -34,6 +37,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 50,
         maxDezenas: 100,
         dezenasObrigatorias: 50,
+        colunas: 10,
     },
     duplasena: {
         nome: "Dupla-Sena",
@@ -42,6 +46,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 6,
         maxDezenas: 50,
         dezenasObrigatorias: 6,
+        colunas: 10,
     },
     timemania: {
         nome: "Timemania",
@@ -50,6 +55,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 7,
         maxDezenas: 80,
         dezenasObrigatorias: 7,
+        colunas: 10,
     },
     diadasorte: {
         nome: "Dia de Sorte",
@@ -58,6 +64,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 7,
         maxDezenas: 31,
         dezenasObrigatorias: 7,
+        colunas: 10,
     },
     maismilionaria: {
         nome: "+Milionária",
@@ -66,6 +73,7 @@ const LOTERIAS_CONFIG = {
         minDezenas: 6,
         maxDezenas: 50,
         dezenasObrigatorias: 6,
+        colunas: 10,
     },
 };
 
@@ -203,7 +211,7 @@ function mudarLoteria(loteriaId) {
     const config = LOTERIAS_CONFIG[loteriaId];
 
     if (titulo) {
-        titulo.innerHTML = `<i class="bi bi-dice-3-fill" style="color:${config.cor};"></i> Gerar Jogos - ${config.nome}`;
+        titulo.innerHTML = `<i class="bi bi-dice-3-fill" style="color:${config.cor};"></i> ${config.nome}`;
     }
 
     document.documentElement.style.setProperty("--cor-loteria", config.cor);
@@ -231,6 +239,7 @@ function inicializarGrid(loteria) {
         "maismilionaria",
     );
     grid.classList.add(loteria);
+    grid.style.setProperty("--cols", config.colunas);
 
     dezenasSelecionadas.clear();
     dezenasFixas.clear();

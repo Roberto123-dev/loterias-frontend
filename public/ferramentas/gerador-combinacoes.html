@@ -51,7 +51,7 @@
             }
 
             #titulo-loteria {
-                font-size: 1.2rem;
+                font-size: 1.5rem;
                 font-weight: bold;
                 color: var(--cor-loteria);
                 transition: color 0.3s ease;
@@ -59,10 +59,15 @@
 
             .top-bar-actions {
                 display: flex;
+                align-items: center;
                 gap: 10px;
             }
 
             .btn-voltar {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                height: 40px;
                 padding: 8px 20px;
                 background: #667eea;
                 color: white;
@@ -73,6 +78,26 @@
             }
             .btn-voltar:hover {
                 background: #5568d3;
+            }
+
+            .btn-voltar-icone {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+                background: transparent;
+                color: #333;
+                text-decoration: none;
+                border-radius: 6px;
+                transition: background 0.2s;
+            }
+            .btn-voltar-icone i {
+                font-size: 1.4rem;
+            }
+            .btn-voltar-icone:hover {
+                background: rgba(0, 0, 0, 0.06);
             }
 
             /* ============= CONTAINER ============= */
@@ -141,12 +166,6 @@
                 font-weight: 600;
             }
 
-            .acoes-dezenas {
-                display: flex;
-                gap: 10px;
-                margin-bottom: 15px;
-            }
-
             .btn-acao {
                 padding: 8px 16px;
                 border: none;
@@ -180,29 +199,27 @@
             .btn-modo {
                 width: 40px;
                 height: 40px;
-                border-radius: 8px;
-                border: 2px solid #ccc;
-                background: #f5f5f5;
+                border: none;
+                border-radius: 6px;
+                background: transparent;
                 color: #999;
-                font-size: 1.5rem;
+                font-size: 1.4rem;
                 cursor: pointer;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                transition: all 0.2s;
+                transition:
+                    color 0.2s,
+                    background 0.2s;
             }
 
-            /* Modo ativo: usa a cor da loteria */
+            /* Modo ativo (Fixa): cor de destaque em vez de fundo preenchido */
             .btn-modo.ativo {
-                border-color: var(--cor-loteria, #667eea);
-                background: var(--cor-loteria, #667eea);
-                color: white;
-                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+                color: var(--cor-loteria, #667eea);
             }
 
-            .btn-modo:hover:not(.ativo) {
-                border-color: var(--cor-loteria, #667eea);
-                color: var(--cor-loteria, #667eea);
+            .btn-modo:hover {
+                background: rgba(0, 0, 0, 0.06);
             }
 
             /* ================================================
@@ -210,8 +227,8 @@
        ================================================ */
             .dezena-btn {
                 position: relative; /* ancora o ícone absoluto */
-                width: 50px;
-                height: 50px;
+                width: 100%;
+                aspect-ratio: 1;
                 border-radius: 50%;
                 border: 1px solid #b0b0b0;
                 background: white;
@@ -269,8 +286,26 @@
 
             /* ============= BOTÃO GERAR ============= */
             .gerador-controles {
-                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
                 margin-top: 20px;
+            }
+
+            .gerador-controles #btn-gerar {
+                margin-left: auto;
+            }
+
+            @media (max-width: 480px) {
+                .gerador-controles {
+                    flex-direction: column;
+                }
+                .gerador-controles #btn-gerar,
+                .gerador-controles .btn-acao {
+                    width: 100%;
+                    margin-left: 0;
+                }
             }
 
             .btn-gerar {
@@ -604,13 +639,16 @@
             }
 
             /* ============= GRID POR LOTERIA ============= */
+            /* Número de colunas vem de LOTERIAS_CONFIG.colunas via JS:
+               grid.style.setProperty('--cols', config.colunas) */
             #grid-dezenas {
-                justify-items: center;
+                justify-items: stretch;
+                grid-template-columns: repeat(var(--cols, 10), 1fr);
+                gap: 4px;
             }
 
             /* Lotofácil — 5 colunas */
             #grid-dezenas.lotofacil {
-                grid-template-columns: repeat(5, minmax(28px, 1fr)) !important;
                 gap: 2px;
                 max-width: 300px;
                 margin: auto;
@@ -620,49 +658,13 @@
                 color: #fff;
             }
 
-            @media (max-width: 480px) {
-                #grid-dezenas.lotofacil {
-                    grid-template-columns: repeat(
-                        5,
-                        minmax(28px, 1fr)
-                    ) !important;
-                    gap: 2px;
-                }
-                #grid-dezenas.lotofacil .dezena-btn {
-                    width: 50px;
-                    height: 50px;
-                    font-size: 1rem;
-                    margin: 0;
-                }
-            }
             @media (min-width: 768px) {
                 #grid-dezenas.lotofacil {
-                    grid-template-columns: repeat(
-                        5,
-                        minmax(28px, 1fr)
-                    ) !important;
-                    gap: 2px;
                     max-width: 310px;
-                }
-                #grid-dezenas.lotofacil .dezena-btn {
-                    width: 50px;
-                    height: 50px;
-                    font-size: 1rem;
-                    margin: auto;
                 }
             }
 
             /* 10 colunas */
-            #grid-dezenas.megasena,
-            #grid-dezenas.quina,
-            #grid-dezenas.lotomania,
-            #grid-dezenas.duplasena,
-            #grid-dezenas.timemania,
-            #grid-dezenas.diadasorte,
-            #grid-dezenas.maismilionaria {
-                grid-template-columns: repeat(10, minmax(28px, 1fr)) !important;
-            }
-
             #grid-dezenas.megasena .dezena-btn.selecionada {
                 background: linear-gradient(145deg, #4bb85a, #0d921f);
                 color: #fff;
@@ -692,35 +694,6 @@
                 color: #fff;
             }
 
-            @media (max-width: 480px) {
-                #grid-dezenas.megasena,
-                #grid-dezenas.quina,
-                #grid-dezenas.lotomania,
-                #grid-dezenas.duplasena,
-                #grid-dezenas.timemania,
-                #grid-dezenas.diadasorte,
-                #grid-dezenas.maismilionaria {
-                    grid-template-columns: repeat(
-                        10,
-                        minmax(26px, 1fr)
-                    ) !important;
-                    gap: 3px;
-                }
-
-                #grid-dezenas.megasena .dezena-btn,
-                #grid-dezenas.quina .dezena-btn,
-                #grid-dezenas.lotomania .dezena-btn,
-                #grid-dezenas.duplasena .dezena-btn,
-                #grid-dezenas.timemania .dezena-btn,
-                #grid-dezenas.diadasorte .dezena-btn,
-                #grid-dezenas.maismilionaria .dezena-btn {
-                    width: 35px;
-                    height: 35px;
-                    font-size: 0.8rem;
-                    margin: auto;
-                }
-            }
-
             @media (min-width: 768px) {
                 #grid-dezenas.megasena,
                 #grid-dezenas.quina,
@@ -742,6 +715,18 @@
                 #grid-dezenas.diadasorte,
                 #grid-dezenas.maismilionaria {
                     max-width: 560px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                #grid-dezenas {
+                    gap: 3px;
+                }
+                #grid-dezenas .dezena-btn {
+                    font-size: 0.8rem;
+                }
+                #grid-dezenas.lotofacil .dezena-btn {
+                    font-size: 0.95rem;
                 }
             }
 
@@ -857,9 +842,19 @@
                     <i class="bi bi-dice-3-fill"></i>
                     Gerar Jogos
                 </h1>
-                <a href="/index.html" class="btn-voltar" title="Voltar">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
+                <div class="top-bar-actions">
+                    <a href="/index.html" class="btn-voltar-icone" title="Voltar">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                    <button
+                        class="btn-modo"
+                        id="btn-modo-toggle"
+                        onclick="toggleModo()"
+                        title="Modo: Variável (clique para Fixa)"
+                    >
+                        <i class="bi bi-hand-thumbs-up-fill"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -923,7 +918,9 @@
                     </div>
                 </div>
 
-                <div class="acoes-dezenas">
+                <div id="grid-dezenas" class="grid-dezenas"></div>
+
+                <div class="gerador-controles">
                     <button
                         class="btn-acao btn-selecionar-todas"
                         onclick="selecionarTodas()"
@@ -936,21 +933,6 @@
                     >
                         LIMPAR
                     </button>
-
-                    <!-- ── Botões de modo ── -->
-                    <button
-                        class="btn-modo"
-                        id="btn-modo-toggle"
-                        onclick="toggleModo()"
-                        title="Modo: Variável (clique para Fixa)"
-                    >
-                        <i class="bi bi-plus-circle"></i>
-                    </button>
-                </div>
-
-                <div id="grid-dezenas" class="grid-dezenas"></div>
-
-                <div class="gerador-controles">
                     <button
                         id="btn-gerar"
                         class="btn-gerar"
