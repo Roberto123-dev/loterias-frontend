@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>📊 Mapa das Dezenas - Sistema de Loterias</title>
-        <script src="js/config.js"></script>
+        <script src="/js/config.js"></script>
 
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -570,7 +570,7 @@
                     <i class="bi bi-moon-stars-fill"></i>
                 </button>
 
-                <a href="index.html" class="btn-voltar" title="Voltar">
+                <a href="/index.html" class="btn-voltar" title="Voltar">
                     <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
@@ -585,7 +585,7 @@
                         <div class="select-com-icone">
                             <img
                                 id="icone-loteria"
-                                src="image/favicon-lf-32.png"
+                                src="/image/favicon-lf-32.png"
                                 alt="Loteria"
                             />
                             <select
@@ -750,7 +750,7 @@
             function verificarAutenticacao() {
                 if (!getToken()) {
                     alert("Você precisa fazer login para acessar esta página!");
-                    window.location.href = "login.html";
+                    window.location.href = "/auth/login.html";
                     return false;
                 }
                 return true;
@@ -762,14 +762,14 @@
                 const loteriaId = select.value;
 
                 const icones = {
-                    lotofacil: "image/favicon-lf-32.png",
-                    megasena: "image/favicon-ms-32.png",
-                    quina: "image/favicon-qu-32.png",
-                    lotomania: "image/favicon-lm-32.png",
-                    duplasena: "image/favicon-ds-32.png",
-                    timemania: "image/favicon-tm-32.png",
-                    diadasorte: "image/favicon-di-32.png",
-                    maismilionaria: "image/favicon-mm-32.png",
+                    lotofacil: "/image/favicon-lf-32.png",
+                    megasena: "/image/favicon-ms-32.png",
+                    quina: "/image/favicon-qu-32.png",
+                    lotomania: "/image/favicon-lm-32.png",
+                    duplasena: "/image/favicon-ds-32.png",
+                    timemania: "/image/favicon-tm-32.png",
+                    diadasorte: "/image/favicon-di-32.png",
+                    maismilionaria: "/image/favicon-mm-32.png",
                 };
 
                 const iconeLoteria = document.getElementById("icone-loteria");
@@ -785,7 +785,7 @@
                         "--cor-loteria",
                         "#667eea",
                     );
-                    iconeLoteria.src = "image/favicon-lf-32.png";
+                    iconeLoteria.src = "/image/favicon-lf-32.png";
                     wrapper.style.display = "none";
                     chk.checked = false;
                     atualizarTituloLoteria();
@@ -953,13 +953,13 @@
                     if (!response.ok) {
                         if (response.status === 401) {
                             alert("Sessão expirada. Faça login novamente.");
-                            window.location.href = "login.html";
+                            window.location.href = "/auth/login.html";
                             return;
                         } else if (response.status === 403) {
                             alert(
                                 "Este recurso está disponível apenas para usuários PRÓ.",
                             );
-                            window.location.href = "index.html";
+                            window.location.href = "/index.html";
                             return;
                         }
                         throw new Error(
@@ -1211,7 +1211,7 @@
                 });
         </script>
 
-        <script src="js/auth-check.js"></script>
+        <script src="/js/auth-check.js"></script>
 
         <script>
             window.addEventListener("DOMContentLoaded", () => {
@@ -1226,6 +1226,6 @@
                 }
             });
         </script>
-        <script src="js/cores-bolas.js"></script>
+        <script src="/js/cores-bolas.js"></script>
     </body>
 </html>

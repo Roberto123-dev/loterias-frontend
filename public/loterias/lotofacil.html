@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>🍀 Dia de Sorte - Resultados</title>
+        <title>🎯 Lotofácil - Resultados</title>
         <!-- ✅ ADICIONAR ESTA LINHA: -->
-        <script src="js/config.js"></script>
+        <script src="/js/config.js"></script>
         <style>
             * {
                 margin: 0;
@@ -15,7 +15,7 @@
 
             body {
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #cb852b 0%, #ffa500 100%);
+                background: linear-gradient(135deg, #930089 0%, #6b0064 100%);
                 min-height: 100vh;
                 padding: 10px;
             }
@@ -51,7 +51,7 @@
 
             h1 {
                 font-size: 1.5rem;
-                color: #cb852b;
+                color: #930089;
                 margin-bottom: 5px;
             }
 
@@ -62,7 +62,7 @@
 
             .btn-voltar {
                 padding: 12px 24px;
-                background: #cb852b;
+                background: #930089;
                 color: white;
                 border: none;
                 border-radius: 8px;
@@ -70,7 +70,7 @@
                 cursor: pointer;
                 text-decoration: none;
                 display: inline-block;
-                transition: opacity 0.3;
+                transition: opacity 0.3s;
             }
 
             .btn-voltar:hover {
@@ -81,7 +81,7 @@
             .tabela-container {
                 background: white;
                 border-radius: 5px;
-                padding: 20px;
+                padding: 15px;
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             }
 
@@ -115,12 +115,12 @@
             }
 
             /* =========================
-        CARDS DIA DE SORTE
+        CARDS 5x5 LOTOFÁCIL
       ========================= */
 
             .cards-container {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
                 gap: 20px;
             }
 
@@ -133,7 +133,7 @@
 
             .card-header {
                 font-weight: bold;
-                color: #cb852b;
+                color: #930089;
                 margin-bottom: 10px;
                 display: flex;
                 justify-content: space-between;
@@ -141,18 +141,18 @@
             }
 
             .card-concurso:first-child {
-                border: 2px solid #cb852b;
+                border: 2px solid #930089;
             }
 
-            .grid-31 {
+            .grid-25 {
                 display: grid;
-                grid-template-columns: repeat(10, 1fr);
+                grid-template-columns: repeat(5, 1fr);
                 gap: 6px;
             }
 
             .dezena {
                 aspect-ratio: 1 / 1;
-                border-radius: 10px;
+                border-radius: 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -165,21 +165,8 @@
             }
 
             .dezena.sorteada {
-                background: #cb852b;
+                background: #930089;
                 color: #fff;
-            }
-
-            .mes-sorte-card {
-                margin-top: 12px;
-                padding: 8px 12px;
-                background: #fff3e0;
-                border-radius: 8px;
-                border-left: 4px solid #cb852b;
-                font-weight: 600;
-                color: #cb852b;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
             }
         </style>
     </head>
@@ -190,14 +177,14 @@
             <header>
                 <div class="header-left">
                     <div class="icon-large">
-                        <img src="image/favicon-di-32.png" alt="Dia-de-Sorte" />
+                        <img src="/image/favicon-lf-32.png" alt="Lotofácil" />
                     </div>
                     <div>
-                        <h1>Dia de Sorte</h1>
+                        <h1>Lotofácil</h1>
                         <div class="subtitle">Resultados</div>
                     </div>
                 </div>
-                <a href="index.html" class="btn-voltar">← Voltar</a>
+                <a href="/index.html" class="btn-voltar">← Voltar</a>
             </header>
 
             <!-- Tabela -->
@@ -213,7 +200,7 @@
         </div>
 
         <script>
-            const ENDPOINT = "/diadasorte";
+            const ENDPOINT = "/lotofacil";
 
             const LIMITE = 10;
 
@@ -236,7 +223,7 @@
                 const token = getToken();
                 if (!token) {
                     alert("Você precisa fazer login para acessar esta página!");
-                    window.location.href = "login.html";
+                    window.location.href = "/auth/login.html";
                     return false;
                 }
                 return true;
@@ -280,7 +267,7 @@
             function gerarGrid(dezenasSorteadas) {
                 let html = "";
 
-                for (let i = 1; i <= 31; i++) {
+                for (let i = 1; i <= 25; i++) {
                     html += `
             <div class="dezena ${dezenasSorteadas.includes(i) ? "sorteada" : ""}">
               ${String(i).padStart(2, "0")}
@@ -297,8 +284,11 @@
                 container.innerHTML = "";
 
                 resultados.forEach((resultado) => {
-                    const dezenas = (resultado.dezenas || []).map(Number);
-                    const mesSorte = resultado.mes_sorte || "Não informado";
+                    const dezenasSorteadas = (
+                        resultado.dezenas ||
+                        resultado.dezenas_1 ||
+                        []
+                    ).map((n) => parseInt(n));
 
                     const card = document.createElement("div");
                     card.className = "card-concurso";
@@ -308,13 +298,8 @@
               <span>Concurso #${resultado.concurso}</span>
               <span>${resultado.data || ""}</span>
             </div>
-
-            <div class="grid-31">
-              ${gerarGrid(dezenas)}
-            </div>
-
-            <div class="mes-sorte-card">
-              🍀 Mês da Sorte: <strong>${mesSorte}</strong>
+            <div class="grid-25">
+              ${gerarGrid(dezenasSorteadas)}
             </div>
           `;
 
@@ -325,7 +310,7 @@
             // ✅ Carregar ao iniciar (após verificar auth)
             carregarDados();
         </script>
-        <script src="js/auth-check.js"></script>
+        <script src="/js/auth-check.js"></script>
         <script>
             // Autenticação básica
             if (verificarAutenticacao()) {

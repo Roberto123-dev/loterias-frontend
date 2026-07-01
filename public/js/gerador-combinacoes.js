@@ -703,7 +703,7 @@ async function salvarJogosNoBackend() {
     if (data.success) {
         alert(`✅ ${jogosGerados.length} jogos salvos em "${labelFinal}"!`);
         limparJogos();
-        window.location.href = "meus-jogos.html";
+        window.location.href = "/jogos/meus-jogos.html";
     } else {
         alert(data.message || "Erro ao salvar jogos");
     }

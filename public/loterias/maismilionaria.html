@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>🎭 Dupla-Sena - Resultados</title>
+        <title>💰 +Milionária - Resultados</title>
         <!-- ✅ ADICIONAR ESTA LINHA: -->
-        <script src="js/config.js"></script>
+        <script src="/js/config.js"></script>
         <style>
             * {
                 margin: 0;
@@ -15,7 +15,7 @@
 
             body {
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #a61324 0%, #7d0e1b 100%);
+                background: linear-gradient(135deg, #6bccef 0%, #4a90e2 100%);
                 min-height: 100vh;
                 padding: 10px;
             }
@@ -51,7 +51,7 @@
 
             h1 {
                 font-size: 1.5rem;
-                color: #a61324;
+                color: #6bccef;
                 margin-bottom: 5px;
             }
 
@@ -62,7 +62,7 @@
 
             .btn-voltar {
                 padding: 12px 24px;
-                background: #a61324;
+                background: #6bccef;
                 color: white;
                 border: none;
                 border-radius: 8px;
@@ -70,7 +70,7 @@
                 cursor: pointer;
                 text-decoration: none;
                 display: inline-block;
-                transition: opacity 0.3s;
+                transition: opacity 0.3;
             }
 
             .btn-voltar:hover {
@@ -115,12 +115,12 @@
             }
 
             /* =========================
-        CARDS 5x5 LOTOFÁCIL
+        CARDS +MILIONÁRIA
       ========================= */
 
             .cards-container {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
                 gap: 20px;
             }
 
@@ -133,7 +133,7 @@
 
             .card-header {
                 font-weight: bold;
-                color: #a61324;
+                color: #6bccef;
                 margin-bottom: 10px;
                 display: flex;
                 justify-content: space-between;
@@ -141,7 +141,7 @@
             }
 
             .card-concurso:first-child {
-                border: 2px solid #a61324;
+                border: 2px solid #6bccef;
             }
 
             .grid-50 {
@@ -156,7 +156,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 0.85rem;
+                font-size: 0.8rem;
                 font-weight: bold;
                 background: #eee;
                 color: #666;
@@ -165,21 +165,27 @@
             }
 
             .dezena.sorteada {
-                background: #a61324;
+                background: #6bccef;
                 color: #fff;
             }
 
-            .sorteio-bloco {
+            .trevos-container {
+                margin-top: 12px;
                 display: flex;
-                flex-direction: column;
-                gap: 6px;
+                gap: 8px;
             }
 
-            .sorteio-titulo {
-                font-size: 0.8rem;
+            .trevo {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: #4caf50;
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 font-weight: bold;
-                color: #a61324;
-                text-transform: uppercase;
+                font-size: 0.85rem;
             }
         </style>
     </head>
@@ -190,14 +196,17 @@
             <header>
                 <div class="header-left">
                     <div class="icon-large">
-                        <img src="image/favicon-ds-32.png" alt="Dupla-Sena" />
+                        <img
+                            src="/image/favicon-mm-32.png"
+                            alt="Mais-Milionária"
+                        />
                     </div>
                     <div>
-                        <h1>Dupla-Sena</h1>
+                        <h1>+Milionária</h1>
                         <div class="subtitle">Resultados</div>
                     </div>
                 </div>
-                <a href="index.html" class="btn-voltar">← Voltar</a>
+                <a href="/index.html" class="btn-voltar">← Voltar</a>
             </header>
 
             <!-- Tabela -->
@@ -213,7 +222,7 @@
         </div>
 
         <script>
-            const ENDPOINT = "/duplasena";
+            const ENDPOINT = "/maismilionaria";
 
             const LIMITE = 10;
 
@@ -235,8 +244,8 @@
             function verificarAutenticacao() {
                 const token = getToken();
                 if (!token) {
-                    alert("Você precisa fazer login!");
-                    window.location.href = "login.html";
+                    alert("Você precisa fazer login para acessar esta página!");
+                    window.location.href = "/auth/login.html";
                     return false;
                 }
                 return true;
@@ -248,7 +257,6 @@
                 await carregarResultados();
             }
 
-            // Carregar dados iniciais
             async function carregarResultados() {
                 const loading = document.getElementById("loading");
                 const cards = document.getElementById("cards-resultados");
@@ -298,8 +306,18 @@
                 container.innerHTML = "";
 
                 resultados.forEach((resultado) => {
-                    const dezenas1 = (resultado.dezenas_1 || []).map(Number);
-                    const dezenas2 = (resultado.dezenas_2 || []).map(Number);
+                    const dezenas = (resultado.dezenas || []).map(Number);
+                    const trevos = resultado.trevos || [];
+
+                    const trevosHTML = trevos
+                        .map(
+                            (t) => `
+          <div class="trevo">
+            🍀${String(t).padStart(2, "0")}
+          </div>
+        `,
+                        )
+                        .join("");
 
                     const card = document.createElement("div");
                     card.className = "card-concurso";
@@ -310,18 +328,12 @@
               <span>${resultado.data || ""}</span>
             </div>
 
-            <div class="sorteio-bloco">
-              <div class="sorteio-titulo">1º Sorteio</div>
-              <div class="grid-50">
-                ${gerarGrid(dezenas1)}
-              </div>
+            <div class="grid-50">
+              ${gerarGrid(dezenas)}
             </div>
 
-            <div class="sorteio-bloco" style="margin-top:12px">
-              <div class="sorteio-titulo">2º Sorteio</div>
-              <div class="grid-50">
-                ${gerarGrid(dezenas2)}
-              </div>
+            <div class="trevos-container">
+              ${trevosHTML}
             </div>
           `;
 
@@ -332,7 +344,7 @@
             // ✅ Carregar ao iniciar (após verificar auth)
             carregarDados();
         </script>
-        <script src="js/auth-check.js"></script>
+        <script src="/js/auth-check.js"></script>
         <script>
             // Autenticação básica
             if (verificarAutenticacao()) {

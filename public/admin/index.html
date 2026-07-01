@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🔐 Painel Admin - Sistema de Loterias</title>
   <!-- ✅ ADICIONAR ESTA LINHA: -->
-  <script src="js/config.js"></script>
+  <script src="/js/config.js"></script>
   <style>
     * {
       margin: 0;
@@ -434,7 +434,7 @@
     <h1>🔐 Painel Administrativo</h1>
     <div class="top-bar-right">
       <span id="admin-nome"></span>
-      <a href="index.html" class="btn-voltar">← Voltar ao Sistema</a>
+      <a href="/index.html" class="btn-voltar">← Voltar ao Sistema</a>
     </div>
   </div>
 
@@ -680,7 +680,7 @@
     // ========== AUTENTICAÇÃO ==========
     const token = localStorage.getItem("token");
     if (!token) {
-      window.location.href = "login.html";
+      window.location.href = "/auth/login.html";
     }
 
     const headers = {

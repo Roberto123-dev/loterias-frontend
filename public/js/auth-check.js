@@ -12,7 +12,7 @@ function verificarAutenticacao() {
     // Se não tiver token OU usuário, redirecionar para login
     if (!token || !usuario) {
         console.log("❌ Sem autenticação - redirecionando para login");
-        window.location.href = "login.html";
+        window.location.href = "/auth/login.html";
         return false;
     }
 
@@ -32,7 +32,7 @@ function verificarAutenticacao() {
                     );
                     localStorage.removeItem("token");
                     localStorage.removeItem("usuario");
-                    window.location.href = "login.html";
+                    window.location.href = "/auth/login.html";
                     return false;
                 }
             }
@@ -58,7 +58,7 @@ function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
     localStorage.removeItem("plano"); // Remover plano também
-    window.location.href = "login.html";
+    window.location.href = "/auth/login.html";
 }
 
 // Adicionar botão de logout no header (se existir)
@@ -76,7 +76,7 @@ function adicionarBotaoLogout() {
     // (porque já têm botão próprio na barra superior)
     // ============================================
     const paginasSemBotao = [
-        "index.html",
+        "/index.html",
         "admin.html",
         "gerar-jogos.html",
         "meus-jogos.html",
@@ -175,7 +175,7 @@ function adicionarBotaoLogout() {
 // Executar verificação ao carregar a página
 window.addEventListener("DOMContentLoaded", () => {
     // Páginas públicas (não precisa de autenticação)
-    const paginasPublicas = ["login.html", "registro.html"];
+    const paginasPublicas = ["/auth/login.html", "registro.html"];
     const paginaAtual = window.location.pathname.split("/").pop();
 
     console.log(`📄 Página atual: ${paginaAtual}`);
@@ -219,7 +219,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const paginaAtual = window.location.pathname.split("/").pop();
 
     // Executar SOMENTE na página de login
-    if (paginaAtual !== "login.html") return;
+    if (paginaAtual !== "/auth/login.html") return;
 
     const loginForm = document.getElementById("loginForm");
     if (!loginForm) return;
@@ -251,7 +251,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // 🚀 REDIRECIONAR
-                window.location.href = "index.html";
+                window.location.href = "/index.html";
             } else {
                 alert(data.message || "Erro ao fazer login");
             }
@@ -275,7 +275,7 @@ function verificarPlanoPro() {
           <div style="font-size:3rem">🔒</div>
           <h2>Recurso PRÓ</h2>
           <p>Este recurso está disponível apenas para usuários com plano <strong>PRÓ</strong>.</p>
-          <button onclick="window.location.href='index.html?upgrade=1'" style="padding:10px 20px;margin-top:15px;background:#ff9800;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">⭐ Fazer Upgrade</button>
+          <button onclick="window.location.href='/index.html?upgrade=1'" style="padding:10px 20px;margin-top:15px;background:#ff9800;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">⭐ Fazer Upgrade</button>
         </div>
       </div>
     `;

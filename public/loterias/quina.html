@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>🌟 Quina - Resultados</title>
         <!-- ✅ ADICIONAR ESTA LINHA: -->
-        <script src="js/config.js"></script>
+        <script src="/js/config.js"></script>
         <style>
             * {
                 margin: 0;
@@ -177,14 +177,14 @@
             <header>
                 <div class="header-left">
                     <div class="icon-large">
-                        <img src="image/favicon-qu-32.png" alt="Quina" />
+                        <img src="/image/favicon-qu-32.png" alt="Quina" />
                     </div>
                     <div>
                         <h1>Quina</h1>
                         <div class="subtitle">Resultados</div>
                     </div>
                 </div>
-                <a href="index.html" class="btn-voltar">← Voltar</a>
+                <a href="/index.html" class="btn-voltar">← Voltar</a>
             </header>
 
             <!-- Tabela -->
@@ -223,7 +223,7 @@
                 const token = getToken();
                 if (!token) {
                     alert("Você precisa fazer login para acessar esta página!");
-                    window.location.href = "login.html";
+                    window.location.href = "/auth/login.html";
                     return false;
                 }
                 return true;
@@ -310,7 +310,7 @@
             // ✅ Carregar ao iniciar (após verificar auth)
             carregarDados();
         </script>
-        <script src="js/auth-check.js"></script>
+        <script src="/js/auth-check.js"></script>
         <script>
             // Autenticação básica
             if (verificarAutenticacao()) {

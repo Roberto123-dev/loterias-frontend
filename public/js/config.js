@@ -96,7 +96,7 @@ window.fetchAuth = async function (url, options = {}) {
   if (response.status === 401) {
     console.warn("⚠️ Sessão expirada. Redirecionando para login...");
     localStorage.clear();
-    window.location.href = "/login.html";
+    window.location.href = "/auth/login.html";
     throw new Error("Sessão expirada");
   }
 
@@ -108,8 +108,8 @@ console.log("✅ config.js carregado com sucesso!");
 
 // Verificar autenticação (se não estiver em login)
 if (
-  window.location.pathname !== "/login.html" &&
-  window.location.pathname !== "/registro.html" &&
+  window.location.pathname !== "/auth/login.html" &&
+  window.location.pathname !== "/auth/registro.html" &&
   window.location.pathname !== "/index.html" &&
   window.location.pathname !== "/"
 ) {

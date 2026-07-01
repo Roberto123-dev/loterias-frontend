@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📝 Criar Conta - Sistema de Loterias</title>
+    <title>🔐 Login - Sistema de Loterias</title>
     <!-- ✅ ADICIONAR ESTA LINHA: -->
-    <script src="js/config.js"></script>
+    <script src="/js/config.js"></script>
     <style>
       * {
         margin: 0;
@@ -23,7 +23,7 @@
         padding: 20px;
       }
 
-      .registro-container {
+      .login-container {
         background: white;
         border-radius: 20px;
         padding: 40px;
@@ -81,7 +81,7 @@
         border-color: #667eea;
       }
 
-      .btn-registro {
+      .btn-login {
         width: 100%;
         padding: 15px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -95,12 +95,12 @@
         margin-top: 10px;
       }
 
-      .btn-registro:hover:not(:disabled) {
+      .btn-login:hover:not(:disabled) {
         transform: translateY(-2px);
         box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
       }
 
-      .btn-registro:disabled {
+      .btn-login:disabled {
         background: #ccc;
         cursor: not-allowed;
         transform: none;
@@ -131,19 +131,19 @@
         right: 0;
       }
 
-      .link-login {
+      .link-registro {
         text-align: center;
         color: #666;
         margin-top: 20px;
       }
 
-      .link-login a {
+      .link-registro a {
         color: #667eea;
         text-decoration: none;
         font-weight: 600;
       }
 
-      .link-login a:hover {
+      .link-registro a:hover {
         text-decoration: underline;
       }
 
@@ -180,14 +180,8 @@
         color: #999;
       }
 
-      .senha-info {
-        font-size: 0.85rem;
-        color: #999;
-        margin-top: 5px;
-      }
-
       @media (max-width: 480px) {
-        .registro-container {
+        .login-container {
           padding: 30px 20px;
         }
 
@@ -199,32 +193,37 @@
           font-size: 3rem;
         }
       }
+
+      .forgot-password {
+        text-align: right;
+        margin-top: -10px;
+        margin-bottom: 20px;
+      }
+
+      .forgot-password a {
+        font-size: 0.9rem;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .forgot-password a:hover {
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body>
-    <div class="registro-container">
+    <div class="login-container">
       <div class="logo">
         <div class="logo-icon">🎰</div>
-        <h1>Criar Conta</h1>
-        <div class="subtitle">Cadastre-se para começar</div>
+        <h1>Sistema de Loterias</h1>
+        <div class="subtitle">Faça login para continuar</div>
       </div>
 
       <div class="alert alert-error" id="alert-erro"></div>
       <div class="alert alert-success" id="alert-sucesso"></div>
 
-      <form id="form-registro" onsubmit="criarConta(event)">
-        <div class="form-group">
-          <label for="nome">Nome Completo:</label>
-          <input
-            type="text"
-            id="nome"
-            required
-            placeholder="Seu nome"
-            autocomplete="name"
-            minlength="3"
-          />
-        </div>
-
+      <form id="form-login" onsubmit="fazerLogin(event)">
         <div class="form-group">
           <label for="email">Email:</label>
           <input
@@ -244,48 +243,34 @@
               id="senha"
               required
               placeholder="••••••••"
-              autocomplete="new-password"
+              autocomplete="current-password"
               minlength="6"
             />
-            <span class="toggle-icon" onclick="toggleSenha('senha')">👁️</span>
-          </div>
-          <div class="senha-info">Mínimo 6 caracteres</div>
-        </div>
-
-        <div class="form-group">
-          <label for="confirmar-senha">Confirmar Senha:</label>
-          <div class="password-toggle">
-            <input
-              type="password"
-              id="confirmar-senha"
-              required
-              placeholder="••••••••"
-              autocomplete="new-password"
-              minlength="6"
-            />
-            <span class="toggle-icon" onclick="toggleSenha('confirmar-senha')"
-              >👁️</span
-            >
+            <span class="toggle-icon" onclick="toggleSenha()">👁️</span>
           </div>
         </div>
 
-        <button type="submit" class="btn-registro" id="btn-registro">
-          📝 Criar Conta
+        <div class="forgot-password">
+          <a href="/auth/forgot-password.html">Esqueci minha senha</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="btn-login">
+          🔐 Entrar
         </button>
       </form>
 
       <div class="divider">ou</div>
 
-      <div class="link-login">
-        Já tem conta? <a href="login.html">Fazer login</a>
+      <div class="link-registro">
+        Não tem conta? <a href="/auth/registro.html">Criar conta</a>
       </div>
     </div>
 
     <script>
       // Toggle mostrar/ocultar senha
-      function toggleSenha(inputId) {
-        const senhaInput = document.getElementById(inputId);
-        const toggleIcon = senhaInput.nextElementSibling;
+      function toggleSenha() {
+        const senhaInput = document.getElementById("senha");
+        const toggleIcon = document.querySelector(".toggle-icon");
 
         if (senhaInput.type === "password") {
           senhaInput.type = "text";
@@ -296,15 +281,13 @@
         }
       }
 
-      // Criar conta
-      async function criarConta(event) {
+      // Fazer login
+      async function fazerLogin(event) {
         event.preventDefault();
 
-        const nome = document.getElementById("nome").value.trim();
-        const email = document.getElementById("email").value.trim();
+        const email = document.getElementById("email").value;
         const senha = document.getElementById("senha").value;
-        const confirmarSenha = document.getElementById("confirmar-senha").value;
-        const btnRegistro = document.getElementById("btn-registro");
+        const btnLogin = document.getElementById("btn-login");
         const alertErro = document.getElementById("alert-erro");
         const alertSucesso = document.getElementById("alert-sucesso");
 
@@ -312,24 +295,17 @@
         alertErro.style.display = "none";
         alertSucesso.style.display = "none";
 
-        // Validar senhas iguais
-        if (senha !== confirmarSenha) {
-          alertErro.textContent = "As senhas não coincidem";
-          alertErro.style.display = "block";
-          return;
-        }
-
         // Desabilitar botão
-        btnRegistro.disabled = true;
-        btnRegistro.textContent = "⏳ Criando conta...";
+        btnLogin.disabled = true;
+        btnLogin.textContent = "⏳ Entrando...";
 
         try {
-          const response = await fetch(`${API_URL}/api/auth/registro`, {
+          const response = await fetch(`${API_URL}/api/auth/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ nome, email, senha }),
+            body: JSON.stringify({ email, senha }),
           });
 
           const data = await response.json();
@@ -341,28 +317,28 @@
 
             // Mostrar sucesso
             alertSucesso.textContent =
-              "✅ Conta criada com sucesso! Redirecionando...";
+              "✅ Login realizado com sucesso! Redirecionando...";
             alertSucesso.style.display = "block";
 
             // Redirecionar para dashboard
             setTimeout(() => {
-              window.location.href = "index.html";
+              window.location.href = "/index.html";
             }, 1500);
           } else {
             // Mostrar erro
-            alertErro.textContent = data.message || "Erro ao criar conta";
+            alertErro.textContent = data.message || "Erro ao fazer login";
             alertErro.style.display = "block";
 
-            btnRegistro.disabled = false;
-            btnRegistro.textContent = "📝 Criar Conta";
+            btnLogin.disabled = false;
+            btnLogin.textContent = "🔐 Entrar";
           }
         } catch (error) {
           console.error("Erro:", error);
           alertErro.textContent = "❌ Erro ao conectar com o servidor";
           alertErro.style.display = "block";
 
-          btnRegistro.disabled = false;
-          btnRegistro.textContent = "📝 Criar Conta";
+          btnLogin.disabled = false;
+          btnLogin.textContent = "🔐 Entrar";
         }
       }
 
@@ -371,7 +347,7 @@
         const token = localStorage.getItem("token");
         if (token) {
           // Já está logado, redirecionar
-          window.location.href = "index.html";
+          window.location.href = "/index.html";
         }
       });
     </script>

@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>💰 +Milionária - Resultados</title>
+        <title>🎲 Lotomania - Resultados</title>
         <!-- ✅ ADICIONAR ESTA LINHA: -->
-        <script src="js/config.js"></script>
+        <script src="/js/config.js"></script>
         <style>
             * {
                 margin: 0;
@@ -15,7 +15,7 @@
 
             body {
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #6bccef 0%, #4a90e2 100%);
+                background: linear-gradient(135deg, #f78100 0%, #d16d00 100%);
                 min-height: 100vh;
                 padding: 10px;
             }
@@ -36,7 +36,7 @@
                 justify-content: space-between;
                 align-items: center;
                 flex-wrap: wrap;
-                gap: 20px;
+                gap: 2px;
             }
 
             .header-left {
@@ -51,7 +51,7 @@
 
             h1 {
                 font-size: 1.5rem;
-                color: #6bccef;
+                color: #f78100;
                 margin-bottom: 5px;
             }
 
@@ -62,7 +62,7 @@
 
             .btn-voltar {
                 padding: 12px 24px;
-                background: #6bccef;
+                background: #f78100;
                 color: white;
                 border: none;
                 border-radius: 8px;
@@ -70,7 +70,7 @@
                 cursor: pointer;
                 text-decoration: none;
                 display: inline-block;
-                transition: opacity 0.3;
+                transition: opacity 0.3s;
             }
 
             .btn-voltar:hover {
@@ -115,12 +115,12 @@
             }
 
             /* =========================
-        CARDS +MILIONÁRIA
+        CARDS 10x100 LOTOMANIA
       ========================= */
 
             .cards-container {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
                 gap: 20px;
             }
 
@@ -133,7 +133,7 @@
 
             .card-header {
                 font-weight: bold;
-                color: #6bccef;
+                color: #f78100;
                 margin-bottom: 10px;
                 display: flex;
                 justify-content: space-between;
@@ -141,10 +141,10 @@
             }
 
             .card-concurso:first-child {
-                border: 2px solid #6bccef;
+                border: 2px solid #f78100;
             }
 
-            .grid-50 {
+            .grid-100 {
                 display: grid;
                 grid-template-columns: repeat(10, 1fr);
                 gap: 6px;
@@ -156,7 +156,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 font-weight: bold;
                 background: #eee;
                 color: #666;
@@ -165,27 +165,8 @@
             }
 
             .dezena.sorteada {
-                background: #6bccef;
+                background: #f78100;
                 color: #fff;
-            }
-
-            .trevos-container {
-                margin-top: 12px;
-                display: flex;
-                gap: 8px;
-            }
-
-            .trevo {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background: #4caf50;
-                color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                font-size: 0.85rem;
             }
         </style>
     </head>
@@ -196,17 +177,14 @@
             <header>
                 <div class="header-left">
                     <div class="icon-large">
-                        <img
-                            src="image/favicon-mm-32.png"
-                            alt="Mais-Milionária"
-                        />
+                        <img src="/image/favicon-lm-32.png" alt="Lotomania" />
                     </div>
                     <div>
-                        <h1>+Milionária</h1>
+                        <h1>Lotomania</h1>
                         <div class="subtitle">Resultados</div>
                     </div>
                 </div>
-                <a href="index.html" class="btn-voltar">← Voltar</a>
+                <a href="/index.html" class="btn-voltar">← Voltar</a>
             </header>
 
             <!-- Tabela -->
@@ -222,7 +200,7 @@
         </div>
 
         <script>
-            const ENDPOINT = "/maismilionaria";
+            const ENDPOINT = "/lotomania";
 
             const LIMITE = 10;
 
@@ -244,8 +222,8 @@
             function verificarAutenticacao() {
                 const token = getToken();
                 if (!token) {
-                    alert("Você precisa fazer login para acessar esta página!");
-                    window.location.href = "login.html";
+                    alert("Você precisa fazer login!");
+                    window.location.href = "/auth/login.html";
                     return false;
                 }
                 return true;
@@ -289,7 +267,7 @@
             function gerarGrid(dezenasSorteadas) {
                 let html = "";
 
-                for (let i = 1; i <= 50; i++) {
+                for (let i = 1; i <= 100; i++) {
                     html += `
             <div class="dezena ${dezenasSorteadas.includes(i) ? "sorteada" : ""}">
               ${String(i).padStart(2, "0")}
@@ -306,18 +284,11 @@
                 container.innerHTML = "";
 
                 resultados.forEach((resultado) => {
-                    const dezenas = (resultado.dezenas || []).map(Number);
-                    const trevos = resultado.trevos || [];
-
-                    const trevosHTML = trevos
-                        .map(
-                            (t) => `
-          <div class="trevo">
-            🍀${String(t).padStart(2, "0")}
-          </div>
-        `,
-                        )
-                        .join("");
+                    const dezenasSorteadas = (
+                        resultado.dezenas ||
+                        resultado.dezenas_1 ||
+                        []
+                    ).map((n) => parseInt(n));
 
                     const card = document.createElement("div");
                     card.className = "card-concurso";
@@ -327,13 +298,8 @@
               <span>Concurso #${resultado.concurso}</span>
               <span>${resultado.data || ""}</span>
             </div>
-
-            <div class="grid-50">
-              ${gerarGrid(dezenas)}
-            </div>
-
-            <div class="trevos-container">
-              ${trevosHTML}
+            <div class="grid-100">
+              ${gerarGrid(dezenasSorteadas)}
             </div>
           `;
 
@@ -344,7 +310,7 @@
             // ✅ Carregar ao iniciar (após verificar auth)
             carregarDados();
         </script>
-        <script src="js/auth-check.js"></script>
+        <script src="/js/auth-check.js"></script>
         <script>
             // Autenticação básica
             if (verificarAutenticacao()) {

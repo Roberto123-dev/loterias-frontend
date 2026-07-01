@@ -4,7 +4,7 @@ async function carregarConfiguracoes() {
 
   if (!usuario || !token) {
     alert("Sessão expirada. Faça login novamente.");
-    window.location.href = "login.html";
+    window.location.href = "/auth/login.html";
     return;
   }
 

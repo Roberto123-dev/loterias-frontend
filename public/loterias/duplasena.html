@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>🎲 Lotomania - Resultados</title>
+        <title>🎭 Dupla-Sena - Resultados</title>
         <!-- ✅ ADICIONAR ESTA LINHA: -->
-        <script src="js/config.js"></script>
+        <script src="/js/config.js"></script>
         <style>
             * {
                 margin: 0;
@@ -15,7 +15,7 @@
 
             body {
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #f78100 0%, #d16d00 100%);
+                background: linear-gradient(135deg, #a61324 0%, #7d0e1b 100%);
                 min-height: 100vh;
                 padding: 10px;
             }
@@ -36,7 +36,7 @@
                 justify-content: space-between;
                 align-items: center;
                 flex-wrap: wrap;
-                gap: 2px;
+                gap: 20px;
             }
 
             .header-left {
@@ -51,7 +51,7 @@
 
             h1 {
                 font-size: 1.5rem;
-                color: #f78100;
+                color: #a61324;
                 margin-bottom: 5px;
             }
 
@@ -62,7 +62,7 @@
 
             .btn-voltar {
                 padding: 12px 24px;
-                background: #f78100;
+                background: #a61324;
                 color: white;
                 border: none;
                 border-radius: 8px;
@@ -115,12 +115,12 @@
             }
 
             /* =========================
-        CARDS 10x100 LOTOMANIA
+        CARDS 5x5 LOTOFÁCIL
       ========================= */
 
             .cards-container {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
                 gap: 20px;
             }
 
@@ -133,7 +133,7 @@
 
             .card-header {
                 font-weight: bold;
-                color: #f78100;
+                color: #a61324;
                 margin-bottom: 10px;
                 display: flex;
                 justify-content: space-between;
@@ -141,10 +141,10 @@
             }
 
             .card-concurso:first-child {
-                border: 2px solid #f78100;
+                border: 2px solid #a61324;
             }
 
-            .grid-100 {
+            .grid-50 {
                 display: grid;
                 grid-template-columns: repeat(10, 1fr);
                 gap: 6px;
@@ -165,8 +165,21 @@
             }
 
             .dezena.sorteada {
-                background: #f78100;
+                background: #a61324;
                 color: #fff;
+            }
+
+            .sorteio-bloco {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .sorteio-titulo {
+                font-size: 0.8rem;
+                font-weight: bold;
+                color: #a61324;
+                text-transform: uppercase;
             }
         </style>
     </head>
@@ -177,14 +190,14 @@
             <header>
                 <div class="header-left">
                     <div class="icon-large">
-                        <img src="image/favicon-lm-32.png" alt="Lotomania" />
+                        <img src="/image/favicon-ds-32.png" alt="Dupla-Sena" />
                     </div>
                     <div>
-                        <h1>Lotomania</h1>
+                        <h1>Dupla-Sena</h1>
                         <div class="subtitle">Resultados</div>
                     </div>
                 </div>
-                <a href="index.html" class="btn-voltar">← Voltar</a>
+                <a href="/index.html" class="btn-voltar">← Voltar</a>
             </header>
 
             <!-- Tabela -->
@@ -200,7 +213,7 @@
         </div>
 
         <script>
-            const ENDPOINT = "/lotomania";
+            const ENDPOINT = "/duplasena";
 
             const LIMITE = 10;
 
@@ -223,7 +236,7 @@
                 const token = getToken();
                 if (!token) {
                     alert("Você precisa fazer login!");
-                    window.location.href = "login.html";
+                    window.location.href = "/auth/login.html";
                     return false;
                 }
                 return true;
@@ -235,6 +248,7 @@
                 await carregarResultados();
             }
 
+            // Carregar dados iniciais
             async function carregarResultados() {
                 const loading = document.getElementById("loading");
                 const cards = document.getElementById("cards-resultados");
@@ -267,7 +281,7 @@
             function gerarGrid(dezenasSorteadas) {
                 let html = "";
 
-                for (let i = 1; i <= 100; i++) {
+                for (let i = 1; i <= 50; i++) {
                     html += `
             <div class="dezena ${dezenasSorteadas.includes(i) ? "sorteada" : ""}">
               ${String(i).padStart(2, "0")}
@@ -284,11 +298,8 @@
                 container.innerHTML = "";
 
                 resultados.forEach((resultado) => {
-                    const dezenasSorteadas = (
-                        resultado.dezenas ||
-                        resultado.dezenas_1 ||
-                        []
-                    ).map((n) => parseInt(n));
+                    const dezenas1 = (resultado.dezenas_1 || []).map(Number);
+                    const dezenas2 = (resultado.dezenas_2 || []).map(Number);
 
                     const card = document.createElement("div");
                     card.className = "card-concurso";
@@ -298,8 +309,19 @@
               <span>Concurso #${resultado.concurso}</span>
               <span>${resultado.data || ""}</span>
             </div>
-            <div class="grid-100">
-              ${gerarGrid(dezenasSorteadas)}
+
+            <div class="sorteio-bloco">
+              <div class="sorteio-titulo">1º Sorteio</div>
+              <div class="grid-50">
+                ${gerarGrid(dezenas1)}
+              </div>
+            </div>
+
+            <div class="sorteio-bloco" style="margin-top:12px">
+              <div class="sorteio-titulo">2º Sorteio</div>
+              <div class="grid-50">
+                ${gerarGrid(dezenas2)}
+              </div>
             </div>
           `;
 
@@ -310,7 +332,7 @@
             // ✅ Carregar ao iniciar (após verificar auth)
             carregarDados();
         </script>
-        <script src="js/auth-check.js"></script>
+        <script src="/js/auth-check.js"></script>
         <script>
             // Autenticação básica
             if (verificarAutenticacao()) {
