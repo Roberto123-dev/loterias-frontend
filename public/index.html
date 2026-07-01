@@ -409,6 +409,7 @@
             .card-meta {
                 display: flex;
                 flex-direction: column;
+                flex: 1;
                 gap: 3px;
                 min-width: 0;
             }
@@ -637,10 +638,8 @@
                 border-radius: 20px;
                 font-size: 0.70rem;
                 font-weight: 700;
-                letter-spacing: 0.04em;
-                text-transform: uppercase;
                 border: none;
-                align-self: flex-start;
+                flex-shrink: 0;
             }
 
             .status-acumulou {
@@ -1439,11 +1438,13 @@
 
             function criarCardLoteria(loteria, resultado, total) {
                 const acumulou = resultado.acumulou === true;
-                const statusTexto = acumulou ? "ACUMULOU" : "TEVE GANHADOR";
                 const statusClasse = acumulou ? "status-acumulou" : "status-ganhador";
 
                 const estimativa = Number(resultado.valor_estimado_proximo) || 0;
                 const prizeHTML = formatarPremio(estimativa);
+                const statusTexto = acumulou
+                    ? `Acumulou! ${prizeHTML}`
+                    : `Estimativa de ${prizeHTML}`;
 
                 const proximo = window.calcularProximoConcurso
                     ? window.calcularProximoConcurso(loteria.id)
@@ -1467,8 +1468,8 @@
             <div class="loteria-name">${loteria.nome}</div>
             <div class="concurso-numero">Concurso ${resultado.concurso}</div>
         </div>
+        <div class="status-concurso ${statusClasse}">${statusTexto}</div>
     </div>
-    <div class="status-concurso ${statusClasse}">${statusTexto}</div>
     <div class="card-prize">${prizeHTML}</div>
     ${proximoConcursoHTML}
     ${btnDetalhes}
