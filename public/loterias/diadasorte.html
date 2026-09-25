@@ -6,6 +6,7 @@
         <title>🍀 Dia de Sorte - Resultados</title>
         <!-- ✅ ADICIONAR ESTA LINHA: -->
         <script src="/js/config.js"></script>
+        <script src="/js/escape-html.js"></script>
         <style>
             * {
                 margin: 0;
@@ -314,7 +315,7 @@
             </div>
 
             <div class="mes-sorte-card">
-              🍀 Mês da Sorte: <strong>${mesSorte}</strong>
+              🍀 Mês da Sorte: <strong>${escapeHtml(mesSorte)}</strong>
             </div>
           `;
 

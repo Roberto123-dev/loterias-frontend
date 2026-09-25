@@ -1061,13 +1061,18 @@
         ${nomes
             .map(
                 (nome) => `
-          <div class="opcao" onclick="aplicarFiltroNome('${escapeHtml(nome).replaceAll("'", "\\'")}')">
+          <div class="opcao" data-nome="${escapeHtml(nome)}">
             ${escapeHtml(nome)}
           </div>
         `,
             )
             .join("")}
       `;
+
+                // Clique via dataset (texto decodificado), sem montar JS dentro do atributo
+                lista.querySelectorAll(".opcao[data-nome]").forEach((el) =>
+                    el.addEventListener("click", () => aplicarFiltroNome(el.dataset.nome)),
+                );
 
                 if (modal) modal.style.display = "flex";
                 if (menu) menu.style.display = "none";
