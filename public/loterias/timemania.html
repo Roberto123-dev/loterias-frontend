@@ -6,6 +6,7 @@
         <title>⚽ Timemania - Resultados</title>
         <!-- ✅ ADICIONAR ESTA LINHA: -->
         <script src="/js/config.js"></script>
+        <script src="/js/escape-html.js"></script>
         <style>
             * {
                 margin: 0;
@@ -332,7 +333,7 @@
 
             <div class="time-coracao-card">
               <span class="time-icon">⚽</span>
-              <span class="time-nome">${timeCoracao}</span>
+              <span class="time-nome">${escapeHtml(timeCoracao)}</span>
             </div>
           `;
 

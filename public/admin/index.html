@@ -7,6 +7,7 @@
   <title>🔐 Painel Admin - Sistema de Loterias</title>
   <!-- ✅ ADICIONAR ESTA LINHA: -->
   <script src="/js/config.js"></script>
+  <script src="/js/escape-html.js"></script>
   <style>
     * {
       margin: 0;
@@ -927,17 +928,17 @@
         html += `
             <tr>
               <td>${u.id}</td>
-              <td>${u.nome}</td>
-              <td>${u.email}</td>
-              <td><span class="badge ${statusBadge}">${u.status}</span></td>
+              <td>${escapeHtml(u.nome)}</td>
+              <td>${escapeHtml(u.email)}</td>
+              <td><span class="badge ${statusBadge}">${escapeHtml(u.status)}</span></td>
               <td>${expiraEm} ${diasRestantes}</td>
               <td>
                 <div class="btn-group">
                   ${u.status !== "PRO ATIVO"
-            ? `<button class="btn btn-success" onclick="abrirModalAtivar(${u.id}, '${u.nome}')">⭐ Ativar PRO</button>`
-            : `<button class="btn btn-danger" onclick="abrirModalDesativar(${u.id}, '${u.nome}')">🚫 Desativar</button>`
+            ? `<button class="btn btn-success" data-acao="ativar" data-id="${u.id}" data-nome="${escapeHtml(u.nome)}">⭐ Ativar PRO</button>`
+            : `<button class="btn btn-danger" data-acao="desativar" data-id="${u.id}" data-nome="${escapeHtml(u.nome)}">🚫 Desativar</button>`
           }
-                    <button class="btn btn-secondary" onclick="abrirModalReset(${u.id}, '${u.nome}')">
+                    <button class="btn btn-secondary" data-acao="reset" data-id="${u.id}" data-nome="${escapeHtml(u.nome)}">
                       🔐 Resetar
                     </button>
                     <button class="btn btn-info" onclick="abrirModalDetalhes(${u.id})">
@@ -1003,18 +1004,17 @@
             const data_formatted = new Date(h.created_at).toLocaleString(
               "pt-BR",
             );
-            const mudanca = `${h.plano_anterior} → ${h.plano_novo}`;
+            const mudanca = `${escapeHtml(h.plano_anterior)} → ${escapeHtml(h.plano_novo)}`;
 
             html += `
                 <tr>
                   <td>${data_formatted}</td>
-                  <td>${h.usuario_nome}<br><small>${h.usuario_email
-              }</small></td>
+                  <td>${escapeHtml(h.usuario_nome)}<br><small>${escapeHtml(h.usuario_email)}</small></td>
                   <td>${mudanca}</td>
                   <td>${h.dias_adicionados} dias</td>
                   <td>R$ ${parseFloat(h.valor_pago || 0).toFixed(2)}</td>
-                  <td>${h.metodo_pagamento}</td>
-                  <td>${h.ativado_por}</td>
+                  <td>${escapeHtml(h.metodo_pagamento)}</td>
+                  <td>${escapeHtml(h.ativado_por)}</td>
                 </tr>
               `;
           });
@@ -1069,8 +1069,8 @@
 
             html += `
                 <tr>
-                  <td>${u.nome}</td>
-                  <td>${u.email}</td>
+                  <td>${escapeHtml(u.nome)}</td>
+                  <td>${escapeHtml(u.email)}</td>
                   <td>${expiraEm}</td>
                   <td><span class="badge badge-expirado">${u.dias_restantes} dias</span></td>
                   <td>
@@ -1123,6 +1123,19 @@
       document.getElementById("desativar-usuario-nome").value = nome;
       document.getElementById("modal-desativar").style.display = "flex";
     }
+
+    // Botões da lista de usuários: data-* + delegação, sem onclick inline com nome.
+    // O dataset devolve o texto já decodificado, então o nome chega intacto ao modal.
+    const ACOES_USUARIO = {
+      ativar: abrirModalAtivar,
+      desativar: abrirModalDesativar,
+      reset: abrirModalReset,
+    };
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-acao]");
+      if (!btn || !ACOES_USUARIO[btn.dataset.acao]) return;
+      ACOES_USUARIO[btn.dataset.acao](Number(btn.dataset.id), btn.dataset.nome);
+    });
 
     function fecharModal(id) {
       document.getElementById(id).style.display = "none";
