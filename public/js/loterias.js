@@ -199,6 +199,7 @@
     const ITENS_GLOBAIS = [
         { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html" },
         { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/loterias/todas.html" },
+        { id: "bancas", nome: "Bancas Parceiras", icone: "bi-shop", url: "/bancas/index.html" },
         { id: "perfil", nome: "Meu perfil", icone: "bi-person-fill", url: "/auth/perfilusuario.html" },
     ];
 

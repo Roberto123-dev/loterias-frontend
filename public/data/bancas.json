@@ -1,0 +1,9 @@
+{
+    "bancas": [
+        { "id": "super-lotogiro", "nome": "Super LotoGiro", "descricao": "Sorteios diários", "link": "https://superjogo.loteriabr.com/admin/indicate/2819", "logo": "/img/bancas/super-lotogiro.png", "ordem": 1, "ativo": true },
+        { "id": "lotopix", "nome": "LotoPix", "descricao": "Aposte com PIX", "link": "https://web.lotopix.digital/admin/indicate/2482", "logo": "/img/bancas/lotopix.png", "ordem": 2, "ativo": true },
+        { "id": "banca-forte", "nome": "Banca Forte", "descricao": "Sorteios diários", "link": "https://web.bancaforte.online/admin/indicate/2886", "logo": "/img/bancas/banca-forte.png", "ordem": 3, "ativo": true },
+        { "id": "banca-vip", "nome": "Banca VIP", "descricao": "Aposte com PIX", "link": "https://bancavip.digital/admin/indicate/2186", "logo": null, "marca": ["BANCA", "VIP"], "ordem": 4, "ativo": true },
+        { "id": "banca-forte-pix", "nome": "Banca Forte PIX", "descricao": "Aposte com PIX", "link": "https://inovaloto.com.br/tenant/aabc5dbc-4993-4efb-a902-b1533885ec8a/seller/45820baf-5aca-4d21-8341-39de78451e9f", "logo": null, "marca": ["BANCA FORTE", "PIX"], "ordem": 5, "ativo": true }
+    ]
+}
