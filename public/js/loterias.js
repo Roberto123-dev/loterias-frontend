@@ -187,8 +187,7 @@
     // Itens globais do menu (não dependem da loteria ativa)
     const ITENS_GLOBAIS = [
         { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html", pro: true },
-        // Até a etapa 5 (loterias/todas.html), a grade com as 8 loterias fica no fim da home
-        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/index.html#todas", pro: false },
+        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/loterias/todas.html", pro: false },
         { id: "configuracoes", nome: "Configurações", icone: "bi-gear-fill", url: "/auth/perfilusuario.html", pro: true },
     ];
 
@@ -332,6 +331,19 @@
 
     function formatarDezena(n) {
         return String(Number(n)).padStart(2, "0");
+    }
+
+    // R$ 6,0 milhões / R$ 850 mil / R$ 1.234,56; sem valor → "—"
+    function formatarPremio(valor) {
+        const v = Number(valor) || 0;
+        if (v <= 0) return "—";
+        if (v >= 1000000) {
+            return `R$ ${(v / 1000000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} milhões`;
+        }
+        if (v >= 1000) {
+            return `R$ ${(v / 1000).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 1 })} mil`;
+        }
+        return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     }
 
     // ========== CONCURSO: STATUS E DATAS ==========
@@ -498,6 +510,7 @@
         vincularSelect,
         formatarDezena,
         formatarData,
+        formatarPremio,
         statusConcurso,
         proximoSorteio,
         corTexto,

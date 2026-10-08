@@ -193,120 +193,6 @@
                 margin-left: 70px;
             }
 
-            /* ============= CARDS DE LOTERIA ============= */
-            .loterias-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 16px;
-                margin-top: 20px;
-            }
-
-            .card-prize {
-                font-size: 1.4rem;
-                font-weight: 800;
-                color: #1e1e2e;
-                line-height: 1.2;
-                word-break: break-word;
-            }
-
-            .loteria-card {
-                background: white;
-                border-radius: 14px;
-                padding: 20px 18px 16px;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-                transition: transform 0.25s, box-shadow 0.25s;
-                position: relative;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .loteria-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-            }
-
-            .loteria-card::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 5px;
-            }
-
-            /* Cores das loterias */
-            .loteria-card.megasena::before {
-                background: #209869;
-            }
-
-            .loteria-card.lotofacil::before {
-                background: #930089;
-            }
-
-            .loteria-card.quina::before {
-                background: #260085;
-            }
-
-            .loteria-card.lotomania::before {
-                background: #f78100;
-            }
-
-            .loteria-card.duplasena::before {
-                background: #a61324;
-            }
-
-            .loteria-card.timemania::before {
-                background: #00ff48;
-            }
-
-            .loteria-card.diadasorte::before {
-                background: #cb852b;
-            }
-
-            .loteria-card.maismilionaria::before {
-                background: #6bccef;
-            }
-
-            .card-top {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .card-meta {
-                display: flex;
-                flex-direction: column;
-                flex: 1;
-                gap: 3px;
-                min-width: 0;
-            }
-
-            .loteria-name {
-                font-size: 1.0rem;
-                font-weight: 700;
-                color: #1e1e2e;
-                margin: 0;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .card-icon {
-                width: 52px;
-                height: 52px;
-                object-fit: contain;
-                flex-shrink: 0;
-            }
-
-            .concurso-numero {
-                font-size: 0.78rem;
-                font-weight: 500;
-                color: #888;
-                margin: 0;
-            }
-
             .btn-ver-mais {
                 width: 100%;
                 padding: 10px;
@@ -329,28 +215,6 @@
                 background: #d1d5db;
                 color: #6b7280;
                 cursor: not-allowed;
-            }
-
-            .loading {
-                text-align: center;
-                color: white;
-                padding: 40px;
-            }
-
-            .spinner {
-                width: 50px;
-                height: 50px;
-                border: 5px solid rgba(255, 255, 255, 0.3);
-                border-top-color: white;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin: 0 auto 20px;
-            }
-
-            @keyframes spin {
-                to {
-                    transform: rotate(360deg);
-                }
             }
 
             /* ============= MOBILE STYLES ============= */
@@ -408,29 +272,6 @@
                     min-height: calc(100vh - 100px);
                 }
 
-                /* Cards mobile */
-                .loterias-grid {
-                    grid-template-columns: 1fr;
-                    gap: 10px;
-                }
-
-                .loteria-card {
-                    padding: 14px 12px 12px;
-                }
-
-                .loteria-name {
-                    font-size: 0.88rem;
-                }
-
-                .card-icon {
-                    width: 40px;
-                    height: 40px;
-                }
-
-                .card-prize {
-                    font-size: 1.1rem;
-                }
-
                 .news-bar {
                     left: 0;
                     width: 100%;
@@ -468,20 +309,6 @@
             .status-ganhador {
                 background: #fee2e2;
                 color: #b91c1c;
-            }
-
-            .proximo-concurso {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                font-size: 0.78rem;
-                font-weight: 600;
-                color: #666;
-                margin-top: 2px;
-            }
-
-            .proximo-concurso.proximo-hoje {
-                color: #16a34a;
             }
 
             .news-bar {
@@ -756,17 +583,6 @@
                 }
             }
 
-            @media (min-width: 769px) and (max-width: 1100px) {
-                .loterias-grid { grid-template-columns: repeat(2, 1fr); }
-            }
-
-            @media (min-width: 1101px) and (max-width: 1400px) {
-                .loterias-grid { grid-template-columns: repeat(3, 1fr); }
-            }
-
-            @media (max-width: 380px) {
-                .loterias-grid { grid-template-columns: 1fr; }
-            }
         </style>
     </head>
 
@@ -813,15 +629,6 @@
 
             <h2 class="secao-titulo" id="titulo-atalhos">Ferramentas</h2>
             <nav id="atalhos-grid" class="atalhos-grid" aria-label="Ferramentas da loteria"></nav>
-
-            <!-- Provisório até a etapa 5 (loterias/todas.html) -->
-            <h2 class="secao-titulo" id="todas">Todas as loterias</h2>
-            <div id="loterias-container" class="loterias-grid">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>📊 Carregando loterias...</p>
-                </div>
-            </div>
         </div>
 
         <!-- ============= MODAL DE UPGRADE ============= -->
@@ -878,57 +685,6 @@
 
 
         <script>
-            const LOTERIAS = [
-                {
-                    id: "lotofacil",
-                    nome: "Lotofácil",
-                    icon: "image/favicon-lf-32.png",
-                    endpoint: "/lotofacil",
-                },
-                {
-                    id: "megasena",
-                    nome: "Mega-Sena",
-                    icon: "image/favicon-ms-32.png",
-                    endpoint: "/megasena",
-                },
-                {
-                    id: "quina",
-                    nome: "Quina",
-                    icon: "image/favicon-qu-32.png",
-                    endpoint: "/quina",
-                },
-                {
-                    id: "lotomania",
-                    nome: "Lotomania",
-                    icon: "image/favicon-lm-32.png",
-                    endpoint: "/lotomania",
-                },
-                {
-                    id: "duplasena",
-                    nome: "Dupla-Sena",
-                    icon: "image/favicon-ds-32.png",
-                    endpoint: "/duplasena",
-                },
-                {
-                    id: "timemania",
-                    nome: "Timemania",
-                    icon: "image/favicon-tm-32.png",
-                    endpoint: "/timemania",
-                },
-                {
-                    id: "diadasorte",
-                    nome: "Dia de Sorte",
-                    icon: "image/favicon-di-32.png",
-                    endpoint: "/diadasorte",
-                },
-                {
-                    id: "maismilionaria",
-                    nome: "+Milionária",
-                    icon: "image/favicon-mm-32.png",
-                    endpoint: "/maismilionaria",
-                },
-            ];
-
             let planoUsuario = window.getPlanoCache();
             let modalUpgrade;
 
@@ -1226,7 +982,7 @@
                 <div class="premio-bloco">
                     <div>
                         <div class="premio-rotulo">Prêmio estimado do próximo concurso</div>
-                        <div class="premio-valor">${formatarPremio(Number(resultado.valor_estimado_proximo) || 0)}</div>
+                        <div class="premio-valor">${Loterias.formatarPremio(resultado.valor_estimado_proximo)}</div>
                     </div>
                     <div>
                         <div class="premio-rotulo">Próximo sorteio · Concurso ${Number(resultado.concurso) + 1}</div>
@@ -1295,12 +1051,6 @@
                 if (isLoadingResultados) return; // trava a corrida com o setInterval
                 isLoadingResultados = true;
 
-                const container = document.getElementById("loterias-container");
-                if (!container) {
-                    isLoadingResultados = false;
-                    return;
-                }
-
                 try {
                     const response = await fetch(
                         `${API_URL}/api/resultados/ultimos-todos`,
@@ -1319,97 +1069,14 @@
                     ultimosResultados = resultados;
                     erroResultados = false;
                     renderizarLoteriaAtiva();
-
-                    // monta tudo numa string só e troca o DOM uma única vez
-                    const html = LOTERIAS.map((loteria) => {
-                        const resultado = resultados[loteria.id];
-                        if (!resultado) return "";
-                        return criarCardLoteria(
-                            loteria,
-                            resultado,
-                            resultado.concurso,
-                        );
-                    }).join("");
-
-                    container.innerHTML = html;
                 } catch (error) {
                     console.error("❌ Erro ao carregar resultados:", error);
                     erroResultados = true;
+                    // não apaga um resultado bom já na tela
                     if (!ultimosResultados) renderizarLoteriaAtiva();
-                    // só mostra erro se ainda não tiver card na tela (não apaga dados bons)
-                    if (
-                        !container.children.length ||
-                        container.querySelector(".loading")
-                    ) {
-                        container.innerHTML = `<div class="loading">❌ Erro ao carregar resultados</div>`;
-                    }
                 } finally {
                     isLoadingResultados = false;
                 }
-            }
-
-            function formatarPremio(valor) {
-                if (!valor || valor <= 0) return "—";
-                if (valor >= 1_000_000) {
-                    const m = valor / 1_000_000;
-                    return "R$ " + m.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 1,
-                        maximumFractionDigits: 1
-                    }) + " milhões";
-                }
-                if (valor >= 1_000) {
-                    return "R$ " + (valor / 1_000).toLocaleString("pt-BR", {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 1
-                    }) + " mil";
-                }
-                return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-            }
-
-            function criarCardLoteria(loteria, resultado, total) {
-                // acumulou NULL → "Aguardando rateio"; com ganhadores → "N ganhadores"
-                const status = Loterias.statusConcurso(resultado);
-                const statusClasse = {
-                    acumulou: "status-acumulou",
-                    ganhadores: "status-ganhador",
-                    aguardando: "status-aguardando",
-                }[status.tipo];
-
-                const estimativa = Number(resultado.valor_estimado_proximo) || 0;
-                const prizeHTML = formatarPremio(estimativa);
-                const statusTexto = status.texto;
-
-                // Data oficial da Caixa; se vier NULL, cai na grade semanal
-                const proximo = Loterias.proximoSorteio(
-                    loteria.id,
-                    resultado.data_proximo_concurso,
-                );
-                const proximoConcursoHTML = proximo
-                    ? `<div class="proximo-concurso ${proximo.ehHoje ? "proximo-hoje" : ""}">
-        ${proximo.ehHoje ? '<i class="bi bi-clock-fill"></i> ' : ""}Próximo Concurso: ${proximo.texto}
-    </div>`
-                    : "";
-
-                const btnDetalhes =
-                    planoUsuario === "pro"
-                        ? `<button class="btn-ver-mais" onclick="verDetalhes('${loteria.id}')">Ver Detalhes</button>`
-                        : `<button class="btn-ver-mais bloqueado" onclick="mostrarModalUpgrade()">Ver Detalhes 🔒</button>`;
-
-                return `
-<div class="loteria-card ${loteria.id}">
-    <div class="card-top">
-        <img class="card-icon" src="${loteria.icon}" alt="${loteria.nome}" width="52" height="52" />
-        <div class="card-meta">
-            <div class="loteria-name">${loteria.nome}</div>
-            <div class="concurso-numero">Concurso ${resultado.concurso}</div>
-        </div>
-        <div class="status-concurso ${statusClasse}">${statusTexto}</div>
-    </div>
-    <div class="card-prize">${prizeHTML}</div>
-    ${proximoConcursoHTML}
-    ${btnDetalhes}
-</div>
-`;
             }
 
             // ========== INICIALIZAÇÃO ==========
