@@ -7,8 +7,10 @@
  * --cor-loteria-clara   fundo suave (destaques, hover)
  * --cor-loteria-escura  gradientes e bordas
  * --cor-loteria-texto   texto sobre --cor-loteria (preto ou branco, pelo contraste)
+ * --fundo-pagina        fundo neutro claro das páginas (a cor da loteria se destaca)
  */
 :root {
+    --fundo-pagina: #f3f4f6;
     --cor-loteria: #930089;
     --cor-loteria-clara: #efd9ed;
     --cor-loteria-escura: #6e0067;

@@ -239,38 +239,8 @@
     margin: 10px 20px;
 }
 
-/* Configurações (grupo com submenu) */
-.menu-grupo .bi-chevron-down {
-    margin-left: auto;
-    font-size: 0.85rem;
-    min-width: 0;
-    transition: transform 0.2s;
-}
-
-.menu-grupo[aria-expanded="true"] .bi-chevron-down {
-    transform: rotate(180deg);
-}
-
-.submenu[hidden] {
-    display: none;
-}
-
-.submenu .menu-item {
-    padding-left: 40px;
-    font-size: 0.92rem;
-}
-
-.submenu .menu-item i {
-    font-size: 1.1rem;
-}
-
-.menu-recolhido .submenu .menu-item {
-    padding-left: 20px;
-}
-
 .menu-recolhido .menu-item span,
-.menu-recolhido .menu-texto,
-.menu-recolhido .menu-grupo .bi-chevron-down {
+.menu-recolhido .menu-texto {
     display: none;
 }
 

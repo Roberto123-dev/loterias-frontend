@@ -188,7 +188,7 @@
     const ITENS_GLOBAIS = [
         { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html" },
         { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/loterias/todas.html" },
-        { id: "configuracoes", nome: "Configurações", icone: "bi-gear-fill", url: "/auth/perfilusuario.html" },
+        { id: "perfil", nome: "Meu perfil", icone: "bi-person-fill", url: "/auth/perfilusuario.html" },
     ];
 
     // Ferramentas ainda quebradas para a loteria (anotações internas).

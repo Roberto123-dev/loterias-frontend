@@ -27,15 +27,6 @@
 
     // ========== HELPERS ==========
 
-    function temToken() {
-        try {
-            return Boolean(localStorage.getItem("token"));
-        } catch (e) {
-            if (e && e.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
-            return false;
-        }
-    }
-
     // "/analise/conferir.html", "/analise/conferir" (cleanUrls) → "/analise/conferir"; "/index.html" → "/"
     function normalizarCaminho(caminho) {
         let p = String(caminho || "/").replace(/\.html$/, "").replace(/\/+$/, "");
@@ -89,14 +80,11 @@
             return html;
         }).join("");
 
-        const configuracoes = L.ITENS_GLOBAIS.find((g) => g.id === "configuracoes");
-        const globais = L.ITENS_GLOBAIS.filter((g) => g.id !== "configuracoes")
-            .map((g) => {
-                const html = itemGlobal(g, slug, marcouAtivo);
-                if (html.includes('aria-current="page"')) marcouAtivo = true;
-                return html;
-            })
-            .join("");
+        const globais = L.ITENS_GLOBAIS.map((g) => {
+            const html = itemGlobal(g, slug, marcouAtivo);
+            if (html.includes('aria-current="page"')) marcouAtivo = true;
+            return html;
+        }).join("");
 
         const opcoes = L.lista()
             .map((l) => {
@@ -111,8 +99,6 @@
                 </li>`;
             })
             .join("");
-
-        const perfilAtivo = ehPaginaAtual(configuracoes.url);
 
         sidebar.innerHTML = `
             <div class="sidebar-header">
@@ -137,25 +123,6 @@
                 ${ferramentas}
                 <div class="menu-divider"></div>
                 ${globais}
-                <button type="button" class="menu-item menu-grupo" data-acao="configuracoes" aria-expanded="${perfilAtivo}" title="${configuracoes.nome}">
-                    <i class="bi ${configuracoes.icone}"></i>
-                    <span class="menu-texto">${configuracoes.nome}</span>
-                    <i class="bi bi-chevron-down"></i>
-                </button>
-                <div class="submenu"${perfilAtivo ? "" : " hidden"}>
-                    <a href="${configuracoes.url}" class="menu-item${perfilAtivo ? " active" : ""}" title="Meu perfil">
-                        <i class="bi bi-person-fill"></i>
-                        <span class="menu-texto">Meu perfil</span>
-                    </a>
-                    ${
-                        temToken()
-                            ? `<button type="button" class="menu-item" data-acao="notificacoes" title="Notificações por e-mail">
-                        <i class="bi bi-bell-fill" id="icon-notificacao"></i>
-                        <span class="menu-texto" id="label-notificacao">Ativar Notificações</span>
-                    </button>`
-                            : ""
-                    }
-                </div>
             </nav>
 
             <div class="menu-rodape">
@@ -164,8 +131,6 @@
                     <span>@roberto.loteria</span>
                 </a>
             </div>`;
-
-        atualizarBotaoNotificacao(notificacaoInscrito);
     }
 
     // ========== SELETOR ==========
@@ -246,80 +211,6 @@
     window.closeMobileMenu = closeMobileMenu;
     window.toggleSidebar = toggleSidebar;
 
-    // ========== NOTIFICAÇÕES POR E-MAIL ==========
-
-    let notificacaoInscrito = false;
-    let alterandoNotificacao = false;
-
-    function atualizarBotaoNotificacao(inscrito) {
-        const icon = document.getElementById("icon-notificacao");
-        const label = document.getElementById("label-notificacao");
-        if (!icon || !label) return;
-
-        if (inscrito) {
-            icon.className = "bi bi-bell-slash-fill";
-            icon.style.color = "#ffd700";
-            label.textContent = "Desativar Notificações";
-        } else {
-            icon.className = "bi bi-bell-fill";
-            icon.style.color = "";
-            label.textContent = "Ativar Notificações";
-        }
-    }
-
-    async function carregarStatusNotificacao() {
-        const token = localStorage.getItem("token");
-        if (!token || !window.API_URL) return;
-
-        try {
-            const res = await fetch(`${window.API_URL}/api/notificacoes/status`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!res.ok) return;
-            const data = await res.json();
-            notificacaoInscrito = Boolean(data.inscrito);
-            atualizarBotaoNotificacao(notificacaoInscrito);
-        } catch (err) {
-            if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
-            console.error("Erro ao verificar notificações:", err);
-        }
-    }
-
-    async function toggleNotificacoes() {
-        if (alterandoNotificacao) return;
-        const token = localStorage.getItem("token");
-        if (!token || !window.API_URL) return;
-
-        const endpoint = notificacaoInscrito
-            ? "/api/notificacoes/cancelar"
-            : "/api/notificacoes/inscrever";
-
-        alterandoNotificacao = true;
-        try {
-            const res = await fetch(`${window.API_URL}${endpoint}`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-            const data = await res.json();
-            if (data?.success) {
-                notificacaoInscrito = !notificacaoInscrito;
-                atualizarBotaoNotificacao(notificacaoInscrito);
-                alert(
-                    notificacaoInscrito
-                        ? "🔔 Notificações ativadas! Você receberá avisos de novos resultados da Lotofácil."
-                        : "🔕 Notificações desativadas.",
-                );
-            }
-        } catch (err) {
-            if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
-            console.error("Erro ao alterar notificações:", err);
-        } finally {
-            alterandoNotificacao = false;
-        }
-    }
-
     // ========== EVENTOS ==========
 
     sidebar.addEventListener("click", (event) => {
@@ -344,16 +235,6 @@
                 seletorAberto(!aberto);
                 return;
             }
-            case "configuracoes": {
-                const submenu = alvo.nextElementSibling;
-                const aberto = alvo.getAttribute("aria-expanded") === "true";
-                alvo.setAttribute("aria-expanded", String(!aberto));
-                if (submenu) submenu.hidden = aberto;
-                return;
-            }
-            case "notificacoes":
-                toggleNotificacoes();
-                return;
         }
 
         closeMobileMenu();
@@ -374,5 +255,4 @@
     document.addEventListener("loteria-ativa-mudou", render);
 
     render();
-    carregarStatusNotificacao();
 })();

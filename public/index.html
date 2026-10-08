@@ -67,7 +67,7 @@
 
             body {
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--fundo-pagina, #f3f4f6);
                 min-height: 100vh;
             }
 
@@ -278,8 +278,8 @@
             }
 
             .status-ganhador {
-                background: #fee2e2;
-                color: #b91c1c;
+                background: #dcfce7;
+                color: #166534;
             }
 
 
@@ -438,15 +438,16 @@
 
             /* ============= ATALHOS ============= */
             .secao-titulo {
-                color: white;
+                color: #374151;
                 font-size: 1.2rem;
                 font-weight: 700;
                 margin: 28px 0 12px;
             }
 
+            /* 8 atalhos: 4 colunas (2 linhas completas); 2 colunas em telas estreitas */
             .atalhos-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                grid-template-columns: repeat(4, 1fr);
                 gap: 12px;
             }
 
@@ -496,6 +497,12 @@
                 font-size: 0.72rem;
                 font-weight: 500;
                 color: #64748b;
+            }
+
+            @media (max-width: 1000px) {
+                .atalhos-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
             }
 
             @media (max-width: 768px) {
@@ -759,7 +766,16 @@
                     <i class="bi ${f.icone}"></i>${f.nome}
                 </a>`;
                     })
-                    .join("");
+                    .join("") + atalhoMeusJogos(loteria);
+            }
+
+            // Meus Jogos é global, mas abre já filtrado pela loteria ativa
+            function atalhoMeusJogos(loteria) {
+                const meusJogos = Loterias.ITENS_GLOBAIS.find((g) => g.id === "meus-jogos");
+                return `
+                <a class="atalho" href="${Loterias.urlComLoteria(meusJogos.url, loteria.slug)}">
+                    <i class="bi ${meusJogos.icone}"></i>${meusJogos.nome}
+                </a>`;
             }
 
             function renderizarLoteriaAtiva() {
@@ -840,7 +856,6 @@
                     }
                 }
 
-                // notificações: js/menu-lateral.js
                 carregarResultados();
                 setInterval(carregarResultados, 5 * 60 * 1000);
             });
