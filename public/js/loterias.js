@@ -187,8 +187,8 @@
     // Itens globais do menu (não dependem da loteria ativa)
     const ITENS_GLOBAIS = [
         { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html", pro: true },
-        // Até a etapa 5 (loterias/todas.html), a home atual já é a grade com as 8 loterias
-        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/index.html", pro: false },
+        // Até a etapa 5 (loterias/todas.html), a grade com as 8 loterias fica no fim da home
+        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/index.html#todas", pro: false },
         { id: "configuracoes", nome: "Configurações", icone: "bi-gear-fill", url: "/auth/perfilusuario.html", pro: true },
     ];
 
@@ -416,7 +416,7 @@
     /**
      * Próximo sorteio: usa a data oficial (data_proximo_concurso) e, se vier NULL
      * ou já tiver passado (resultado novo ainda não chegou), a grade semanal.
-     * → { data, dias, texto: "Hoje" | "Amanhã" | "Domingo, 11/10", ehHoje, ehAmanha, oficial }
+     * → { data, dataTexto: "11/10", dias, texto: "Hoje" | "Amanhã" | "Domingo, 11/10", ehHoje, ehAmanha, oficial }
      */
     function proximoSorteio(slug, dataProximoISO, agora) {
         const hoje = inicioDoDia(agora || new Date());
@@ -433,7 +433,7 @@
         const dias = Math.round((data - hoje) / UM_DIA);
         const texto =
             dias === 0 ? "Hoje" : dias === 1 ? "Amanhã" : `${DIAS_SEMANA[data.getDay()]}, ${diaMes(data)}`;
-        return { data, dias, texto, ehHoje: dias === 0, ehAmanha: dias === 1, oficial };
+        return { data, dataTexto: diaMes(data), dias, texto, ehHoje: dias === 0, ehAmanha: dias === 1, oficial };
     }
 
     // ========== TEMA (CSS vars) ==========

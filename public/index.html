@@ -183,8 +183,8 @@
             /* ============= MAIN CONTENT ============= */
             .main-content {
                 margin-left: 260px;
-                margin-top: 70px;
-                /* 60 + 40 */
+                margin-top: 100px;
+                /* top-bar 60 + news-bar 40 */
                 padding: 30px;
                 min-height: calc(100vh - 60px);
             }
@@ -403,9 +403,9 @@
                 /* Main content mobile */
                 .main-content {
                     margin-left: 0 !important;
-                    margin-top: 70px;
+                    margin-top: 100px;
                     padding: 15px;
-                    min-height: calc(100vh - 70px);
+                    min-height: calc(100vh - 100px);
                 }
 
                 /* Cards mobile */
@@ -521,6 +521,241 @@
                 }
             }
 
+            /* ============= LOTERIA ATIVA (destaque) ============= */
+            .destaque-card {
+                background: white;
+                border-radius: 14px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+                overflow: hidden;
+            }
+
+            .cabecalho-loteria {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 18px 22px;
+                background: var(--cor-loteria);
+                color: var(--cor-loteria-texto);
+            }
+
+            .cabecalho-loteria img {
+                width: 52px;
+                height: 52px;
+                padding: 6px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.92);
+                flex-shrink: 0;
+            }
+
+            .cabecalho-loteria h1 {
+                margin: 0;
+                font-size: 1.6rem;
+                font-weight: 800;
+                line-height: 1.1;
+            }
+
+            .cabecalho-loteria .subtitulo {
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            .destaque-corpo {
+                padding: 20px 22px;
+                display: grid;
+                gap: 16px;
+            }
+
+            .destaque-topo {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .destaque-concurso {
+                font-size: 1.1rem;
+                font-weight: 800;
+                color: #1e1e2e;
+            }
+
+            .destaque-data {
+                font-weight: 500;
+                color: #666;
+            }
+
+            .destaque-card .status-concurso {
+                font-size: 0.85rem;
+                padding: 6px 14px;
+            }
+
+            .rotulo-sorteio {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #666;
+                text-transform: uppercase;
+                margin-bottom: 6px;
+            }
+
+            .bolas {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .bola {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 1.05rem;
+                background: var(--cor-loteria);
+                color: var(--cor-loteria-texto);
+                box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.15);
+            }
+
+            .bola.trevo {
+                background: #2e7d32;
+                color: white;
+            }
+
+            .extra-concurso {
+                font-weight: 600;
+                color: #333;
+            }
+
+            .premio-bloco {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: 10px;
+                background: var(--cor-loteria-clara);
+            }
+
+            .premio-rotulo {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #555;
+                text-transform: uppercase;
+            }
+
+            .premio-valor {
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: #1e1e2e;
+            }
+
+            .proximo-valor {
+                font-size: 1.15rem;
+                font-weight: 700;
+                color: #1e1e2e;
+            }
+
+            .proximo-valor.proximo-hoje {
+                color: #16a34a;
+            }
+
+            .destaque-rodape {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .destaque-rodape .btn-ver-mais {
+                width: auto;
+                padding: 10px 18px;
+                background: var(--cor-loteria);
+                color: var(--cor-loteria-texto);
+            }
+
+            /* ============= ATALHOS ============= */
+            .secao-titulo {
+                color: white;
+                font-size: 1.2rem;
+                font-weight: 700;
+                margin: 28px 0 12px;
+            }
+
+            .atalhos-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 12px;
+            }
+
+            .atalho {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 16px;
+                border-radius: 12px;
+                border-top: 4px solid var(--cor-loteria);
+                background: white;
+                color: #1e1e2e;
+                text-decoration: none;
+                font-weight: 600;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            .atalho:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+                color: #1e1e2e;
+            }
+
+            .atalho i {
+                font-size: 1.6rem;
+                color: var(--cor-loteria-escura);
+            }
+
+            .atalho .menu-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                color: white;
+            }
+
+            .atalho.em-breve {
+                opacity: 0.6;
+                cursor: not-allowed;
+                border-top-color: #cbd5e1;
+            }
+
+            .atalho.em-breve:hover {
+                transform: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .atalho.em-breve i {
+                color: #94a3b8;
+            }
+
+            .atalho small {
+                font-size: 0.72rem;
+                font-weight: 500;
+                color: #64748b;
+            }
+
+            @media (max-width: 768px) {
+                .cabecalho-loteria h1 {
+                    font-size: 1.3rem;
+                }
+
+                .bola {
+                    width: 36px;
+                    height: 36px;
+                    font-size: 0.95rem;
+                }
+
+                .atalhos-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
             @media (min-width: 769px) and (max-width: 1100px) {
                 .loterias-grid { grid-template-columns: repeat(2, 1fr); }
             }
@@ -573,6 +808,14 @@
 
         <!-- ============= MAIN CONTENT ============= -->
         <div class="main-content">
+            <!-- Loteria ativa: cabeçalho + último concurso (preenchido via JS) -->
+            <section id="loteria-destaque" class="destaque-card" aria-live="polite"></section>
+
+            <h2 class="secao-titulo" id="titulo-atalhos">Ferramentas</h2>
+            <nav id="atalhos-grid" class="atalhos-grid" aria-label="Ferramentas da loteria"></nav>
+
+            <!-- Provisório até a etapa 5 (loterias/todas.html) -->
+            <h2 class="secao-titulo" id="todas">Todas as loterias</h2>
             <div id="loterias-container" class="loterias-grid">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -630,6 +873,8 @@
 
         <!-- Bootstrap 5 JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="/js/escape-html.js"></script>
 
 
         <script>
@@ -907,6 +1152,142 @@
                 location.href = "/auth/login.html";
             }
 
+            // ========== LOTERIA ATIVA (destaque + atalhos) ==========
+            let ultimosResultados = null; // { slug: resultado } de /api/resultados/ultimos-todos
+            let erroResultados = false;
+
+            function bolasHTML(dezenas, classe = "") {
+                return (dezenas || [])
+                    .map((d) => `<span class="bola ${classe}">${Loterias.formatarDezena(d)}</span>`)
+                    .join("");
+            }
+
+            function sorteiosHTML(loteria, resultado) {
+                if (loteria.sorteios === 2) {
+                    return `
+                <div><div class="rotulo-sorteio">1º sorteio</div><div class="bolas">${bolasHTML(resultado.dezenas)}</div></div>
+                <div><div class="rotulo-sorteio">2º sorteio</div><div class="bolas">${bolasHTML(resultado.dezenas_2)}</div></div>`;
+                }
+                let html = `<div class="bolas">${bolasHTML(resultado.dezenas)}</div>`;
+                const extra = loteria.extra;
+                if (extra && extra.tipo === "trevos" && (resultado.trevos || []).length) {
+                    html += `<div><div class="rotulo-sorteio">${extra.rotulo}</div><div class="bolas">${bolasHTML(resultado.trevos, "trevo")}</div></div>`;
+                } else if (extra && resultado[extra.campo]) {
+                    // texto vindo da Caixa: escapar
+                    html += `<div class="extra-concurso">${extra.rotulo}: ${escapeHtml(resultado[extra.campo])}</div>`;
+                }
+                return html;
+            }
+
+            function renderizarDestaque(loteria) {
+                const el = document.getElementById("loteria-destaque");
+                const resultado = ultimosResultados ? ultimosResultados[loteria.slug] : null;
+
+                const cabecalho = `
+            <div class="cabecalho-loteria">
+                <img src="${loteria.icone}" alt="" width="52" height="52" />
+                <div>
+                    <h1>${loteria.nome}</h1>
+                    <div class="subtitulo">Último resultado</div>
+                </div>
+            </div>`;
+
+                if (!resultado) {
+                    const msg = erroResultados || ultimosResultados
+                        ? "❌ Resultado indisponível no momento"
+                        : "Carregando resultado...";
+                    el.innerHTML = `${cabecalho}<div class="destaque-corpo"><p class="text-muted m-0">${msg}</p></div>`;
+                    return;
+                }
+
+                const status = Loterias.statusConcurso(resultado);
+                const statusClasse = {
+                    acumulou: "status-acumulou",
+                    ganhadores: "status-ganhador",
+                    aguardando: "status-aguardando",
+                }[status.tipo];
+                const dataSorteio = Loterias.formatarData(resultado.data_sorteio); // NULL → não exibe
+                const proximo = Loterias.proximoSorteio(loteria.slug, resultado.data_proximo_concurso);
+                const proximoTexto = proximo
+                    ? proximo.ehHoje || proximo.ehAmanha
+                        ? `${proximo.texto}, ${proximo.dataTexto}`
+                        : proximo.texto
+                    : "—";
+
+                el.innerHTML = `${cabecalho}
+            <div class="destaque-corpo">
+                <div class="destaque-topo">
+                    <div class="destaque-concurso">
+                        Concurso ${resultado.concurso}${dataSorteio ? ` <span class="destaque-data">· ${dataSorteio}</span>` : ""}
+                    </div>
+                    <span class="status-concurso ${statusClasse}">${status.texto}</span>
+                </div>
+                ${sorteiosHTML(loteria, resultado)}
+                <div class="premio-bloco">
+                    <div>
+                        <div class="premio-rotulo">Prêmio estimado do próximo concurso</div>
+                        <div class="premio-valor">${formatarPremio(Number(resultado.valor_estimado_proximo) || 0)}</div>
+                    </div>
+                    <div>
+                        <div class="premio-rotulo">Próximo sorteio · Concurso ${Number(resultado.concurso) + 1}</div>
+                        <div class="proximo-valor ${proximo && proximo.ehHoje ? "proximo-hoje" : ""}">
+                            ${proximo && proximo.ehHoje ? '<i class="bi bi-clock-fill"></i> ' : ""}${proximoTexto}
+                        </div>
+                    </div>
+                </div>
+                <div class="destaque-rodape">
+                    <button class="btn-ver-mais" onclick="verDetalhes('${loteria.slug}')">
+                        Últimos resultados${planoUsuario === "pro" ? "" : " 🔒"}
+                    </button>
+                </div>
+            </div>`;
+            }
+
+            function renderizarAtalhos(loteria) {
+                document.getElementById("titulo-atalhos").textContent =
+                    `Ferramentas da ${loteria.nome}`;
+                document.getElementById("atalhos-grid").innerHTML = Loterias.FERRAMENTAS
+                    .filter((f) => f.id !== "inicio")
+                    .map((f) => {
+                        if (!Loterias.suporta(loteria.slug, f.id)) {
+                            return `
+                <span class="atalho em-breve" aria-disabled="true" title="Em breve para esta loteria">
+                    <i class="bi ${f.icone}"></i>${f.nome}<small>Em breve para esta loteria</small>
+                </span>`;
+                        }
+                        return `
+                <a class="atalho" href="${Loterias.urlFerramenta(f.id, loteria.slug)}" data-pro="${f.pro}">
+                    <i class="bi ${f.icone}"></i>${f.nome}
+                    ${f.pro ? '<span class="menu-badge badge-pro">PRO</span>' : ""}
+                </a>`;
+                    })
+                    .join("");
+            }
+
+            function renderizarLoteriaAtiva() {
+                const loteria = Loterias.obter(Loterias.ativa());
+                document.title = `${loteria.nome} — Roberto Loterias`;
+                renderizarDestaque(loteria);
+                renderizarAtalhos(loteria);
+            }
+
+            // Troca pelo seletor do menu: atualiza sem recarregar
+            document.addEventListener("loteria-ativa-mudou", renderizarLoteriaAtiva);
+
+            // Atalho PRÓ para FREE abre o modal de upgrade
+            document.getElementById("atalhos-grid").addEventListener("click", (event) => {
+                const atalho = event.target.closest(".atalho");
+                if (!atalho) return;
+                if (atalho.classList.contains("em-breve")) {
+                    event.preventDefault();
+                    return;
+                }
+                if (atalho.dataset.pro === "true" && planoUsuario !== "pro") {
+                    event.preventDefault();
+                    mostrarModalUpgrade();
+                }
+            });
+
             // ========== CARREGAR RESULTADOS (OTIMIZADO) ==========
             let isLoadingResultados = false;
 
@@ -935,6 +1316,9 @@
                     console.log(`📦 Cache: ${data.cached ? "SIM ⚡" : "NÃO"}`);
 
                     const resultados = data.data;
+                    ultimosResultados = resultados;
+                    erroResultados = false;
+                    renderizarLoteriaAtiva();
 
                     // monta tudo numa string só e troca o DOM uma única vez
                     const html = LOTERIAS.map((loteria) => {
@@ -950,6 +1334,8 @@
                     container.innerHTML = html;
                 } catch (error) {
                     console.error("❌ Erro ao carregar resultados:", error);
+                    erroResultados = true;
+                    if (!ultimosResultados) renderizarLoteriaAtiva();
                     // só mostra erro se ainda não tiver card na tela (não apaga dados bons)
                     if (
                         !container.children.length ||
@@ -1036,6 +1422,8 @@
                 } catch (e) {
                     console.error("Falha ao iniciar o modal:", e);
                 }
+
+                renderizarLoteriaAtiva(); // cabeçalho já aparece enquanto carrega
 
                 const user = getUsuario();
                 if (user) {
