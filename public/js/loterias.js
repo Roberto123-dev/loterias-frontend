@@ -187,7 +187,8 @@
     // Itens globais do menu (não dependem da loteria ativa)
     const ITENS_GLOBAIS = [
         { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html", pro: true },
-        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/loterias/todas.html", pro: false },
+        // Até a etapa 5 (loterias/todas.html), a home atual já é a grade com as 8 loterias
+        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/index.html", pro: false },
         { id: "configuracoes", nome: "Configurações", icone: "bi-gear-fill", url: "/auth/perfilusuario.html", pro: true },
     ];
 

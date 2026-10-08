@@ -95,7 +95,9 @@ window.fetchAuth = async function (url, options = {}) {
   // Se 401 (Unauthorized), redirecionar para login
   if (response.status === 401) {
     console.warn("⚠️ Sessão expirada. Redirecionando para login...");
+    const loteriaAtiva = localStorage.getItem("loteriaAtiva"); // preserva a última loteria escolhida
     localStorage.clear();
+    if (loteriaAtiva) localStorage.setItem("loteriaAtiva", loteriaAtiva);
     window.location.href = "/auth/login.html";
     throw new Error("Sessão expirada");
   }
