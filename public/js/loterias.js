@@ -334,6 +334,108 @@
         return String(Number(n)).padStart(2, "0");
     }
 
+    // ========== CONCURSO: STATUS E DATAS ==========
+    // Campos vindos de /api/resultados/ultimos-todos. Qualquer um pode ser NULL:
+    //   acumulou NULL              → "Aguardando rateio" (nunca "ACUMULOU" nem "0 ganhadores")
+    //   data_sorteio NULL          → não exibir a data
+    //   data_proximo_concurso NULL → reserva: próximo dia de sorteio pela grade semanal
+
+    const DIAS_SEMANA = [
+        "Domingo",
+        "Segunda-feira",
+        "Terça-feira",
+        "Quarta-feira",
+        "Quinta-feira",
+        "Sexta-feira",
+        "Sábado",
+    ];
+    const UM_DIA = 24 * 60 * 60 * 1000;
+
+    // "AAAA-MM-DD" → Date local (meia-noite); inválido/NULL → null
+    function lerDataISO(iso) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ""));
+        return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+    }
+
+    function inicioDoDia(data) {
+        return new Date(data.getFullYear(), data.getMonth(), data.getDate());
+    }
+
+    function diaMes(data) {
+        return `${String(data.getDate()).padStart(2, "0")}/${String(data.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    // "AAAA-MM-DD" → "07/10/2026"; NULL → null (não exibir)
+    function formatarData(iso) {
+        const data = lerDataISO(iso);
+        return data ? `${diaMes(data)}/${data.getFullYear()}` : null;
+    }
+
+    function ganhadoresFaixa1(premiacoes) {
+        let lista = premiacoes;
+        if (typeof lista === "string") {
+            try {
+                lista = JSON.parse(lista);
+            } catch (e) {
+                lista = null;
+            }
+        }
+        if (!Array.isArray(lista) || lista.length === 0) return null;
+        const faixa1 = lista.find((f) => f && f.faixa === 1) || lista[0];
+        const n = Number(faixa1 && faixa1.numeroDeGanhadores);
+        return Number.isFinite(n) ? n : null;
+    }
+
+    /**
+     * { tipo: "acumulou" | "ganhadores" | "aguardando", texto, ganhadores }
+     */
+    function statusConcurso(resultado) {
+        const acumulou = resultado ? resultado.acumulou : null;
+        if (acumulou === true) return { tipo: "acumulou", texto: "ACUMULOU", ganhadores: 0 };
+        if (acumulou !== false) return { tipo: "aguardando", texto: "Aguardando rateio", ganhadores: null };
+
+        const n = ganhadoresFaixa1(resultado.premiacoes);
+        return {
+            tipo: "ganhadores",
+            ganhadores: n,
+            texto: n > 0 ? `${n} ${n === 1 ? "ganhador" : "ganhadores"}` : "Teve ganhador",
+        };
+    }
+
+    // Reserva: próximo dia da grade semanal a partir de hoje (inclui hoje)
+    function proximoPelaGrade(slug, hoje) {
+        const loteria = obter(slug);
+        if (!loteria) return null;
+        for (let offset = 0; offset <= 7; offset++) {
+            const data = new Date(hoje.getTime() + offset * UM_DIA);
+            if (loteria.diasSorteio.includes(data.getDay())) return inicioDoDia(data);
+        }
+        return null;
+    }
+
+    /**
+     * Próximo sorteio: usa a data oficial (data_proximo_concurso) e, se vier NULL
+     * ou já tiver passado (resultado novo ainda não chegou), a grade semanal.
+     * → { data, dias, texto: "Hoje" | "Amanhã" | "Domingo, 11/10", ehHoje, ehAmanha, oficial }
+     */
+    function proximoSorteio(slug, dataProximoISO, agora) {
+        const hoje = inicioDoDia(agora || new Date());
+        let data = lerDataISO(dataProximoISO);
+        let oficial = Boolean(data);
+
+        if (data && data < hoje) {
+            data = null;
+            oficial = false;
+        }
+        if (!data) data = proximoPelaGrade(slug, hoje);
+        if (!data) return null;
+
+        const dias = Math.round((data - hoje) / UM_DIA);
+        const texto =
+            dias === 0 ? "Hoje" : dias === 1 ? "Amanhã" : `${DIAS_SEMANA[data.getDay()]}, ${diaMes(data)}`;
+        return { data, dias, texto, ehHoje: dias === 0, ehAmanha: dias === 1, oficial };
+    }
+
     // ========== TEMA (CSS vars) ==========
 
     function hexParaRgb(hex) {
@@ -395,6 +497,9 @@
         urlUltimosResultados,
         vincularSelect,
         formatarDezena,
+        formatarData,
+        statusConcurso,
+        proximoSorteio,
         corTexto,
         aplicarTema,
     };
