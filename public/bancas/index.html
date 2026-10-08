@@ -232,12 +232,18 @@
 
             // Conta o clique sem atrasar a abertura da banca (o link abre normalmente em nova aba).
             // keepalive: a requisição termina mesmo se a aba atual for trocada. Falhas são ignoradas.
+            // A banca vai no corpo (nunca no endereço): o log de acesso do servidor registra o
+            // caminho junto do IP.
             function registrarClique(idBanca) {
                 try {
-                    fetch(`${API_URL}/api/bancas/${encodeURIComponent(idBanca)}/clique`, {
+                    fetch(`${API_URL}/api/bancas/clique`, {
                         method: "POST",
                         keepalive: true,
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ banca: idBanca }),
                     }).catch(() => {});
                 } catch (e) {}
             }
