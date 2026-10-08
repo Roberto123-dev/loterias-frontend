@@ -219,6 +219,20 @@
                 color: #000000;
             }
 
+            /* Faixa de prêmio / acertos por sorteio (Dupla Sena) sob o número */
+            .jogo-acertos-destaque {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 2px;
+            }
+
+            .faixa-jogo {
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: #374151;
+                white-space: nowrap;
+            }
+
             /* ============= GRID DE DEZENAS - ESTILO APP ============= */
             .jogo-dezenas-grid {
                 display: grid;
@@ -1175,7 +1189,11 @@
                 }
 
                 const dados = {
+                    loteria: jogo.loteria,
                     numeros: jogo.dezenas,
+                    trevos: jogo.trevos || [],
+                    mes_sorte: jogo.mes_sorte || null,
+                    time_coracao: jogo.time_coracao || null,
                     nomeLoteria: LOTERIAS_NOMES[jogo.loteria],
                     cor: obterCorLoteria(jogo.loteria), // 👈 vamos corrigir isso
                     endpoint: `/${jogo.loteria}`, // 🔥 IGUAL AO conferir.html
@@ -1362,7 +1380,10 @@
             // RESULTADOS / CACHE
             // =========================================================
 
-            /** Busca o resultado do concurso (com cache) para destacar acertos */
+            /**
+             * Busca o resultado completo do concurso (com cache) para destacar acertos:
+             * dezenas (Dupla Sena: dezenas_1 e dezenas_2), trevos, time e mês.
+             */
             async function buscarResultadoConcurso(loteria, concurso) {
                 const cacheKey = `${loteria}-${concurso}`;
 
@@ -1372,19 +1393,20 @@
 
                 try {
                     const token = localStorage.getItem("token");
+                    const slug = Loterias.normalizarSlug(loteria);
+                    if (!slug) return null;
                     const response = await fetch(
-                        `${API_URL}/api/loterias/${loteria}/resultado/${concurso}`,
+                        `${API_URL}/${slug}/${encodeURIComponent(concurso)}`,
                         {
                             headers: { Authorization: `Bearer ${token}` },
                         },
                     );
 
-                    if (!response.ok) return [];
+                    if (!response.ok) return null;
 
                     const data = await response.json();
                     if (data.success && data.data) {
-                        resultadosCache[cacheKey] =
-                            data.data.dezenasSorteadas || [];
+                        resultadosCache[cacheKey] = data.data;
                         return resultadosCache[cacheKey];
                     }
                 } catch (error) {
@@ -1395,7 +1417,7 @@
                     );
                 }
 
-                return [];
+                return null;
             }
 
             // =========================================================
@@ -1435,17 +1457,7 @@
                     }),
                 );
 
-                // Regras mínimas para considerar "premiado" (você pode ajustar depois)
-                const regrasPremiacao = {
-                    megasena: 4,
-                    lotofacil: 11,
-                    quina: 2,
-                    lotomania: 0,
-                    duplasena: 3,
-                    timemania: 3,
-                    diadasorte: 4,
-                    maismilionaria: 4,
-                };
+                // Premiação pelas faixas oficiais (/js/loterias.js → Loterias.conferir)
 
                 const cardsHTML = jogosParaRenderizar
                     .map((jogo) => {
@@ -1456,8 +1468,16 @@
                         const nomeJogo = escapeHtml(getNomeDoJogo(jogo));
 
                         const cacheKey = `${jogo.loteria}-${jogo.concurso_conferido}`;
-                        const dezenasResultado =
-                            resultadosCache[cacheKey] || [];
+                        const resultadoConcurso = jogo.conferido
+                            ? resultadosCache[cacheKey] || null
+                            : null;
+                        // Dupla Sena: cada sorteio é conferido à parte
+                        const conferencia = resultadoConcurso
+                            ? Loterias.conferir(jogo.loteria, jogo, resultadoConcurso)
+                            : null;
+                        const dezenasAcertadas = conferencia
+                            ? conferencia.porSorteio.flatMap((s) => s.acertadas)
+                            : [];
 
                         const listaDezenas = Array.isArray(jogo.dezenas)
                             ? jogo.dezenas
@@ -1471,12 +1491,9 @@
                                     .toString()
                                     .padStart(2, "0");
 
-                                if (
-                                    jogo.conferido &&
-                                    dezenasResultado.length > 0
-                                ) {
+                                if (conferencia) {
                                     const acertou =
-                                        dezenasResultado.includes(n);
+                                        dezenasAcertadas.includes(n);
                                     const classe = acertou
                                         ? "acertou"
                                         : "nao-acertou";
@@ -1494,15 +1511,27 @@
                         const acertos = temAcertos ? jogo.acertos : "-";
 
                         let premiado = false;
-                        if (temAcertos) {
-                            if (jogo.loteria === "lotomania") {
-                                premiado =
-                                    jogo.acertos === 0 || jogo.acertos >= 15;
-                            } else {
-                                premiado =
-                                    jogo.acertos >=
-                                    (regrasPremiacao[jogo.loteria] || 4);
-                            }
+                        let faixasHTML = "";
+                        if (temAcertos && conferencia) {
+                            premiado = conferencia.premiado;
+                            const multi = conferencia.porSorteio.length > 1;
+                            const linhas = conferencia.porSorteio
+                                .filter((s) => s.faixa || multi)
+                                .map((s) =>
+                                    multi
+                                        ? `${s.sorteio}º: ${s.acertos}${s.faixa ? " 🏆" : ""}`
+                                        : `🏆 ${s.faixa}`,
+                                );
+                            if (jogo.loteria === "maismilionaria")
+                                linhas.push(`🍀 ${conferencia.trevosAcertados} trevo${conferencia.trevosAcertados === 1 ? "" : "s"}`);
+                            if (conferencia.acertouTime) linhas.push("🏆 Time do Coração");
+                            if (conferencia.acertouMes) linhas.push("🏆 Mês da Sorte");
+                            faixasHTML = linhas
+                                .map((l) => `<div class="faixa-jogo">${escapeHtml(l)}</div>`)
+                                .join("");
+                        } else if (temAcertos) {
+                            // Resultado do concurso indisponível: só o mínimo de acertos
+                            premiado = Boolean(Loterias.faixaPremio(jogo.loteria, jogo.acertos, 2));
                         }
 
                         return `
@@ -1534,6 +1563,7 @@
                 <div class="acertos-numero ${premiado ? "premiado" : ""}">
                   ${escapeHtml(acertos)}
                 </div>
+                ${faixasHTML}
               </div>
             </div>
           </div>

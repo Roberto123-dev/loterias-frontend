@@ -139,8 +139,9 @@
     }
 
     .resumo-item {
-      background: var(--cor-loteria, #667eea);
-      color: white;
+      /* texto sobre a cor da loteria: tokens de contraste de /js/loterias.js */
+      background: var(--cor-loteria-fundo, var(--cor-loteria, #667eea));
+      color: var(--cor-loteria-texto, white);
       padding: 2px;
       text-align: center;
     }
@@ -279,6 +280,68 @@
       margin-bottom: 15px;
     }
 
+    /* Faixa de prêmio, sorteios (Dupla Sena) e extras (trevos, time, mês) */
+    .faixa-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .sorteio-bloco + .sorteio-bloco {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed #d1d5db;
+    }
+
+    .sorteio-titulo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .sorteio-titulo .acertos-sorteio {
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .extra-linha {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .bola-sorteada.trevo {
+      border-radius: 10px;
+      width: auto;
+      padding: 0 10px;
+    }
+
+    .extra-acertou {
+      color: #166534;
+    }
+
+    .resumo-item.premiado {
+      outline: 3px solid #f59e0b;
+    }
+
+    .resumo-faixa {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
     /* Responsivo */
     @media (max-width: 768px) {
       h1 {
@@ -359,7 +422,7 @@
 
     <!-- Resumo -->
     <div id="resumo-container" class="resumo-container" style="display: none">
-      <h1>📊 Resumo: Acertos/Concurso</h1>
+      <h1>📊 Resumo por faixa</h1>
       <div class="resumo-grid" id="resumo-grid"></div>
     </div>
 
@@ -370,6 +433,7 @@
     </div>
   </div>
 
+  <script src="/js/escape-html.js"></script>
   <script>
     // ✅ Pegar token
     function getToken() {
@@ -440,8 +504,10 @@
         // ✅ Buscar o histórico completo da API COM TOKEN (paginado)
         const concursos = await buscarHistoricoCompleto(jogo.endpoint);
 
-        // Processar resultados
-        const resultados = conferirAcertos(jogo.numeros, concursos, jogo.min);
+        // Processar resultados (regras oficiais em /js/loterias.js)
+        const slug = Loterias.normalizarSlug(jogo.loteria || String(jogo.endpoint || "").replace(/^\//, ""));
+        if (slug) Loterias.aplicarTema(slug); // cores da loteria conferida (com contraste)
+        const resultados = conferirAcertos(slug, jogo, concursos);
 
         // Mostrar resultado
         mostrarResultado(jogo, resultados);
@@ -497,26 +563,38 @@
       return primeira.data.concat(...demais.map((pagina) => pagina.data));
     }
 
-    function conferirAcertos(meuJogo, concursos, min) {
+    // Confere o jogo em cada concurso. Dupla Sena: cada sorteio é um evento
+    // (as dezenas do 1º e do 2º sorteio nunca se somam).
+    function conferirAcertos(slug, jogo, concursos) {
+      const meuJogo = {
+        dezenas: (jogo.numeros || []).map(Number),
+        trevos: jogo.trevos || [],
+        time_coracao: jogo.time_coracao || null,
+        mes_sorte: jogo.mes_sorte || null,
+      };
       const resultados = [];
 
       concursos.forEach((concurso) => {
-        const dezenas = concurso.dezenas || [];
-        const acertos = meuJogo.filter((num) => dezenas.includes(num));
-
-        if (acertos.length > 0) {
-          resultados.push({
-            concurso: concurso.concurso,
-            data: concurso.created_at,
-            dezenas: dezenas,
-            acertos: acertos,
-            qtdAcertos: acertos.length,
-          });
+        const c = Loterias.conferir(slug, meuJogo, concurso);
+        if (c.acertos > 0 || c.premiado) {
+          resultados.push({ concurso, slug, ...c });
         }
       });
 
-      resultados.sort((a, b) => b.qtdAcertos - a.qtdAcertos);
+      // Premiados primeiro, depois mais acertos, depois o concurso mais recente
+      resultados.sort(
+        (a, b) =>
+          Number(b.premiado) - Number(a.premiado) ||
+          b.acertos - a.acertos ||
+          b.concurso.concurso - a.concurso.concurso,
+      );
       return resultados;
+    }
+
+    // Chave do resumo para um sorteio: a faixa oficial (se premia) ou "N acertos"
+    function chaveResumo(slug, sorteio) {
+      const n = sorteio.acertos;
+      return sorteio.faixa || `${n} acerto${n === 1 ? "" : "s"}`;
     }
 
     const LIMITE_RESULTADOS_EXIBIDOS = 10;
@@ -543,26 +621,36 @@
 
       document.getElementById("jogo-consultado").style.display = "block";
 
-      // Resumo
-      const resumo = {};
+      // Resumo por faixa (Dupla Sena: cada sorteio conta como um evento)
+      const resumo = new Map(); // chave → { qtd, premiado, ordem }
+      const somar = (chave, premiado, ordem) => {
+        const item = resumo.get(chave) || { qtd: 0, premiado, ordem };
+        item.qtd++;
+        resumo.set(chave, item);
+      };
       resultados.forEach((r) => {
-        resumo[r.qtdAcertos] = (resumo[r.qtdAcertos] || 0) + 1;
+        r.porSorteio.forEach((s) => {
+          if (s.acertos > 0 || s.faixa) somar(chaveResumo(r.slug, s), Boolean(s.faixa), s.acertos * 10 + r.trevosAcertados);
+        });
+        if (r.acertouTime) somar("Time do Coração", true, -1);
+        if (r.acertouMes) somar("Mês da Sorte", true, -1);
       });
 
       const resumoDiv = document.getElementById("resumo-grid");
       resumoDiv.innerHTML = "";
 
-      // Ordenar do maior para o menor
-      Object.keys(resumo)
-        .sort((a, b) => b - a)
-        .forEach((qtd) => {
-          const item = document.createElement("div");
-          item.className = "resumo-item";
-          item.innerHTML = `
-            <div class="resumo-label">${qtd} acerto${qtd > 1 ? "s" : ""}</div>
-              <div class="resumo-qtd">${resumo[qtd]}</div>
-                `;
-          resumoDiv.appendChild(item);
+      // Faixas premiadas primeiro, do maior acerto para o menor
+      [...resumo.entries()]
+        .sort((a, b) => Number(b[1].premiado) - Number(a[1].premiado) || b[1].ordem - a[1].ordem)
+        .forEach(([chave, item]) => {
+          const div = document.createElement("div");
+          div.className = `resumo-item${item.premiado ? " premiado" : ""}`;
+          div.innerHTML = `
+            <div class="resumo-label">${escapeHtml(chave)}</div>
+            ${item.premiado ? '<div class="resumo-faixa">🏆 faixa premiada</div>' : ""}
+            <div class="resumo-qtd">${item.qtd}</div>
+          `;
+          resumoDiv.appendChild(div);
         });
 
       document.getElementById("resumo-container").style.display = "block";
@@ -575,30 +663,62 @@
         const card = document.createElement("div");
         card.className = "concurso-card";
 
-        const dezenasHTML = resultado.dezenas
-          .map((num) => {
-            const acertou = resultado.acertos.includes(num);
-            const texto =
-              jogo.min === 0 ? num.toString().padStart(2, "0") : num;
-            return `<div class="bola-sorteada ${acertou ? "acertou" : ""
-              }">${texto}</div>`;
-          })
+        const fmt = (num) => (jogo.min === 0 ? String(num).padStart(2, "0") : num);
+        const bolas = (dezenas, acertadas) =>
+          dezenas
+            .map((num) => `<div class="bola-sorteada ${acertadas.includes(num) ? "acertou" : ""}">${fmt(num)}</div>`)
+            .join("");
+        const plural = (n) => `${n} acerto${n === 1 ? "" : "s"}`;
+        const sorteios = Loterias.sorteiosDoConcurso(resultado.slug, resultado.concurso);
+        const variosSorteios = sorteios.length > 1;
+
+        // Um bloco por sorteio; na Dupla Sena cada sorteio tem a sua faixa
+        const sorteiosHTML = resultado.porSorteio
+          .map((s, i) => `
+            <div class="sorteio-bloco">
+              ${variosSorteios ? `
+              <div class="sorteio-titulo">
+                <span>${s.rotulo}</span>
+                <span class="acertos-sorteio">${plural(s.acertos)}</span>
+                ${s.faixa ? `<span class="faixa-badge">🏆 ${escapeHtml(s.faixa)}</span>` : ""}
+              </div>` : ""}
+              <div class="numeros-sorteados">${bolas(sorteios[i].dezenas, s.acertadas)}</div>
+            </div>`)
           .join("");
+
+        // Extras: trevos (+Milionária), time do coração (Timemania), mês da sorte (Dia de Sorte)
+        let extrasHTML = "";
+        const c = resultado.concurso;
+        if (resultado.slug === "maismilionaria" && Array.isArray(c.trevos)) {
+          const meus = (jogo.trevos || []).map(Number);
+          extrasHTML += `
+            <div class="extra-linha">Trevos:
+              ${c.trevos.map((t) => `<div class="bola-sorteada trevo ${meus.includes(Number(t)) ? "acertou" : ""}">🍀 ${t}</div>`).join("")}
+              <span>(${resultado.trevosAcertados} acertado${resultado.trevosAcertados === 1 ? "" : "s"})</span>
+            </div>`;
+        }
+        if (resultado.slug === "timemania" && c.time_coracao) {
+          extrasHTML += `<div class="extra-linha ${resultado.acertouTime ? "extra-acertou" : ""}">Time do Coração: ${escapeHtml(c.time_coracao)}${resultado.acertouTime ? " — 🏆 acertou" : ""}</div>`;
+        }
+        if (resultado.slug === "diadasorte" && c.mes_sorte) {
+          extrasHTML += `<div class="extra-linha ${resultado.acertouMes ? "extra-acertou" : ""}">Mês da Sorte: ${escapeHtml(Loterias.normalizarMes(c.mes_sorte) || c.mes_sorte)}${resultado.acertouMes ? " — 🏆 acertou" : ""}</div>`;
+        }
+
+        // Badge do topo: faixa (loteria de um sorteio) ou o maior acerto (Dupla Sena)
+        const faixaUnica = !variosSorteios && resultado.porSorteio[0].faixa;
+        const badgeTopo = faixaUnica
+          ? `<div class="faixa-badge">🏆 ${escapeHtml(faixaUnica)}</div>`
+          : `<div class="acertos-badge">${variosSorteios ? "Melhor sorteio: " : ""}${plural(resultado.acertos)}</div>`;
 
         card.innerHTML = `
                     <div class="concurso-header">
                         <div>
-                            <div class="concurso-numero">Concurso #${resultado.concurso
-          }</div>
+                            <div class="concurso-numero">Concurso #${c.concurso}</div>
                         </div>
-                        <div class="acertos-badge">
-                            ${resultado.qtdAcertos} acerto${resultado.qtdAcertos > 1 ? "s" : ""
-          }
-                        </div>
+                        ${badgeTopo}
                     </div>
-                    <div class="numeros-sorteados">
-                        ${dezenasHTML}
-                    </div>
+                    ${sorteiosHTML}
+                    ${extrasHTML}
                 `;
 
         concursosList.appendChild(card);
@@ -609,7 +729,7 @@
         aviso.style.textAlign = "center";
         aviso.style.padding = "20px";
         aviso.style.color = "#666";
-        aviso.textContent = `Mostrando os primeiros 100 resultados. Total de acertos: ${resultados.length}`;
+        aviso.textContent = `Mostrando os primeiros ${LIMITE_RESULTADOS_EXIBIDOS} resultados. Total de concursos com acertos: ${resultados.length}`;
         concursosList.appendChild(aviso);
       }
 

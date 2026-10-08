@@ -926,6 +926,7 @@
     function conferirJogo() {
       // Salvar dados no localStorage
       const dadosJogo = {
+        loteria: document.getElementById("loteria-select").value,
         nomeLoteria: loteriaAtual.nome,
         numeros: numerosSelecionados,
         cor: loteriaAtual.cor,

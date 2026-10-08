@@ -278,7 +278,8 @@
             function gerarGrid(dezenasSorteadas) {
                 let html = "";
 
-                for (let i = 1; i <= 100; i++) {
+                // Volante oficial: 00 a 99 (a Caixa devolve "00", gravado como 0)
+                for (let i = 0; i <= 99; i++) {
                     html += `
             <div class="dezena ${dezenasSorteadas.includes(i) ? "sorteada" : ""}">
               ${String(i).padStart(2, "0")}

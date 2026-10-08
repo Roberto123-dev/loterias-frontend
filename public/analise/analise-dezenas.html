@@ -97,6 +97,13 @@
             font-weight: bold;
         }
 
+        .nota-unidade {
+            margin: 0 0 12px;
+            color: #374151;
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
         .loading {
             text-align: center;
             padding: 20px;
@@ -145,6 +152,8 @@
             <p>Carregando análise...</p>
         </div>
 
+        <p id="nota-unidade" class="nota-unidade" style="display: none"></p>
+
         <table id="tabela-resultado" style="display: none">
             <thead>
                 <tr>
@@ -153,13 +162,14 @@
                     <th>Atraso atual</th>
                     <th>Média atraso</th>
                     <th>Atraso máximo</th>
-                    <th>Último concurso</th>
+                    <th id="th-ultimo">Último concurso</th>
                 </tr>
             </thead>
             <tbody id="resultado-analise"></tbody>
         </table>
     </div>
 
+    <script src="/js/escape-html.js"></script>
     <script>
         async function analisarDezenas() {
             const loteria = document.getElementById("loteria").value;
@@ -190,6 +200,15 @@
 
                 if (!data.success) throw new Error(data.message);
 
+                // Dupla Sena: cada sorteio é um evento — atrasos contados em sorteios
+                const porSorteio = data.unidade === "sorteios";
+                document.getElementById("th-ultimo").textContent = porSorteio ? "Último sorteio" : "Último concurso";
+                const nota = document.getElementById("nota-unidade");
+                nota.textContent = porSorteio
+                    ? "Dupla Sena: cada sorteio conta como um evento (2 por concurso). Atrasos contados em sorteios."
+                    : "";
+                nota.style.display = porSorteio ? "block" : "none";
+
                 data.data.forEach(item => {
                     corpo.innerHTML += `
             <tr>
@@ -198,7 +217,7 @@
               <td>${item.atual}</td>
               <td>${item.media}</td>
               <td>${item.max}</td>
-              <td>${item.ultimo}</td>
+              <td>${escapeHtml(item.ultimo)}</td>
             </tr>
           `;
                 });

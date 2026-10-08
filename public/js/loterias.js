@@ -205,9 +205,8 @@
 
     // Ferramentas ainda quebradas para a loteria (anotações internas).
     // Aparecem desabilitadas no menu com "Em breve para esta loteria".
-    const EM_BREVE = {
-        duplasena: ["conferir", "ciclo", "analise-dezenas", "analise-combinacoes"],
-    };
+    // Ex.: { duplasena: ["ciclo"] }. Vazio desde a etapa 12 (Dupla Sena corrigida).
+    const EM_BREVE = {};
 
     // ========== SLUG / ESTADO ==========
 
@@ -359,6 +358,111 @@
             return `R$ ${(v / 1000).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 1 })} mil`;
         }
         return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    // ========== REGRAS DE PREMIAÇÃO ==========
+    // Espelho de backend/src/config/loterias.js (faixaPremio) e services/conferencia.js.
+    // Faixas OFICIAIS (listaRateioPremio da Caixa, conferidas em 2026-10).
+
+    /**
+     * Sorteios de um concurso: [{ sorteio, rotulo, dezenas }].
+     * Dupla Sena: cada sorteio é um evento (dezenas_1 e dezenas_2 nunca se misturam).
+     */
+    function sorteiosDoConcurso(valor, resultado) {
+        const r = resultado || {};
+        if (normalizarSlug(valor) === "duplasena") {
+            return [
+                { sorteio: 1, rotulo: "1º sorteio", dezenas: (r.dezenas_1 || []).map(Number) },
+                { sorteio: 2, rotulo: "2º sorteio", dezenas: (r.dezenas_2 || []).map(Number) },
+            ];
+        }
+        return [{ sorteio: null, rotulo: "", dezenas: (r.dezenas || []).map(Number) }];
+    }
+
+    // Nome da faixa ("4 acertos", "5 acertos + 2 trevos") ou null se não premia
+    function faixaPremio(valor, acertos, trevos = 0) {
+        switch (normalizarSlug(valor)) {
+            case "lotofacil": return acertos >= 11 ? `${acertos} acertos` : null;
+            case "megasena": return acertos >= 4 ? `${acertos} acertos` : null;
+            case "quina": return acertos >= 2 ? `${acertos} acertos` : null;
+            case "lotomania": return acertos >= 15 || acertos === 0 ? `${acertos} acertos` : null;
+            case "duplasena": return acertos >= 3 ? `${acertos} acertos` : null;
+            case "timemania": return acertos >= 3 ? `${acertos} acertos` : null;
+            case "diadasorte": return acertos >= 4 ? `${acertos} acertos` : null;
+            case "maismilionaria": {
+                if (acertos >= 4) return `${acertos} acertos + ${trevos === 2 ? "2 trevos" : "1 ou nenhum trevo"}`;
+                if (acertos === 3 && trevos >= 1) return `3 acertos + ${trevos === 2 ? "2 trevos" : "1 trevo"}`;
+                if (acertos === 2 && trevos >= 1) return `2 acertos + ${trevos === 2 ? "2 trevos" : "1 trevo"}`;
+                return null;
+            }
+            default: return null;
+        }
+    }
+
+    const MESES = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+    ];
+
+    const semAcento = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    // "3", "03", "Março", "MARCO", "Mar&ccedil;o" → "Março"; inválido → null
+    function normalizarMes(valor) {
+        if (valor === null || valor === undefined) return null;
+        let t = String(valor).trim().replace(/&ccedil;/gi, "ç").replace(/&atilde;/gi, "ã");
+        if (/^\d{1,2}$/.test(t)) {
+            const n = Number(t);
+            return n >= 1 && n <= 12 ? MESES[n - 1] : null;
+        }
+        t = semAcento(t).toLowerCase();
+        return MESES.find((m) => semAcento(m).toLowerCase() === t) || null;
+    }
+
+    // "AMERICA      /RN" e "América RN" → "AMERICA RN"
+    function normalizarTime(valor) {
+        if (!valor) return "";
+        return semAcento(String(valor)).toUpperCase().replace(/\//g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    /**
+     * Confere um jogo contra um resultado (linha da API, com dezenas / dezenas_1+2, trevos,
+     * time_coracao, mes_sorte). jogo = { dezenas, trevos?, time_coracao?, mes_sorte? }.
+     * → { acertos (maior entre os sorteios), premiado, porSorteio: [{ sorteio, rotulo,
+     *     acertos, acertadas, faixa }], trevosAcertados, acertouTime, acertouMes }
+     */
+    function conferir(valor, jogo, resultado) {
+        const slug = normalizarSlug(valor);
+        const r = resultado || {};
+        const dezenasJogo = (jogo.dezenas || []).map(Number);
+        const trevosAcertados =
+            slug === "maismilionaria"
+                ? (jogo.trevos || []).map(Number).filter((t) => (r.trevos || []).map(Number).includes(t)).length
+                : 0;
+
+        const porSorteio = sorteiosDoConcurso(slug, r).map((s) => {
+            const acertadas = dezenasJogo.filter((d) => s.dezenas.includes(d));
+            return {
+                sorteio: s.sorteio,
+                rotulo: s.rotulo,
+                acertos: acertadas.length,
+                acertadas,
+                faixa: faixaPremio(slug, acertadas.length, trevosAcertados),
+            };
+        });
+
+        const acertouTime =
+            slug === "timemania" && Boolean(jogo.time_coracao) && normalizarTime(jogo.time_coracao) === normalizarTime(r.time_coracao);
+        const mesJogo = normalizarMes(jogo.mes_sorte);
+        const acertouMes = slug === "diadasorte" && Boolean(mesJogo) && mesJogo === normalizarMes(r.mes_sorte);
+
+        return {
+            acertos: Math.max(...porSorteio.map((s) => s.acertos)),
+            premiado: porSorteio.some((s) => s.faixa) || acertouTime || acertouMes,
+            porSorteio,
+            trevosAcertados,
+            acertouTime,
+            acertouMes,
+        };
     }
 
     // ========== CONCURSO: STATUS E DATAS ==========
@@ -563,6 +667,12 @@
         vincularSelect,
         formatarDezena,
         formatarData,
+        MESES,
+        sorteiosDoConcurso,
+        faixaPremio,
+        normalizarMes,
+        normalizarTime,
+        conferir,
         formatarPremio,
         statusConcurso,
         proximoSorteio,
