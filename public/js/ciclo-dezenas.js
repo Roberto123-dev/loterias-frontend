@@ -227,3 +227,8 @@ function renderizarResumo(ausentes, ciclosQtd) {
     <p><strong>Total de Ciclos:</strong> ${ciclosQtd.length}</p>
   `;
 }
+
+// Pré-seleciona a loteria ativa (?loteria= / última escolha)
+if (window.Loterias) {
+    Loterias.vincularSelect(document.getElementById("loteria-select"), mudarLoteria);
+}

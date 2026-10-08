@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>📊 Mapa das Dezenas - Sistema de Loterias</title>
         <script src="/js/config.js"></script>
+        <script src="/js/loterias.js"></script>
 
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -1107,7 +1108,12 @@
                     atraso[i] = count;
                 }
 
-                const media = (totalConcursos * 15) / totalDezenas;
+                // Cada linha é um sorteio (a Dupla Sena tem 2 linhas por concurso),
+                // então a média esperada usa as dezenas sorteadas por sorteio.
+                const sorteadas = Loterias.obter(
+                    document.getElementById("loteria-select").value,
+                ).sorteadas;
+                const media = (totalConcursos * sorteadas) / totalDezenas;
                 const temperatura = freq.map((f) => {
                     if (f >= media + 2) return "Q";
                     if (f <= media - 2) return "F";
@@ -1122,6 +1128,7 @@
                 localStorage.setItem(
                     "estatisticasMapa",
                     JSON.stringify({
+                        slug: document.getElementById("loteria-select").value,
                         loteria: loteriaAtual.nome,
                         min: loteriaAtual.min,
                         max: loteriaAtual.max,
@@ -1224,6 +1231,11 @@
                 if (verificarAutenticacao()) {
                     verificarPlanoPro();
                 }
+
+                Loterias.vincularSelect(
+                    document.getElementById("loteria-select"),
+                    mudarLoteria,
+                );
             });
         </script>
         <script src="/js/cores-bolas.js"></script>

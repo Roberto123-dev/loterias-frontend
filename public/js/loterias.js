@@ -196,13 +196,6 @@
     // Aparecem desabilitadas no menu com "Em breve para esta loteria".
     const EM_BREVE = {
         duplasena: ["conferir", "ciclo", "analise-dezenas", "analise-combinacoes"],
-        // Mapa/Estatísticas usam a constante 15 da Lotofácil — revisado na etapa 3.
-        megasena: ["mapa", "estatisticas"],
-        quina: ["mapa", "estatisticas"],
-        lotomania: ["mapa", "estatisticas"],
-        timemania: ["mapa", "estatisticas"],
-        diadasorte: ["mapa", "estatisticas"],
-        maismilionaria: ["mapa", "estatisticas"],
     };
 
     // ========== SLUG / ESTADO ==========
@@ -313,6 +306,28 @@
         return `/loterias/${s}.html`;
     }
 
+    /**
+     * Liga o <select> de loteria de uma ferramenta à loteria ativa:
+     * - pré-seleciona a ativa e chama aoAplicar(slug) (o handler que a página
+     *   já usa no onchange), para a ferramenta já abrir carregada;
+     * - quando o usuário troca o select, a escolha vira a loteria ativa
+     *   (URL, localStorage, tema e menu).
+     * Chamar depois que o DOM e o handler da página existirem.
+     */
+    function vincularSelect(select, aoAplicar) {
+        if (!select) return;
+
+        const temOpcao = Array.from(select.options).some((o) => o.value === ativaAtual);
+        if (temOpcao && select.value !== ativaAtual) {
+            select.value = ativaAtual;
+            if (typeof aoAplicar === "function") aoAplicar(ativaAtual);
+        }
+
+        select.addEventListener("change", () => {
+            if (normalizarSlug(select.value)) definirAtiva(select.value);
+        });
+    }
+
     // ========== FORMATAÇÃO ==========
 
     function formatarDezena(n) {
@@ -378,6 +393,7 @@
         urlFerramenta,
         urlComLoteria,
         urlUltimosResultados,
+        vincularSelect,
         formatarDezena,
         corTexto,
         aplicarTema,

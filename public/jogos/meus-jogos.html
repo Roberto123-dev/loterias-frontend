@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>💾 Meus Jogos - Sistema de Loterias</title>
         <script src="/js/config.js"></script>
+        <script src="/js/loterias.js"></script>
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
@@ -1608,6 +1609,15 @@
                     alert("Você precisa fazer login primeiro!");
                     window.location.href = "/auth/login.html";
                     return;
+                }
+
+                // Vindo do menu (?loteria=), abre filtrado pela loteria ativa;
+                // carregarJogos() aplica o filtro depois de buscar os jogos.
+                if (new URLSearchParams(window.location.search).has("loteria")) {
+                    const select = document.getElementById("filtro-loteria");
+                    Loterias.vincularSelect(select, () => {
+                        filtroLoteriaSelecionada = select.value;
+                    });
                 }
 
                 carregarJogos();

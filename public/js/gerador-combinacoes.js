@@ -110,6 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Pré-seleciona a loteria ativa (?loteria= / última escolha); mudarLoteria roda logo abaixo
+    if (window.Loterias) Loterias.vincularSelect(selectLoteria);
+
     const loteriaInicial = selectLoteria?.value;
     if (loteriaInicial) mudarLoteria(loteriaInicial);
     else atualizarBotaoGerar();
