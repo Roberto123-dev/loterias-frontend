@@ -361,3 +361,58 @@
         display: none;
     }
 }
+
+/* ============= PÁGINAS COM O MENU INJETADO ============= */
+/*
+ * <html class="com-menu-lateral">: páginas antigas (ferramentas, loterias/*.html)
+ * que não têm layout próprio para o menu. O espaço é reservado no <html> (não no
+ * <body>, que em várias páginas tem padding/max-width próprios), já no CSS — sem
+ * "pisca" quando o JS injeta o menu.
+ * --largura-menu fica disponível para elementos position: fixed da página.
+ */
+html.com-menu-lateral {
+    --largura-menu: 260px;
+    padding-left: var(--largura-menu);
+    transition: padding-left 0.3s;
+}
+
+html.com-menu-lateral.menu-recolhido {
+    --largura-menu: 70px;
+}
+
+/* Faixa do topo na cor da loteria ativa */
+html.com-menu-lateral body {
+    border-top: 4px solid var(--cor-loteria);
+}
+
+/* Celular: aba na borda esquerda para abrir o menu (as páginas antigas não
+   têm botão de menu; o topo-esquerdo já tem "Voltar") */
+html.com-menu-lateral .btn-menu-flutuante {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    html.com-menu-lateral {
+        --largura-menu: 0px;
+    }
+
+    html.com-menu-lateral .btn-menu-flutuante {
+        display: flex;
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 34px;
+        height: 52px;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 0 10px 10px 0;
+        background: var(--cor-loteria);
+        color: var(--cor-loteria-texto);
+        font-size: 1.4rem;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        z-index: 998;
+    }
+}

@@ -9,6 +9,9 @@
  *       <script src="/js/menu-lateral.js"></script>
  *   </aside>
  *
+ * Páginas antigas sem layout próprio: <html class="com-menu-lateral"> (ver menu-lateral.css);
+ * nelas o menu cria uma aba na borda esquerda para abri-lo no celular.
+ *
  * Expõe para os botões da página: openMobileMenu(), closeMobileMenu(), toggleSidebar().
  * Itens PRÓ para usuário FREE chamam window.mostrarModalUpgrade() se a página
  * tiver o modal; senão levam a /index.html?upgrade=1.
@@ -92,6 +95,9 @@
     }
 
     function render() {
+        // Esconde os selos PRO para quem já é PRÓ (CSS: .plano-pro .menu-badge)
+        document.documentElement.classList.toggle("plano-pro", planoAtual() === "pro");
+
         const ativa = L.obter(L.ativa());
         const slug = ativa.slug;
         let marcouAtivo = false;
@@ -225,6 +231,17 @@
         sidebar.insertAdjacentElement("afterend", backdrop);
     }
     backdrop.addEventListener("click", closeMobileMenu);
+
+    // Só nas páginas antigas (as demais têm botão de menu no próprio topo)
+    if (document.documentElement.classList.contains("com-menu-lateral")) {
+        const aba = document.createElement("button");
+        aba.type = "button";
+        aba.className = "btn-menu-flutuante";
+        aba.setAttribute("aria-label", "Abrir menu");
+        aba.innerHTML = '<i class="bi bi-list"></i>';
+        aba.addEventListener("click", () => openMobileMenu());
+        backdrop.insertAdjacentElement("afterend", aba);
+    }
 
     function openMobileMenu() {
         document.documentElement.classList.remove("menu-recolhido");

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="com-menu-lateral">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -597,7 +597,7 @@
             .fab-novo {
                 position: fixed;
                 bottom: 25px;
-                left: 25px;
+                left: calc(var(--largura-menu, 0px) + 25px); /* não fica sob o menu lateral */
                 width: 60px;
                 height: 60px;
                 border-radius: 50%;
@@ -726,9 +726,16 @@
                 cursor: pointer;
             }
         </style>
+        <!-- Menu lateral compartilhado + tema da loteria ativa -->
+        <link rel="stylesheet" href="/css/tema-loteria.css" />
+        <link rel="stylesheet" href="/css/menu-lateral.css" />
     </head>
 
     <body>
+        <aside class="sidebar" id="sidebar">
+            <script src="/js/menu-lateral.js"></script>
+        </aside>
+
         <!-- HEADER APP -->
         <header class="app-header">
             <button class="icon-btn" onclick="location.href = '/index.html'">

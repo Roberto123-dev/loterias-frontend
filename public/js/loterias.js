@@ -247,8 +247,10 @@
      * Troca a loteria ativa sem recarregar: salva, reaplica o tema, atualiza
      * ?loteria= na URL (replaceState) e dispara o evento "loteria-ativa-mudou"
      * com detail = { slug, loteria }.
+     * opcoes.atualizarUrl = false: não mexe na URL (páginas da própria loteria,
+     * ex.: /loterias/quina.html).
      */
-    function definirAtiva(valor) {
+    function definirAtiva(valor, opcoes = {}) {
         const slug = normalizarSlug(valor);
         if (!slug) return false;
 
@@ -257,6 +259,7 @@
         aplicarTema(slug);
 
         try {
+            if (opcoes.atualizarUrl === false) throw null;
             const url = new URL(window.location.href);
             if (url.searchParams.get("loteria") !== slug) {
                 url.searchParams.set("loteria", slug);

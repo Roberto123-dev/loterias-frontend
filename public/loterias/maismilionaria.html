@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="com-menu-lateral">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -120,7 +120,7 @@
 
             .cards-container {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
                 gap: 20px;
             }
 
@@ -146,7 +146,7 @@
 
             .grid-50 {
                 display: grid;
-                grid-template-columns: repeat(10, 1fr);
+                grid-template-columns: repeat(10, minmax(0, 1fr));
                 gap: 6px;
             }
 
@@ -188,9 +188,19 @@
                 font-size: 0.85rem;
             }
         </style>
+        <!-- Menu lateral compartilhado + tema da loteria ativa -->
+        <script src="/js/loterias.js"></script>
+        <script>Loterias.definirAtiva("maismilionaria", { atualizarUrl: false });</script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+        <link rel="stylesheet" href="/css/tema-loteria.css" />
+        <link rel="stylesheet" href="/css/menu-lateral.css" />
     </head>
 
     <body>
+        <aside class="sidebar" id="sidebar">
+            <script src="/js/menu-lateral.js"></script>
+        </aside>
+
         <div class="container">
             <!-- Header -->
             <header>
