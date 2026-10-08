@@ -43,22 +43,6 @@
         <!-- Loteria ativa + tema (antes de qualquer CSS, evita "pisca" de cor) -->
         <script src="/js/loterias.js"></script>
 
-        <script>
-            window.getPlanoCache = function () {
-                try {
-                    var p = localStorage.getItem("plano");
-                    if (p) return p.toLowerCase();
-                    var u = JSON.parse(
-                        localStorage.getItem("usuario") || "null",
-                    );
-                    if (u && u.plano) return String(u.plano).toLowerCase();
-                } catch (e) {}
-                return "free";
-            };
-            if (window.getPlanoCache() === "pro") {
-                document.documentElement.classList.add("plano-pro");
-            }
-        </script>
 
         <!-- Bootstrap 5 CSS -->
         <link
@@ -142,14 +126,6 @@
                 gap: 10px;
             }
 
-            .badge-plano {
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                text-transform: uppercase;
-            }
-
             .btn-admin {
                 padding: 8px 16px;
                 background: #2c3e50;
@@ -183,8 +159,8 @@
             /* ============= MAIN CONTENT ============= */
             .main-content {
                 margin-left: 260px;
-                margin-top: 100px;
-                /* top-bar 60 + news-bar 40 */
+                margin-top: 70px;
+                /* top-bar 60 (+40 do aviso, no bloco do aviso) */
                 padding: 30px;
                 min-height: calc(100vh - 60px);
             }
@@ -267,14 +243,9 @@
                 /* Main content mobile */
                 .main-content {
                     margin-left: 0 !important;
-                    margin-top: 100px;
+                    margin-top: 70px;
                     padding: 15px;
-                    min-height: calc(100vh - 100px);
-                }
-
-                .news-bar {
-                    left: 0;
-                    width: 100%;
+                    min-height: calc(100vh - 70px);
                 }
 
             }
@@ -311,42 +282,6 @@
                 color: #b91c1c;
             }
 
-            .news-bar {
-                position: fixed;
-                top: 60px;
-                /* abaixo da top-bar */
-                left: 0;
-                /* 🔥 começa do canto da tela */
-                width: 100%;
-                /* 🔥 largura total real */
-                height: 40px;
-                background: linear-gradient(90deg, #6a5acd, #8a2be2);
-                color: #fff;
-                overflow: hidden;
-                white-space: nowrap;
-                display: flex;
-                align-items: center;
-                font-weight: 500;
-                z-index: 998;
-            }
-
-            .news-track {
-                padding-left: 100%;
-                padding-right: 50px;
-                display: inline-block;
-                padding-left: 100%;
-                animation: scrollText 30s linear infinite;
-            }
-
-            @keyframes scrollText {
-                from {
-                    transform: translateX(0);
-                }
-
-                to {
-                    transform: translateX(-100%);
-                }
-            }
 
             /* ============= LOTERIA ATIVA (destaque) ============= */
             .destaque-card {
@@ -597,7 +532,6 @@
                 </button>
             </div>
             <div class="top-bar-right">
-                <span id="badge-plano" class="badge-plano"></span>
                 <div class="user-info">
                     <span id="nome-usuario"></span>
                 </div>
@@ -610,12 +544,54 @@
             </div>
         </div>
 
+        <!-- ===== AVISO "100% GRATUITO" (temporário) =====
+             Para remover: apague tudo daqui até "FIM DO AVISO" (HTML + CSS).
+             A margem do conteúdo volta sozinha (o +40px só existe com a faixa). -->
+        <style>
+            .news-bar {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                height: 40px;
+                background: linear-gradient(90deg, #6a5acd, #8a2be2);
+                color: #fff;
+                overflow: hidden;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                font-weight: 500;
+                z-index: 998;
+            }
+
+            .news-track {
+                display: inline-block;
+                padding-left: 100%;
+                padding-right: 50px;
+                animation: scrollText 30s linear infinite;
+            }
+
+            @keyframes scrollText {
+                from {
+                    transform: translateX(0);
+                }
+
+                to {
+                    transform: translateX(-100%);
+                }
+            }
+
+            /* espaço da faixa abaixo da top-bar */
+            .news-bar ~ .main-content {
+                margin-top: 110px;
+            }
+        </style>
         <div class="news-bar">
             <div class="news-track">
-                🎯 Confira os últimos resultados atualizados • 💰 Aumente suas
-                chances com análises inteligentes • 🚀 Usuários PRÓ têm acesso a
-                estatísticas avançadas •
+                🎉 Roberto Loterias agora é 100% gratuito • Ferramentas para todas as loterias •
             </div>
+        </div>
+        <!-- ===== FIM DO AVISO ===== -->
         </div>
 
         <!-- ============= MAIN CONTENT ============= -->
@@ -627,63 +603,11 @@
             <nav id="atalhos-grid" class="atalhos-grid" aria-label="Ferramentas da loteria"></nav>
         </div>
 
-        <!-- ============= MODAL DE UPGRADE ============= -->
-        <div
-            class="modal fade"
-            id="modalUpgrade"
-            tabindex="-1"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div
-                        class="modal-body text-center p-5"
-                        id="modalUpgradeBody"
-                    >
-                        <div style="font-size: 4rem; margin-bottom: 20px">
-                            🔒
-                        </div>
-                        <h2>Recurso Exclusivo PRÓ</h2>
-                        <p>
-                            Este recurso está disponível apenas para usuários
-                            com plano PRÓ.
-                        </p>
-                        <button
-                            class="btn btn-warning btn-lg"
-                            onclick="fazerUpgrade()"
-                            style="
-                                background: linear-gradient(
-                                    135deg,
-                                    #ffd700 0%,
-                                    #ff6b6b 100%
-                                );
-                                border: none;
-                                font-weight: bold;
-                            "
-                        >
-                            ⭐ Fazer Upgrade Agora
-                        </button>
-                        <button
-                            class="btn btn-secondary btn-lg ms-2"
-                            data-bs-dismiss="modal"
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bootstrap 5 JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
         <script src="/js/escape-html.js"></script>
 
 
         <script>
-            let planoUsuario = window.getPlanoCache();
-            let modalUpgrade;
-
             function getUsuario() {
                 try {
                     return JSON.parse(localStorage.getItem("usuario"));
@@ -714,186 +638,9 @@
                     );
                     return JSON.parse(jsonPayload);
                 } catch (e) {
+                    if (e && e.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     return null;
                 }
-            }
-
-            async function verificarPlanoUsuario() {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    planoUsuario = "free";
-                    atualizarBadgePlano("free");
-                    atualizarMenuBadges("free");
-                    return { plano: "free" };
-                }
-                try {
-                    const response = await fetch(
-                        `${API_URL}/api/planos/meu-plano`,
-                        {
-                            headers: { Authorization: `Bearer ${token}` },
-                        },
-                    );
-                    if (!response.ok)
-                        throw new Error(`HTTP ${response.status}`);
-
-                    const data = await response.json();
-                    if (data?.success && data.data?.plano) {
-                        planoUsuario = data.data.plano;
-                        localStorage.setItem("plano", planoUsuario);
-                        atualizarBadgePlano(planoUsuario);
-                        atualizarMenuBadges(planoUsuario);
-                        return data.data;
-                    }
-                } catch (error) {
-                    console.error("Erro ao verificar plano:", error);
-                }
-                return { plano: "free" };
-            }
-
-            function atualizarBadgePlano(plano) {
-                const badge = document.getElementById("badge-plano");
-                if (plano === "pro") {
-                    badge.textContent = "⭐ PRÓ";
-                    badge.className = "badge-plano badge-pro";
-                } else {
-                    badge.textContent = "FREE";
-                    badge.className = "badge-plano badge-free";
-                }
-            }
-
-            function atualizarMenuBadges(plano) {
-                const badges = document.querySelectorAll(".menu-badge");
-                const isPro = plano === "pro";
-                document.documentElement.classList.toggle("plano-pro", isPro);
-                badges.forEach((badge) => {
-                    badge.style.display = isPro ? "none" : "";
-                });
-            }
-
-            function mostrarModalUpgrade() {
-                if (modalUpgrade) modalUpgrade.show();
-            }
-
-            function fazerUpgrade() {
-                const usuario = getUsuario();
-
-                if (!usuario) {
-                    alert(
-                        "❌ Erro: Usuário não encontrado. Faça login novamente.",
-                    );
-                    return;
-                }
-
-                const body = document.getElementById("modalUpgradeBody");
-
-                body.innerHTML = `
-          <div class="text-center">
-            <div style="font-size:3.5rem">💎</div>
-            <h2 class="mt-2 fw-bold">Seja PRÓ</h2>
-            <p class="text-muted">
-              Libere <strong>todas as funcionalidades</strong> do Sistema de Loterias
-            </p>
-          </div>
-
-          <!-- PLANO DESTAQUE -->
-          <div class="card border-0 shadow-sm mt-4"
-              style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;">
-            <div class="card-body text-center">
-              <span class="badge bg-warning text-dark mb-2">🔥 MELHOR OFERTA</span>
-              <h3 class="fw-bold mt-2">Plano Anual PRÓ</h3>
-
-              <div style="font-size:3rem;font-weight:bold">
-                R$ 29,90
-              </div>
-              <small>pagamento único • acesso por 12 meses</small>
-
-              <ul class="list-unstyled mt-3 text-start">
-                <li>✅ Gerador ilimitado de jogos</li>
-                <li>✅ Salvar e organizar jogos</li>
-                <li>✅ Conferência automática</li>
-                <li>✅ Estatísticas e mapas</li>
-                <li>✅ Atualizações em tempo real</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- COMO FUNCIONA -->
-          <div class="mt-4 text-muted text-start">
-            <p class="fw-bold mb-1">🔐 Como funciona</p>
-            <small>
-              1️⃣ Realize o pagamento do plano<br>
-              2️⃣ Envie o comprovante<br>
-              3️⃣ Ativação em até <strong>24 horas</strong>
-            </small>
-          </div>
-
-          <!-- PIX -->
-          <div class="mt-4">
-            <p class="fw-bold mb-2">💠 Pagamento via PIX</p>
-
-            <div class="d-flex justify-content-center gap-2">
-              <input
-                type="text"
-                id="pixKey"
-                class="form-control text-center"
-                style="max-width:260px"
-                value="21981092008"
-                readonly
-              />
-
-              <button class="btn btn-success" onclick="copiarPix()">
-                📋 Copiar
-              </button>
-            </div>
-
-            <small class="text-muted d-block mt-2">
-              Chave PIX • Celular
-            </small>
-          </div>
-
-            <!-- WHATSAPP -->
-            <div class="mt-4 text-center">
-              <a
-                href="https://wa.me/5521981092008"
-                target="_blank"
-                class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
-                style="border-radius: 12px;"
-              >
-                <i class="bi bi-whatsapp" style="font-size: 1.5rem;"></i>
-                Falar no WhatsApp
-              </a>
-
-              <small class="text-muted d-block mt-2">
-                Atendimento rápido após o pagamento
-              </small>
-            </div>
-
-            <button class="btn btn-outline-secondary"
-                    data-bs-dismiss="modal">
-              Agora não
-            </button>
-          </div>
-        `;
-            }
-
-            function copiarPix() {
-                const pixInput = document.getElementById("pixKey");
-                pixInput.select();
-                pixInput.setSelectionRange(0, 99999); // mobile
-
-                navigator.clipboard.writeText(pixInput.value);
-
-                alert(
-                    "✅ Chave PIX copiada!\n\nAgora cole no app do seu banco para realizar o pagamento.",
-                );
-            }
-
-            function verDetalhes(loteriaId) {
-                if (planoUsuario === "free") {
-                    mostrarModalUpgrade();
-                    return false;
-                }
-                window.location.href = `/loterias/${loteriaId}.html`;
             }
 
             function logout() {
@@ -1044,6 +791,7 @@
                 try {
                     const response = await fetch(
                         `${API_URL}/api/resultados/ultimos-todos`,
+                        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } },
                     );
                     if (!response.ok)
                         throw new Error(`HTTP ${response.status}`);
@@ -1060,6 +808,7 @@
                     erroResultados = false;
                     renderizarLoteriaAtiva();
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.error("❌ Erro ao carregar resultados:", error);
                     erroResultados = true;
                     // não apaga um resultado bom já na tela
@@ -1071,14 +820,8 @@
 
             // ========== INICIALIZAÇÃO ==========
             window.addEventListener("DOMContentLoaded", async () => {
-                try {
-                    const modalEl = document.getElementById("modalUpgrade");
-                    if (window.bootstrap?.Modal && modalEl) {
-                        modalUpgrade = new bootstrap.Modal(modalEl);
-                    }
-                } catch (e) {
-                    console.error("Falha ao iniciar o modal:", e);
-                }
+                // Login obrigatório: sem sessão, auth-check redireciona e nada é buscado
+                if (!verificarAutenticacao()) return;
 
                 renderizarLoteriaAtiva(); // cabeçalho já aparece enquanto carrega
 
@@ -1097,14 +840,7 @@
                     }
                 }
 
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get("upgrade") === "1") {
-                    setTimeout(() => mostrarModalUpgrade(), 400);
-                }
-
                 // notificações: js/menu-lateral.js
-                await verificarPlanoUsuario();
-
                 carregarResultados();
                 setInterval(carregarResultados, 5 * 60 * 1000);
             });

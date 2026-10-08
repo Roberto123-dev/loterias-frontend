@@ -67,26 +67,6 @@
       font-size: 0.8rem;
       font-weight: bold;
     }
-
-    .free {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .pro {
-      background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
-    }
-
-    .btn-upgrade {
-      margin-top: 15px;
-      padding: 12px;
-      background: #667eea;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-    }
   </style>
     <!-- Menu lateral compartilhado + tema da loteria ativa -->
     <script src="/js/loterias.js"></script>
@@ -119,34 +99,12 @@
         <strong id="user-email">---</strong>
       </div>
     </div>
-
-    <!-- Plano -->
-    <div class="card">
-      <h3>💎 Plano</h3>
-
-      <div class="linha">
-        <span>Status</span>
-        <span id="user-plano" class="badge">---</span>
-      </div>
-
-      <div class="linha" id="linha-expira" style="display: none">
-        <span>Expira em</span>
-        <strong id="user-expira">---</strong>
-      </div>
-
-      <button class="btn-upgrade" id="btn-upgrade" style="display: none">
-        Fazer upgrade para PRO
-      </button>
-    </div>
   </div>
   <script src="/js/perfilusuario.js"></script>
   <script src="/js/auth-check.js"></script>
   <script>
     // Autenticação básica
-    if (verificarAutenticacao()) {
-      // 🚫 Verificação do plano
-      verificarPlanoPro();
-    }
+    verificarAutenticacao();
   </script>
 </body>
 

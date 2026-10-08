@@ -65,7 +65,6 @@ window.getUser = function () {
       email: payload.email,
       nome: payload.nome,
       role: payload.role,
-      plano: payload.plano,
     };
   } catch (e) {
     console.error("❌ Erro ao obter usuário:", e);
@@ -105,6 +104,74 @@ window.fetchAuth = async function (url, options = {}) {
   return response;
 };
 
+// ============================================
+// LIMITE DE CONSULTAS (HTTP 429)
+// ============================================
+// O backend limita consultas por usuário e responde 429 com tenteNovamenteEm (segundos)
+// e uma message que já diz o tempo de espera.
+// - Rotas de /api/auth: a resposta segue normal (as telas de login/cadastro mostram a message).
+// - Demais rotas da API: mostra um aviso amigável com o tempo de espera e rejeita a chamada
+//   com erro.limiteAtingido = true; os catch das páginas ignoram esse erro (aviso já mostrado).
+window.formatarEspera = function (segundos) {
+  const s = Math.max(1, Math.round(Number(segundos) || 60));
+  if (s < 60) return `${s} segundo${s === 1 ? "" : "s"}`;
+  const m = Math.ceil(s / 60);
+  if (m < 60) return `${m} minuto${m === 1 ? "" : "s"}`;
+  const h = Math.ceil(m / 60);
+  return `${h} hora${h === 1 ? "" : "s"}`;
+};
+
+window.mostrarAvisoLimite = function (mensagem) {
+  let aviso = document.getElementById("aviso-limite");
+  if (!aviso) {
+    aviso = document.createElement("div");
+    aviso.id = "aviso-limite";
+    aviso.setAttribute("role", "alert");
+    aviso.style.cssText =
+      "position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:10050;" +
+      "max-width:min(92vw,520px);padding:14px 18px;border-radius:12px;" +
+      "background:#fff7ed;color:#7c2d12;border:1px solid #fdba74;" +
+      "box-shadow:0 8px 24px rgba(0,0,0,.18);font:600 0.95rem/1.4 'Segoe UI',sans-serif;" +
+      "display:flex;gap:10px;align-items:flex-start";
+    document.body.appendChild(aviso);
+  }
+  aviso.textContent = "";
+  const icone = document.createElement("span");
+  icone.textContent = "⏳";
+  const texto = document.createElement("span");
+  texto.textContent = mensagem;
+  aviso.append(icone, texto);
+  aviso.style.display = "flex";
+  clearTimeout(window.mostrarAvisoLimite._timer);
+  window.mostrarAvisoLimite._timer = setTimeout(() => {
+    aviso.style.display = "none";
+  }, 10000);
+};
+
+(function () {
+  const fetchOriginal = window.fetch.bind(window);
+  window.fetch = async function (recurso, opcoes) {
+    const resposta = await fetchOriginal(recurso, opcoes);
+    if (resposta.status !== 429) return resposta;
+
+    const url = typeof recurso === "string" ? recurso : (recurso && recurso.url) || "";
+    if (!url.startsWith(API_URL) || url.startsWith(`${API_URL}/api/auth/`)) return resposta;
+
+    let segundos = 60;
+    try {
+      const corpo = await resposta.clone().json();
+      if (corpo && corpo.tenteNovamenteEm) segundos = corpo.tenteNovamenteEm;
+    } catch (e) {}
+
+    const mensagem = `Você fez muitas consultas em pouco tempo. Aguarde ${formatarEspera(segundos)} e tente novamente.`;
+    mostrarAvisoLimite(mensagem);
+    const erro = new Error(mensagem);
+    erro.limiteAtingido = true;
+    erro.tenteNovamenteEm = segundos;
+    throw erro;
+  };
+})();
+
 // Log inicial
 console.log("✅ config.js carregado com sucesso!");
 
@@ -118,7 +185,6 @@ if (
   if (isAuthenticated()) {
     const user = getUser();
     console.log("👤 Usuário:", user?.nome || "Anônimo");
-    console.log("📦 Plano:", user?.plano || "FREE");
   } else {
     console.warn("⚠️ Usuário não autenticado");
   }

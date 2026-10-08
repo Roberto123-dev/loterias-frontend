@@ -124,7 +124,6 @@ function mudarLoteria() {
 // ===============================
 async function carregarCiclo() {
     if (!verificarAutenticacao()) return;
-    verificarPlanoPro();
 
     const limit = document.getElementById("qtd-concursos").value;
     const tbody = document.getElementById("tbody-ciclo");

@@ -998,6 +998,7 @@
                     // Aplica filtros atuais (se houver) e renderiza
                     aplicarFiltrosCompletos();
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.error("❌ Erro ao carregar jogos:", error);
                     setLoading(false);
 
@@ -1331,6 +1332,7 @@
                         );
                     }
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.error(error);
                     mostrarToast("❌ Erro ao excluir jogos", "error");
                 }
@@ -1386,6 +1388,7 @@
                         return resultadosCache[cacheKey];
                     }
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.warn(
                         `Erro ao buscar resultado ${loteria} ${concurso}:`,
                         error,
@@ -1591,6 +1594,7 @@
                         throw new Error(data.message || "Erro ao conferir");
                     }
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.error("Erro:", error);
                     mostrarToast("❌ Erro ao conferir jogos", "error");
                 } finally {
@@ -1634,10 +1638,7 @@
         <script src="/js/auth-check.js"></script>
         <script>
             // Autenticação básica
-            if (verificarAutenticacao()) {
-                // 🚫 Verificação do plano
-                verificarPlanoPro();
-            }
+            verificarAutenticacao();
         </script>
     </body>
 </html>

@@ -242,7 +242,9 @@
 
             async function carregarResultados() {
                 try {
-                    const response = await fetch(`${API_URL}/api/resultados/ultimos-todos`);
+                    const response = await fetch(`${API_URL}/api/resultados/ultimos-todos`, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    });
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const data = await response.json();
                     if (!data || !data.success || !data.data) {
@@ -251,6 +253,7 @@
                     ultimosResultados = data.data;
                     renderizar();
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.error("❌ Erro ao carregar resultados:", error);
                     if (!ultimosResultados) {
                         document.getElementById("grade-loterias").innerHTML =
@@ -270,8 +273,12 @@
             // Troca pelo seletor do menu: destaca o card da nova loteria ativa
             document.addEventListener("loteria-ativa-mudou", renderizar);
 
-            carregarResultados();
-            setInterval(carregarResultados, 5 * 60 * 1000);
+            // Login obrigatório: sem sessão, auth-check redireciona e nada é buscado
+            window.addEventListener("DOMContentLoaded", () => {
+                if (!verificarAutenticacao()) return;
+                carregarResultados();
+                setInterval(carregarResultados, 5 * 60 * 1000);
+            });
         </script>
         <script src="/js/auth-check.js"></script>
     </body>

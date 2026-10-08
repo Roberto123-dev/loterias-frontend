@@ -31,6 +31,7 @@
         try {
             return Boolean(localStorage.getItem("token"));
         } catch (e) {
+            if (e && e.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
             return false;
         }
     }
@@ -279,6 +280,7 @@
             notificacaoInscrito = Boolean(data.inscrito);
             atualizarBotaoNotificacao(notificacaoInscrito);
         } catch (err) {
+            if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
             console.error("Erro ao verificar notificações:", err);
         }
     }
@@ -311,6 +313,7 @@
                 );
             }
         } catch (err) {
+            if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
             console.error("Erro ao alterar notificações:", err);
         } finally {
             alterandoNotificacao = false;

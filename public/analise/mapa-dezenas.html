@@ -965,7 +965,7 @@
                             return;
                         } else if (response.status === 403) {
                             alert(
-                                "Este recurso está disponível apenas para usuários PRÓ.",
+                                "Você não tem permissão para acessar este recurso.",
                             );
                             window.location.href = "/index.html";
                             return;
@@ -983,6 +983,11 @@
                     loading.style.display = "none";
                     tabela.style.display = "table";
                 } catch (error) {
+                    if (error && error.limiteAtingido) {
+                        // aviso de limite já mostrado (js/config.js); esconde o "carregando"
+                        document.getElementById("tabela-container").style.display = "none";
+                        return;
+                    }
                     console.error("Erro:", error);
                     loading.textContent = "❌ Erro ao carregar dados";
                 }
@@ -1235,9 +1240,7 @@
                 ).matches;
                 aplicarTema(temaSalvo || (prefereEscuro ? "dark" : "light"));
 
-                if (verificarAutenticacao()) {
-                    verificarPlanoPro();
-                }
+                verificarAutenticacao();
 
                 Loterias.vincularSelect(
                     document.getElementById("loteria-select"),

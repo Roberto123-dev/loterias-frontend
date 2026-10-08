@@ -207,6 +207,7 @@
 
             } catch (err) {
                 loading.style.display = "none";
+                if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                 alert("Erro ao buscar dados: " + err.message);
             }
         }
@@ -214,10 +215,7 @@
     <script src="/js/auth-check.js"></script>
     <script>
         // Autenticação básica
-        if (verificarAutenticacao()) {
-            // 🚫 Verificação do plano
-            verificarPlanoPro();
-        }
+        verificarAutenticacao();
 
         Loterias.vincularSelect(document.getElementById("loteria"));
     </script>

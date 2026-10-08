@@ -274,23 +274,6 @@
     display: none;
 }
 
-/* Selo PRÓ do topo da home (index.html) — sai na etapa 9 (sistema gratuito) */
-.badge-pro {
-    background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
-    animation: shine 2s infinite;
-}
-
-@keyframes shine {
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.8;
-    }
-}
-
 /* ============= RODAPÉ ============= */
 .menu-rodape {
     margin-top: auto;

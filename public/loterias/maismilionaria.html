@@ -291,6 +291,7 @@
                         loading.textContent = "❌ Nenhum resultado encontrado";
                     }
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.error(error);
                     loading.textContent = "❌ Erro ao carregar resultados";
                 }
@@ -357,10 +358,7 @@
         <script src="/js/auth-check.js"></script>
         <script>
             // Autenticação básica
-            if (verificarAutenticacao()) {
-                // 🚫 Verificação do plano
-                verificarPlanoPro();
-            }
+            verificarAutenticacao();
         </script>
     </body>
 </html>

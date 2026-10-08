@@ -465,6 +465,7 @@
                 });
 
             } catch (err) {
+                if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                 console.error(err);
                 lista.innerHTML = "<p>Erro ao carregar grupos</p>";
                 vazio.style.display = "none";
@@ -509,6 +510,7 @@
                 document.getElementById("input-novo-grupo").value = "";
                 await carregarGrupos();
             } catch (err) {
+                if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                 console.error(err);
                 alert("Erro ao salvar grupo");
             }
@@ -580,6 +582,7 @@
                     alert(data.message || "Erro ao atualizar");
                 }
             } catch (err) {
+                if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                 console.error(err);
                 alert("Erro ao atualizar grupo");
             }
@@ -630,6 +633,7 @@
                     alert(data.message || "Erro ao remover");
                 }
             } catch (err) {
+                if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                 console.error(err);
                 alert("Erro ao remover grupo");
             }
@@ -687,10 +691,7 @@
     <script src="/js/auth-check.js"></script>
     <script>
         // Autenticação básica
-        if (verificarAutenticacao()) {
-            // 🚫 Verificação do plano
-            verificarPlanoPro();
-        }
+        verificarAutenticacao();
     </script>
 
 </body>
