@@ -285,7 +285,7 @@
       // As estatísticas vêm do último Mapa gerado: precisam ser da loteria ativa
       if (!est || est.slug !== ativa.slug) {
         alert(
-          `Nenhuma estatística da ${ativa.nome} encontrada. Gere o Mapa das Dezenas da ${ativa.nome} primeiro.`,
+          `Nenhuma estatística ${Loterias.comArtigo(ativa.slug)} encontrada. Gere o Mapa das Dezenas ${Loterias.comArtigo(ativa.slug)} primeiro.`,
         );
         window.location.href = Loterias.urlFerramenta("mapa", ativa.slug);
         return;

@@ -141,7 +141,7 @@
                 border-radius: 12px;
                 font-size: 0.7rem;
                 font-weight: 700;
-                background: var(--cor-card);
+                background: var(--cor-card-fundo);
                 color: var(--cor-card-texto);
             }
 
@@ -181,7 +181,9 @@
             function criarCard(loteria, resultado) {
                 const ativa = loteria.slug === Loterias.ativa();
                 const href = Loterias.urlFerramenta("inicio", loteria.slug);
-                const estilo = `--cor-card: ${loteria.cor}; --cor-card-texto: ${Loterias.corTexto(loteria.cor)}`;
+                const cores = Loterias.coresTexto(loteria.slug);
+                // --cor-card: borda/contorno; --cor-card-fundo/texto: selo "Loteria ativa" (tem texto)
+                const estilo = `--cor-card: ${loteria.cor}; --cor-card-fundo: ${cores.fundo}; --cor-card-texto: ${cores.texto}`;
 
                 if (!resultado) {
                     return `

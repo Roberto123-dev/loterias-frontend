@@ -38,6 +38,7 @@
             slug: "lotofacil",
             slugCaixa: "lotofacil",
             nome: "Lotofácil",
+            artigo: "a", // "da …"
             icone: "/image/favicon-lf-32.png",
             cor: "#930089",
             dezenaMin: 1,
@@ -52,6 +53,8 @@
             slug: "megasena",
             slugCaixa: "megasena",
             nome: "Mega-Sena",
+            artigo: "a", // "da …"
+            textoBranco: true, // texto branco sobre a cor (decisão do projeto); fundo escurecido se < 3:1
             icone: "/image/favicon-ms-32.png",
             cor: "#209869",
             dezenaMin: 1,
@@ -66,6 +69,7 @@
             slug: "quina",
             slugCaixa: "quina",
             nome: "Quina",
+            artigo: "a", // "da …"
             icone: "/image/favicon-qu-32.png",
             cor: "#260085",
             dezenaMin: 1,
@@ -80,6 +84,8 @@
             slug: "lotomania",
             slugCaixa: "lotomania",
             nome: "Lotomania",
+            artigo: "a", // "da …"
+            textoBranco: true, // texto branco sobre a cor (decisão do projeto); fundo escurecido se < 3:1
             icone: "/image/favicon-lm-32.png",
             cor: "#F78100",
             dezenaMin: 0, // 00 a 99 (a Caixa devolve "00", gravado como 0)
@@ -94,6 +100,7 @@
             slug: "duplasena",
             slugCaixa: "duplasena",
             nome: "Dupla Sena",
+            artigo: "a", // "da …"
             icone: "/image/favicon-ds-32.png",
             cor: "#A61324",
             dezenaMin: 1,
@@ -108,6 +115,7 @@
             slug: "timemania",
             slugCaixa: "timemania",
             nome: "Timemania",
+            artigo: "a", // "da …"
             icone: "/image/favicon-tm-32.png",
             cor: "#00FF48",
             dezenaMin: 1,
@@ -123,6 +131,8 @@
             slug: "diadasorte",
             slugCaixa: "diadesorte",
             nome: "Dia de Sorte",
+            artigo: "o", // "do …"
+            textoBranco: true, // texto branco sobre a cor (decisão do projeto); fundo escurecido se < 3:1
             icone: "/image/favicon-di-32.png",
             cor: "#CB852B",
             dezenaMin: 1,
@@ -138,6 +148,7 @@
             slug: "maismilionaria",
             slugCaixa: "maismilionaria",
             nome: "+Milionária",
+            artigo: "a", // "da …"
             icone: "/image/favicon-mm-32.png",
             cor: "#6BCCEF",
             dezenaMin: 1,
@@ -478,6 +489,11 @@
         return 0.2126 * r + 0.7152 * g + 0.0722 * b;
     }
 
+    function contraste(hexA, hexB) {
+        const [maior, menor] = [luminancia(hexA), luminancia(hexB)].sort((a, b) => b - a);
+        return (maior + 0.05) / (menor + 0.05);
+    }
+
     // Preto ou branco, o que tiver maior contraste com o fundo
     function corTexto(hexFundo) {
         const l = luminancia(hexFundo);
@@ -486,14 +502,47 @@
         return contrastePreto > contrasteBranco ? "#000000" : "#ffffff";
     }
 
+    // Texto branco precisa de pelo menos 3:1 sobre o fundo (decisão do projeto)
+    const CONTRASTE_MINIMO_BRANCO = 3;
+
+    /**
+     * Cores para elementos COM texto sobre a cor da loteria (cabeçalho, item ativo,
+     * bolinhas, botões): { fundo, texto }. Loterias com textoBranco usam branco e, se a
+     * cor original não der 3:1, o fundo é escurecido só o necessário. As demais usam
+     * preto ou branco pelo maior contraste. Bordas e detalhes sem texto continuam com
+     * a cor original (--cor-loteria).
+     */
+    function coresTexto(valor) {
+        const loteria = obter(valor) || LOTERIAS[LOTERIA_PADRAO];
+        if (!loteria.textoBranco) return { fundo: loteria.cor, texto: corTexto(loteria.cor) };
+
+        let fundo = loteria.cor;
+        let peso = 0;
+        while (contraste(fundo, "#ffffff") < CONTRASTE_MINIMO_BRANCO && peso < 1) {
+            peso = Math.round((peso + 0.01) * 100) / 100;
+            fundo = misturar(loteria.cor, "#000000", peso);
+        }
+        return { fundo, texto: "#ffffff" };
+    }
+
+    // "da Lotofácil", "do Dia de Sorte"; com "em": "na Quina", "no Dia de Sorte"
+    function comArtigo(valor, preposicao = "de") {
+        const loteria = obter(valor);
+        if (!loteria) return "";
+        const contracao = { de: { a: "da", o: "do" }, em: { a: "na", o: "no" } }[preposicao][loteria.artigo];
+        return `${contracao} ${loteria.nome}`;
+    }
+
     function aplicarTema(valor) {
         const loteria = obter(valor) || LOTERIAS[LOTERIA_PADRAO];
+        const cores = coresTexto(loteria.slug);
         const raiz = document.documentElement;
         raiz.setAttribute("data-loteria", loteria.slug);
         raiz.style.setProperty("--cor-loteria", loteria.cor);
         raiz.style.setProperty("--cor-loteria-clara", misturar(loteria.cor, "#ffffff", 0.85));
         raiz.style.setProperty("--cor-loteria-escura", misturar(loteria.cor, "#000000", 0.25));
-        raiz.style.setProperty("--cor-loteria-texto", corTexto(loteria.cor));
+        raiz.style.setProperty("--cor-loteria-fundo", cores.fundo);
+        raiz.style.setProperty("--cor-loteria-texto", cores.texto);
     }
 
     window.Loterias = {
@@ -517,6 +566,8 @@
         statusConcurso,
         proximoSorteio,
         corTexto,
+        coresTexto,
+        comArtigo,
         aplicarTema,
     };
 

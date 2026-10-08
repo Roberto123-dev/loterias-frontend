@@ -6,7 +6,9 @@
  * --cor-loteria         cor principal (faixa do topo, item ativo, botões)
  * --cor-loteria-clara   fundo suave (destaques, hover)
  * --cor-loteria-escura  gradientes e bordas
- * --cor-loteria-texto   texto sobre --cor-loteria (preto ou branco, pelo contraste)
+ * --cor-loteria-fundo   fundo de elementos COM texto (= --cor-loteria, ou escurecido até o
+ *                       texto branco ter 3:1 — ex.: Lotomania)
+ * --cor-loteria-texto   texto sobre --cor-loteria-fundo
  * --fundo-pagina        fundo neutro claro das páginas (a cor da loteria se destaca)
  */
 :root {
@@ -14,5 +16,6 @@
     --cor-loteria: #930089;
     --cor-loteria-clara: #efd9ed;
     --cor-loteria-escura: #6e0067;
+    --cor-loteria-fundo: #930089;
     --cor-loteria-texto: #ffffff;
 }

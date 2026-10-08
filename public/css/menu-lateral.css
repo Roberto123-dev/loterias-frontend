@@ -199,7 +199,7 @@
 }
 
 .menu-item.active {
-    background: var(--cor-loteria);
+    background: var(--cor-loteria-fundo);
     color: var(--cor-loteria-texto);
     border-left-color: var(--cor-loteria-clara);
     font-weight: 600;
@@ -349,7 +349,7 @@ html.com-menu-lateral .btn-menu-flutuante {
         justify-content: center;
         border: none;
         border-radius: 0 10px 10px 0;
-        background: var(--cor-loteria);
+        background: var(--cor-loteria-fundo);
         color: var(--cor-loteria-texto);
         font-size: 1.4rem;
         box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
