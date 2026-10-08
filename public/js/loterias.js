@@ -174,21 +174,21 @@
 
     // Ferramentas que dependem da loteria ativa (recebem ?loteria=<slug>)
     const FERRAMENTAS = [
-        { id: "inicio", nome: "Início", icone: "bi-house-fill", url: "/index.html", pro: false },
-        { id: "gerar", nome: "Gerar Jogos", icone: "bi-dice-3-fill", url: "/ferramentas/gerador-combinacoes.html", pro: true },
-        { id: "conferir", nome: "Conferir Jogo", icone: "bi-check-circle-fill", url: "/analise/conferir.html", pro: true },
-        { id: "ciclo", nome: "Ciclo das Dezenas", icone: "bi-fire", url: "/ferramentas/ciclo-dezenas.html", pro: true },
-        { id: "mapa", nome: "Mapa das Dezenas", icone: "bi-bar-chart-fill", url: "/analise/mapa-dezenas.html", pro: true },
-        { id: "estatisticas", nome: "Estatísticas", icone: "bi-calculator-fill", url: "/analise/estatisticas.html", pro: true },
-        { id: "analise-dezenas", nome: "Análise de Dezenas", icone: "bi-graph-up", url: "/analise/analise-dezenas.html", pro: true },
-        { id: "analise-combinacoes", nome: "Análise de Combinações", icone: "bi-bullseye", url: "/analise/analise-combinacoes.html", pro: true },
+        { id: "inicio", nome: "Início", icone: "bi-house-fill", url: "/index.html" },
+        { id: "gerar", nome: "Gerar Jogos", icone: "bi-dice-3-fill", url: "/ferramentas/gerador-combinacoes.html" },
+        { id: "conferir", nome: "Conferir Jogo", icone: "bi-check-circle-fill", url: "/analise/conferir.html" },
+        { id: "ciclo", nome: "Ciclo das Dezenas", icone: "bi-fire", url: "/ferramentas/ciclo-dezenas.html" },
+        { id: "mapa", nome: "Mapa das Dezenas", icone: "bi-bar-chart-fill", url: "/analise/mapa-dezenas.html" },
+        { id: "estatisticas", nome: "Estatísticas", icone: "bi-calculator-fill", url: "/analise/estatisticas.html" },
+        { id: "analise-dezenas", nome: "Análise de Dezenas", icone: "bi-graph-up", url: "/analise/analise-dezenas.html" },
+        { id: "analise-combinacoes", nome: "Análise de Combinações", icone: "bi-bullseye", url: "/analise/analise-combinacoes.html" },
     ];
 
     // Itens globais do menu (não dependem da loteria ativa)
     const ITENS_GLOBAIS = [
-        { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html", pro: true },
-        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/loterias/todas.html", pro: false },
-        { id: "configuracoes", nome: "Configurações", icone: "bi-gear-fill", url: "/auth/perfilusuario.html", pro: true },
+        { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html" },
+        { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/loterias/todas.html" },
+        { id: "configuracoes", nome: "Configurações", icone: "bi-gear-fill", url: "/auth/perfilusuario.html" },
     ];
 
     // Ferramentas ainda quebradas para a loteria (anotações internas).

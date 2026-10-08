@@ -274,22 +274,10 @@
     display: none;
 }
 
-/* Badge PRO */
-.menu-badge {
-    margin-left: auto;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: bold;
-}
-
+/* Selo PRÓ do topo da home (index.html) — sai na etapa 9 (sistema gratuito) */
 .badge-pro {
     background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
     animation: shine 2s infinite;
-}
-
-.plano-pro .menu-badge {
-    display: none !important;
 }
 
 @keyframes shine {

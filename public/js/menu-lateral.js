@@ -13,8 +13,7 @@
  * nelas o menu cria uma aba na borda esquerda para abri-lo no celular.
  *
  * Expõe para os botões da página: openMobileMenu(), closeMobileMenu(), toggleSidebar().
- * Itens PRÓ para usuário FREE chamam window.mostrarModalUpgrade() se a página
- * tiver o modal; senão levam a /index.html?upgrade=1.
+ * Sistema gratuito: o menu não tem selo, modal nem verificação de plano.
  */
 (function () {
     "use strict";
@@ -27,16 +26,6 @@
     const LOGO = "/ROBERTO%20(3).png";
 
     // ========== HELPERS ==========
-
-    function planoAtual() {
-        try {
-            const p = localStorage.getItem("plano");
-            if (p) return p.toLowerCase();
-            const u = JSON.parse(localStorage.getItem("usuario") || "null");
-            if (u && u.plano) return String(u.plano).toLowerCase();
-        } catch (e) {}
-        return "free";
-    }
 
     function temToken() {
         try {
@@ -61,10 +50,6 @@
 
     // ========== RENDER ==========
 
-    function badgePro(item) {
-        return item.pro ? '<span class="menu-badge badge-pro">PRO</span>' : "";
-    }
-
     function itemFerramenta(f, slug, jaMarcouAtivo) {
         if (!L.suporta(slug, f.id)) {
             return `
@@ -75,10 +60,9 @@
         }
         const ativo = !jaMarcouAtivo && ehPaginaAtual(f.url);
         return `
-            <a href="${L.urlFerramenta(f.id, slug)}" class="menu-item${ativo ? " active" : ""}"${ativo ? ' aria-current="page"' : ""} data-pro="${f.pro}" title="${f.nome}">
+            <a href="${L.urlFerramenta(f.id, slug)}" class="menu-item${ativo ? " active" : ""}"${ativo ? ' aria-current="page"' : ""} title="${f.nome}">
                 <i class="bi ${f.icone}"></i>
                 <span class="menu-texto">${f.nome}</span>
-                ${badgePro(f)}
             </a>`;
     }
 
@@ -87,17 +71,13 @@
         // Meus Jogos já abre filtrado pela loteria ativa
         const href = g.id === "meus-jogos" ? L.urlComLoteria(g.url, slug) : g.url;
         return `
-            <a href="${href}" class="menu-item${ativo ? " active" : ""}"${ativo ? ' aria-current="page"' : ""} data-pro="${g.pro}" title="${g.nome}">
+            <a href="${href}" class="menu-item${ativo ? " active" : ""}"${ativo ? ' aria-current="page"' : ""} title="${g.nome}">
                 <i class="bi ${g.icone}"></i>
                 <span class="menu-texto">${g.nome}</span>
-                ${badgePro(g)}
             </a>`;
     }
 
     function render() {
-        // Esconde os selos PRO para quem já é PRÓ (CSS: .plano-pro .menu-badge)
-        document.documentElement.classList.toggle("plano-pro", planoAtual() === "pro");
-
         const ativa = L.obter(L.ativa());
         const slug = ativa.slug;
         let marcouAtivo = false;
@@ -162,10 +142,9 @@
                     <i class="bi bi-chevron-down"></i>
                 </button>
                 <div class="submenu"${perfilAtivo ? "" : " hidden"}>
-                    <a href="${configuracoes.url}" class="menu-item${perfilAtivo ? " active" : ""}" data-pro="${configuracoes.pro}" title="Meu perfil">
+                    <a href="${configuracoes.url}" class="menu-item${perfilAtivo ? " active" : ""}" title="Meu perfil">
                         <i class="bi bi-person-fill"></i>
                         <span class="menu-texto">Meu perfil</span>
-                        ${badgePro(configuracoes)}
                     </a>
                     ${
                         temToken()
@@ -265,16 +244,6 @@
     window.openMobileMenu = openMobileMenu;
     window.closeMobileMenu = closeMobileMenu;
     window.toggleSidebar = toggleSidebar;
-
-    // ========== PLANO ==========
-
-    function abrirUpgrade() {
-        if (typeof window.mostrarModalUpgrade === "function") {
-            window.mostrarModalUpgrade();
-        } else {
-            window.location.href = "/index.html?upgrade=1";
-        }
-    }
 
     // ========== NOTIFICAÇÕES POR E-MAIL ==========
 
@@ -384,13 +353,6 @@
                 return;
         }
 
-        // Link comum: PRÓ bloqueado para FREE abre o modal de upgrade
-        if (alvo.dataset.pro === "true" && planoAtual() !== "pro") {
-            event.preventDefault();
-            closeMobileMenu();
-            abrirUpgrade();
-            return;
-        }
         closeMobileMenu();
     });
 
