@@ -1,0 +1,16 @@
+/*
+ * Tema da loteria ativa.
+ * Os valores reais são aplicados por /js/loterias.js (inline no <html>, no <head>).
+ * Aqui ficam só os padrões (Lotofácil), usados se o JS não carregar.
+ *
+ * --cor-loteria         cor principal (faixa do topo, item ativo, botões)
+ * --cor-loteria-clara   fundo suave (destaques, hover)
+ * --cor-loteria-escura  gradientes e bordas
+ * --cor-loteria-texto   texto sobre --cor-loteria (preto ou branco, pelo contraste)
+ */
+:root {
+    --cor-loteria: #930089;
+    --cor-loteria-clara: #efd9ed;
+    --cor-loteria-escura: #6e0067;
+    --cor-loteria-texto: #ffffff;
+}
