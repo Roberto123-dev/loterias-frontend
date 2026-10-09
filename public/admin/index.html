@@ -125,17 +125,8 @@
       color: #333;
     }
 
-    .stat-card.pro .value {
-      color: #4caf50;
-    }
 
-    .stat-card.receita .value {
-      color: #667eea;
-    }
 
-    .stat-card.alerta .value {
-      color: #ff9800;
-    }
 
     /* ============= TABELA ============= */
     .table-container {
@@ -218,20 +209,8 @@
       text-transform: uppercase;
     }
 
-    .badge-free {
-      background: #e0e0e0;
-      color: #666;
-    }
 
-    .badge-pro {
-      background: #4caf50;
-      color: white;
-    }
 
-    .badge-expirado {
-      background: #ff9800;
-      color: white;
-    }
 
     /* ============= BOTÕES ============= */
     .btn {
@@ -447,9 +426,8 @@
       </button>
       <button class="tab" onclick="mudarTab('usuarios')">👥 Usuários</button>
       <button class="tab" onclick="mudarTab('historico')">
-        📜 Histórico
+        📜 Histórico de upgrades
       </button>
-      <button class="tab" onclick="mudarTab('alertas')">🔔 Alertas</button>
     </div>
 
     <!-- ========== DASHBOARD ========== -->
@@ -461,20 +439,9 @@
     <div id="usuarios-section" class="content-section">
       <div class="table-container">
         <div class="table-header">
-          <h2>Gerenciar Usuários</h2>
+          <h2>Usuários</h2>
           <div class="filters">
             <input type="text" class="search-box" id="search-usuarios" placeholder="🔍 Buscar por nome ou email..." />
-            <select class="filter-select" id="filter-plano">
-              <option value="">Todos os Planos</option>
-              <option value="free">FREE</option>
-              <option value="pro">PRO</option>
-            </select>
-            <select class="filter-select" id="filter-status">
-              <option value="">Todos os Status</option>
-              <option value="ativo">PRO Ativo</option>
-              <option value="expirado">PRO Expirado</option>
-              <option value="free">FREE</option>
-            </select>
           </div>
         </div>
         <div id="usuarios-lista"></div>
@@ -486,121 +453,16 @@
       <div class="table-container">
         <div class="table-header">
           <h2>Histórico de Upgrades</h2>
+          <!-- Sistema gratuito: histórico só para consulta. O CSV lista quem ainda
+               tinha plano válido, para avisar esses clientes. -->
+          <button class="btn btn-success" id="btn-exportar-planos" onclick="exportarPlanosValidosCSV()">
+            ⬇️ Exportar planos ainda válidos (CSV)
+          </button>
         </div>
         <div id="historico-lista"></div>
       </div>
     </div>
 
-    <!-- ========== ALERTAS ========== -->
-    <div id="alertas-section" class="content-section">
-      <div class="table-container">
-        <div class="table-header">
-          <h2>Planos Expirando (Próximos 7 Dias)</h2>
-        </div>
-        <div id="alertas-lista"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Ativar PRO -->
-  <div id="modal-ativar" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>⭐ Ativar Plano PRO</h2>
-        <button class="modal-close" onclick="fecharModal('modal-ativar')">
-          ×
-        </button>
-      </div>
-      <form id="form-ativar">
-        <input type="hidden" id="ativar-usuario-id" />
-
-        <div class="form-group">
-          <label>Usuário:</label>
-          <input type="text" id="ativar-usuario-nome" disabled />
-        </div>
-
-        <div class="form-group">
-          <label>Duração:*</label>
-          <select id="ativar-dias" required>
-            <option value="7">7 dias (R$ 4,90)</option>
-            <option value="15">15 dias (R$ 7,90)</option>
-            <option value="30" selected>30 dias (R$ 9,90)</option>
-            <option value="90">90 dias (R$ 24,90)</option>
-            <option value="180">180 dias (R$ 44,90)</option>
-            <option value="365">365 dias (R$ 29,90)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Valor Pago (R$):*</label>
-          <input type="number" step="0.01" id="ativar-valor" value="9.90" required />
-        </div>
-
-        <div class="form-group">
-          <label>Método de Pagamento:*</label>
-          <select id="ativar-metodo" required>
-            <option value="WhatsApp - PIX">WhatsApp - PIX</option>
-            <option value="WhatsApp - Transferência">
-              WhatsApp - Transferência
-            </option>
-            <option value="Mercado Pago">Mercado Pago</option>
-            <option value="Cortesia">Cortesia</option>
-            <option value="Outro">Outro</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Observações:</label>
-          <textarea id="ativar-obs" placeholder="Informações adicionais (opcional)..."></textarea>
-        </div>
-
-        <div class="btn-group">
-          <button type="submit" class="btn btn-success">✅ Ativar PRO</button>
-          <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-ativar')">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Desativar PRO -->
-  <div id="modal-desativar" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>⚠️ Desativar Plano PRO</h2>
-        <button class="modal-close" onclick="fecharModal('modal-desativar')">
-          ×
-        </button>
-      </div>
-      <form id="form-desativar">
-        <input type="hidden" id="desativar-usuario-id" />
-
-        <div class="alert alert-warning">
-          ⚠️ <strong>Atenção:</strong> Esta ação irá desativar o plano PRO do
-          usuário e mudar para FREE imediatamente.
-        </div>
-
-        <div class="form-group">
-          <label>Usuário:</label>
-          <input type="text" id="desativar-usuario-nome" disabled />
-        </div>
-
-        <div class="form-group">
-          <label>Motivo:*</label>
-          <textarea id="desativar-obs" placeholder="Descreva o motivo da desativação..." required></textarea>
-        </div>
-
-        <div class="btn-group">
-          <button type="submit" class="btn btn-danger">
-            🚫 Desativar PRO
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-desativar')">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
   </div>
 
   <!-- Modal Resetar Senha -->
@@ -659,14 +521,6 @@
         <label>Cadastrado em:</label>
         <p id="detalhe-cadastro"></p>
       </div>
-      <div class="form-group">
-        <label>Plano:</label>
-        <p id="detalhe-plano"></p>
-      </div>
-      <div class="form-group">
-        <label>Status:</label>
-        <p id="detalhe-status"></p>
-      </div>
       <div class="btn-group">
         <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-detalhes')">
           Fechar
@@ -719,7 +573,6 @@
       if (tab === "dashboard") carregarDashboard();
       else if (tab === "usuarios") carregarUsuarios();
       else if (tab === "historico") carregarHistorico();
-      else if (tab === "alertas") carregarAlertas();
     }
 
     // ========== DASHBOARD ==========
@@ -741,41 +594,10 @@
                 <h3>Total de Usuários</h3>
                 <div class="value">${d.total_usuarios || 0}</div>
               </div>
-              <div class="stat-card pro">
-                <h3>PRO Ativos</h3>
-                <div class="value">${d.total_pro_ativos || 0}</div>
-              </div>
-              <div class="stat-card">
-                <h3>FREE</h3>
-                <div class="value">${d.total_free || 0}</div>
-              </div>
-              <div class="stat-card receita">
-                <h3>Receita Hoje</h3>
-                <div class="value">R$ ${parseFloat(d.receita_hoje || 0).toFixed(
-            2,
-          )}</div>
-              </div>
-              <div class="stat-card receita">
-                <h3>Receita Mês</h3>
-                <div class="value">R$ ${parseFloat(d.receita_mes || 0).toFixed(
-            2,
-          )}</div>
-              </div>
-              <div class="stat-card">
-                <h3>Upgrades Hoje</h3>
-                <div class="value">${d.upgrades_hoje || 0}</div>
-              </div>
-              <div class="stat-card">
-                <h3>Upgrades Mês</h3>
-                <div class="value">${d.upgrades_mes || 0}</div>
-              </div>
-              <div class="stat-card alerta">
-                <h3>Expiram em 7 dias</h3>
-                <div class="value">${d.expiram_7_dias || 0}</div>
-              </div>
             `;
         }
       } catch (error) {
+          if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
         console.error("Erro:", error);
         container.innerHTML =
           '<div class="loading">❌ Erro ao carregar dashboard</div>';
@@ -794,13 +616,9 @@
 
       try {
         const busca = document.getElementById("search-usuarios")?.value || "";
-        const plano = document.getElementById("filter-plano")?.value || "";
-        const status = document.getElementById("filter-status")?.value || "";
 
         const params = new URLSearchParams({
           busca,
-          plano,
-          status,
           limit: 100,
         });
 
@@ -816,6 +634,7 @@
           renderUsuariosPaginados();
         }
       } catch (error) {
+          if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
         console.error("Erro:", error);
         container.innerHTML =
           '<div class="loading">❌ Erro ao carregar usuários</div>';
@@ -902,8 +721,6 @@
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Email</th>
-                <th>Status</th>
-                <th>Expira em</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -911,33 +728,13 @@
         `;
 
       usuarios.forEach((u) => {
-        const statusBadge =
-          u.status === "PRO ATIVO"
-            ? "badge-pro"
-            : u.status === "PRO EXPIRADO"
-              ? "badge-expirado"
-              : "badge-free";
-
-        const expiraEm = u.plano_expira_em
-          ? new Date(u.plano_expira_em).toLocaleDateString("pt-BR")
-          : "-";
-
-        const diasRestantes =
-          u.dias_restantes > 0 ? `(${u.dias_restantes}d)` : "";
-
         html += `
             <tr>
               <td>${u.id}</td>
               <td>${escapeHtml(u.nome)}</td>
               <td>${escapeHtml(u.email)}</td>
-              <td><span class="badge ${statusBadge}">${escapeHtml(u.status)}</span></td>
-              <td>${expiraEm} ${diasRestantes}</td>
               <td>
                 <div class="btn-group">
-                  ${u.status !== "PRO ATIVO"
-            ? `<button class="btn btn-success" data-acao="ativar" data-id="${u.id}" data-nome="${escapeHtml(u.nome)}">⭐ Ativar PRO</button>`
-            : `<button class="btn btn-danger" data-acao="desativar" data-id="${u.id}" data-nome="${escapeHtml(u.nome)}">🚫 Desativar</button>`
-          }
                     <button class="btn btn-secondary" data-acao="reset" data-id="${u.id}" data-nome="${escapeHtml(u.nome)}">
                       🔐 Resetar
                     </button>
@@ -956,7 +753,7 @@
 
     // Filtros
     document.addEventListener("DOMContentLoaded", () => {
-      ["search-usuarios", "filter-plano", "filter-status"].forEach((id) => {
+      ["search-usuarios"].forEach((id) => {
         const el = document.getElementById(id);
         if (el) {
           el.addEventListener("input", carregarUsuarios);
@@ -1023,79 +820,66 @@
           container.innerHTML = html;
         }
       } catch (error) {
+          if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
         console.error("Erro:", error);
         container.innerHTML =
           '<div class="loading">❌ Erro ao carregar histórico</div>';
       }
     }
 
-    // ========== ALERTAS ==========
-    async function carregarAlertas() {
-      const container = document.getElementById("alertas-lista");
-      container.innerHTML =
-        '<div class="loading"><div class="spinner"></div>Carregando alertas...</div>';
-
-      try {
-        const response = await fetch(`${API_URL}/api/admin/alertas`, {
-          headers,
-        });
-        const data = await response.json();
-
-        if (data.success) {
-          if (data.data.length === 0) {
-            container.innerHTML =
-              '<div class="alert alert-info">✅ Nenhum plano expirando nos próximos 7 dias!</div>';
-            return;
-          }
-
-          let html = `
-              <table>
-                <thead>
-                  <tr>
-                    <th>Usuário</th>
-                    <th>Email</th>
-                    <th>Expira em</th>
-                    <th>Dias Restantes</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-            `;
-
-          data.data.forEach((u) => {
-            const expiraEm = new Date(u.plano_expira_em).toLocaleDateString(
-              "pt-BR",
-            );
-
-            html += `
-                <tr>
-                  <td>${escapeHtml(u.nome)}</td>
-                  <td>${escapeHtml(u.email)}</td>
-                  <td>${expiraEm}</td>
-                  <td><span class="badge badge-expirado">${u.dias_restantes} dias</span></td>
-                  <td>
-                    <button class="btn btn-primary" onclick="notificarUsuario(${u.id})">
-                      📧 Notificar
-                    </button>
-                  </td>
-                </tr>
-              `;
-          });
-
-          html += "</tbody></table>";
-          container.innerHTML = html;
-        }
-      } catch (error) {
-        console.error("Erro:", error);
-        container.innerHTML =
-          '<div class="loading">❌ Erro ao carregar alertas</div>';
-      }
+    // ========== EXPORTAR PLANOS AINDA VÁLIDOS (CSV) ==========
+    // Sistema gratuito: lista quem pagou e ainda estaria dentro do prazo, para avisá-los.
+    function campoCSV(valor) {
+      let v = String(valor ?? "");
+      // Evita fórmula ao abrir no Excel (CSV injection)
+      if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
+      return '"' + v.replace(/"/g, '""') + '"';
     }
 
-    function notificarUsuario(id) {
-      alert(
-        "Funcionalidade de notificação por email será implementada em breve!",
-      );
+    // "2027-01-15T00:00:00.000Z" → "15/01/2027" (a data como está no banco; converter
+    // para o fuso do navegador mostraria o dia anterior)
+    function dataSemFuso(iso) {
+      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ""));
+      return m ? `${m[3]}/${m[2]}/${m[1]}` : "";
+    }
+
+    async function exportarPlanosValidosCSV() {
+      const botao = document.getElementById("btn-exportar-planos");
+      botao.disabled = true;
+      try {
+        const params = new URLSearchParams({ status: "ativo", limit: 10000 });
+        const response = await fetch(`${API_URL}/api/admin/usuarios?${params}`, { headers });
+        const data = await response.json();
+        if (!data.success) throw new Error(data.message || "Falha ao buscar usuários");
+
+        const linhas = [["Nome", "E-mail", "Plano válido até", "Dias restantes"]];
+        data.data.forEach((u) => {
+          linhas.push([
+            u.nome,
+            u.email,
+            dataSemFuso(u.plano_expira_em),
+            u.dias_restantes ?? "",
+          ]);
+        });
+
+        // ";" + BOM: abre direto no Excel em português, com acentos
+        const csv = "\uFEFF" + linhas.map((l) => l.map(campoCSV).join(";")).join("\r\n");
+        const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `planos-validos-${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        alert(`✅ ${data.data.length} cliente(s) com plano ainda válido exportado(s).`);
+      } catch (error) {
+          if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
+        console.error("Erro ao exportar CSV:", error);
+        alert("❌ Não foi possível exportar a lista.");
+      } finally {
+        botao.disabled = false;
+      }
     }
 
     // ========== MODAIS ==========
@@ -1107,28 +891,12 @@
       document.getElementById("detalhe-cadastro").textContent = u.cadastrado_em
         ? new Date(u.cadastrado_em).toLocaleDateString("pt-BR")
         : "—";
-      document.getElementById("detalhe-plano").textContent = u.plano?.toUpperCase() || "—";
-      document.getElementById("detalhe-status").textContent = u.status;
       document.getElementById("modal-detalhes").style.display = "flex";
-    }
-
-    function abrirModalAtivar(id, nome) {
-      document.getElementById("ativar-usuario-id").value = id;
-      document.getElementById("ativar-usuario-nome").value = nome;
-      document.getElementById("modal-ativar").style.display = "flex";
-    }
-
-    function abrirModalDesativar(id, nome) {
-      document.getElementById("desativar-usuario-id").value = id;
-      document.getElementById("desativar-usuario-nome").value = nome;
-      document.getElementById("modal-desativar").style.display = "flex";
     }
 
     // Botões da lista de usuários: data-* + delegação, sem onclick inline com nome.
     // O dataset devolve o texto já decodificado, então o nome chega intacto ao modal.
     const ACOES_USUARIO = {
-      ativar: abrirModalAtivar,
-      desativar: abrirModalDesativar,
       reset: abrirModalReset,
     };
     document.addEventListener("click", (e) => {
@@ -1140,103 +908,6 @@
     function fecharModal(id) {
       document.getElementById(id).style.display = "none";
     }
-
-    // Atualizar valor ao mudar duração
-    document
-      .getElementById("ativar-dias")
-      ?.addEventListener("change", (e) => {
-        const valores = {
-          7: 4.9,
-          15: 7.9,
-          30: 9.9,
-          90: 24.9,
-          180: 44.9,
-          365: 79.9,
-        };
-        document.getElementById("ativar-valor").value =
-          valores[e.target.value] || 0;
-      });
-
-    // ========== ATIVAR PRO ==========
-    document
-      .getElementById("form-ativar")
-      ?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const id = document.getElementById("ativar-usuario-id").value;
-        const dias = document.getElementById("ativar-dias").value;
-        const valor = document.getElementById("ativar-valor").value;
-        const metodo = document.getElementById("ativar-metodo").value;
-        const observacoes = document.getElementById("ativar-obs").value;
-
-        try {
-          const response = await fetch(
-            `${API_URL}/api/admin/usuarios/${id}/ativar`,
-            {
-              method: "POST",
-              headers,
-              body: JSON.stringify({ dias, valor, metodo, observacoes }),
-            },
-          );
-
-          const data = await response.json();
-
-          if (data.success) {
-            alert("✅ Plano PRO ativado com sucesso!");
-            fecharModal("modal-ativar");
-            carregarUsuarios();
-            carregarDashboard();
-          } else {
-            alert("❌ Erro: " + data.message);
-          }
-        } catch (error) {
-          console.error("Erro:", error);
-          alert("❌ Erro ao ativar plano PRO");
-        }
-      });
-
-    // ========== DESATIVAR PRO ==========
-    document
-      .getElementById("form-desativar")
-      ?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const id = document.getElementById("desativar-usuario-id").value;
-        const observacoes = document.getElementById("desativar-obs").value;
-
-        if (
-          !confirm(
-            "Tem certeza que deseja desativar o plano PRO deste usuário?",
-          )
-        ) {
-          return;
-        }
-
-        try {
-          const response = await fetch(
-            `${API_URL}/api/admin/usuarios/${id}/desativar`,
-            {
-              method: "POST",
-              headers,
-              body: JSON.stringify({ observacoes }),
-            },
-          );
-
-          const data = await response.json();
-
-          if (data.success) {
-            alert("✅ Plano PRO desativado com sucesso!");
-            fecharModal("modal-desativar");
-            carregarUsuarios();
-            carregarDashboard();
-          } else {
-            alert("❌ Erro: " + data.message);
-          }
-        } catch (error) {
-          console.error("Erro:", error);
-          alert("❌ Erro ao desativar plano PRO");
-        }
-      });
 
     function abrirModalReset(id, nome) {
       document.getElementById("reset-usuario-id").value = id;
@@ -1277,6 +948,7 @@
             alert("❌ Erro: " + data.message);
           }
         } catch (error) {
+            if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
           console.error("Erro:", error);
           alert("❌ Erro ao redefinir senha");
         }

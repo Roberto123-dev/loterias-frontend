@@ -40,23 +40,9 @@
 
         <!-- ✅ ADICIONAR ESTA LINHA: -->
         <script src="/js/config.js"></script>
+        <!-- Loteria ativa + tema (antes de qualquer CSS, evita "pisca" de cor) -->
+        <script src="/js/loterias.js"></script>
 
-        <script>
-            window.getPlanoCache = function () {
-                try {
-                    var p = localStorage.getItem("plano");
-                    if (p) return p.toLowerCase();
-                    var u = JSON.parse(
-                        localStorage.getItem("usuario") || "null",
-                    );
-                    if (u && u.plano) return String(u.plano).toLowerCase();
-                } catch (e) {}
-                return "free";
-            };
-            if (window.getPlanoCache() === "pro") {
-                document.documentElement.classList.add("plano-pro");
-            }
-        </script>
 
         <!-- Bootstrap 5 CSS -->
         <link
@@ -69,6 +55,9 @@
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
         />
 
+        <link rel="stylesheet" href="/css/tema-loteria.css" />
+        <link rel="stylesheet" href="/css/menu-lateral.css" />
+
         <style>
             * {
                 margin: 0;
@@ -78,144 +67,8 @@
 
             body {
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--fundo-pagina, #f3f4f6);
                 min-height: 100vh;
-            }
-
-            /* ============= SIDEBAR DESKTOP ============= */
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                width: 260px;
-                background: #2c3e50;
-                color: white;
-                transition: all 0.3s;
-                z-index: 1000;
-                overflow-y: auto;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-            }
-
-            .sidebar.collapsed {
-                width: 70px;
-            }
-
-            .sidebar-header {
-                padding: 2px 2px;
-                background: linear-gradient(
-                    135deg,
-                    #6366f1,
-                    #8b5cf6
-                ); /* ajusta pro roxo exato da sua marca */
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .sidebar-brand {
-                display: block;
-                flex: 1;
-            }
-
-            .sidebar-brand-logo {
-                max-width: 100%;
-                height: auto;
-                display: block;
-            }
-
-            .toggle-btn {
-                background: none;
-                border: none;
-                color: white;
-                font-size: 1.5rem;
-                cursor: pointer;
-                padding: 5px;
-                transition: transform 0.3s;
-            }
-
-            .sidebar.collapsed .toggle-btn {
-                transform: rotate(180deg);
-            }
-
-            /* Menu Items */
-            .sidebar-menu {
-                padding: 20px 0;
-            }
-
-            .menu-item {
-                display: flex;
-                align-items: center;
-                padding: 15px 20px;
-                color: white;
-                text-decoration: none;
-                transition: all 0.3s;
-                cursor: pointer;
-                gap: 15px;
-            }
-
-            .menu-item:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: #667eea;
-            }
-
-            .menu-item.active {
-                background: #667eea;
-                border-left: 4px solid #ffd700;
-            }
-
-            .menu-item i {
-                font-size: 1.3rem;
-                min-width: 30px;
-                text-align: center;
-            }
-
-            .menu-item span {
-                transition: all 0.3s;
-            }
-
-            .sidebar.collapsed .menu-item span {
-                display: none;
-            }
-
-            .menu-divider {
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                margin: 10px 20px;
-            }
-
-            /* Badge PRO/FREE */
-            .menu-badge {
-                margin-left: auto;
-                padding: 3px 8px;
-                border-radius: 12px;
-                font-size: 0.7rem;
-                font-weight: bold;
-            }
-
-            .badge-pro {
-                background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
-                animation: shine 2s infinite;
-            }
-
-            .badge-free {
-                background: #e0e0e0;
-                color: #666;
-            }
-
-            .plano-pro .menu-badge {
-                display: none !important;
-            }
-
-            @keyframes shine {
-                0%,
-                100% {
-                    opacity: 1;
-                }
-
-                50% {
-                    opacity: 0.8;
-                }
             }
 
             /* ============= TOP BAR ============= */
@@ -235,7 +88,7 @@
                 transition: left 0.3s;
             }
 
-            .sidebar.collapsed + .top-bar {
+            .menu-recolhido .top-bar {
                 left: 70px;
             }
 
@@ -273,14 +126,6 @@
                 gap: 10px;
             }
 
-            .badge-plano {
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                text-transform: uppercase;
-            }
-
             .btn-admin {
                 padding: 8px 16px;
                 background: #2c3e50;
@@ -315,127 +160,13 @@
             .main-content {
                 margin-left: 260px;
                 margin-top: 70px;
-                /* 60 + 40 */
+                /* top-bar 60 (+40 do aviso, no bloco do aviso) */
                 padding: 30px;
                 min-height: calc(100vh - 60px);
             }
 
-            .sidebar.collapsed ~ .main-content {
+            .menu-recolhido .main-content {
                 margin-left: 70px;
-            }
-
-            /* ============= CARDS DE LOTERIA ============= */
-            .loterias-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 16px;
-                margin-top: 20px;
-            }
-
-            .card-prize {
-                font-size: 1.4rem;
-                font-weight: 800;
-                color: #1e1e2e;
-                line-height: 1.2;
-                word-break: break-word;
-            }
-
-            .loteria-card {
-                background: white;
-                border-radius: 14px;
-                padding: 20px 18px 16px;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-                transition: transform 0.25s, box-shadow 0.25s;
-                position: relative;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .loteria-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-            }
-
-            .loteria-card::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 5px;
-            }
-
-            /* Cores das loterias */
-            .loteria-card.megasena::before {
-                background: #209869;
-            }
-
-            .loteria-card.lotofacil::before {
-                background: #930089;
-            }
-
-            .loteria-card.quina::before {
-                background: #260085;
-            }
-
-            .loteria-card.lotomania::before {
-                background: #f78100;
-            }
-
-            .loteria-card.duplasena::before {
-                background: #a61324;
-            }
-
-            .loteria-card.timemania::before {
-                background: #00ff48;
-            }
-
-            .loteria-card.diadasorte::before {
-                background: #cb852b;
-            }
-
-            .loteria-card.maismilionaria::before {
-                background: #6bccef;
-            }
-
-            .card-top {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .card-meta {
-                display: flex;
-                flex-direction: column;
-                flex: 1;
-                gap: 3px;
-                min-width: 0;
-            }
-
-            .loteria-name {
-                font-size: 1.0rem;
-                font-weight: 700;
-                color: #1e1e2e;
-                margin: 0;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .card-icon {
-                width: 52px;
-                height: 52px;
-                object-fit: contain;
-                flex-shrink: 0;
-            }
-
-            .concurso-numero {
-                font-size: 0.78rem;
-                font-weight: 500;
-                color: #888;
-                margin: 0;
             }
 
             .btn-ver-mais {
@@ -462,58 +193,8 @@
                 cursor: not-allowed;
             }
 
-            .loading {
-                text-align: center;
-                color: white;
-                padding: 40px;
-            }
-
-            .spinner {
-                width: 50px;
-                height: 50px;
-                border: 5px solid rgba(255, 255, 255, 0.3);
-                border-top-color: white;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin: 0 auto 20px;
-            }
-
-            @keyframes spin {
-                to {
-                    transform: rotate(360deg);
-                }
-            }
-
             /* ============= MOBILE STYLES ============= */
             @media (max-width: 768px) {
-                /* Ocultar sidebar no mobile */
-                .sidebar {
-                    transform: translateX(-100%);
-                    width: 100%;
-                    max-width: 300px;
-                    z-index: 9999;
-                }
-
-                .sidebar.mobile-open {
-                    transform: translateX(0);
-                }
-
-                /* Backdrop escuro */
-                .mobile-backdrop {
-                    display: none;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(0, 0, 0, 0.7);
-                    z-index: 9998;
-                }
-
-                .mobile-backdrop.show {
-                    display: block;
-                }
-
                 /* Top bar mobile */
                 .top-bar {
                     left: 0 !important;
@@ -567,69 +248,13 @@
                     min-height: calc(100vh - 70px);
                 }
 
-                /* Cards mobile */
-                .loterias-grid {
-                    grid-template-columns: 1fr;
-                    gap: 10px;
-                }
-
-                .loteria-card {
-                    padding: 14px 12px 12px;
-                }
-
-                .loteria-name {
-                    font-size: 0.88rem;
-                }
-
-                .card-icon {
-                    width: 40px;
-                    height: 40px;
-                }
-
-                .card-prize {
-                    font-size: 1.1rem;
-                }
-
-                /* Ocultar toggle desktop no mobile */
-                .sidebar-header .toggle-btn {
-                    display: none;
-                }
-
-                .news-bar {
-                    left: 0;
-                    width: 100%;
-                }
-
             }
 
-            /* Desktop: mostrar sidebar, ocultar backdrop e botão mobile */
+            /* Desktop: ocultar botão mobile */
             @media (min-width: 769px) {
                 .mobile-menu-btn {
                     display: none;
                 }
-
-                .mobile-backdrop {
-                    display: none !important;
-                }
-            }
-
-            .menu-footer a i.bi-instagram {
-                color: #e1306c;
-                margin-top: auto;
-                padding: 25px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                font-size: 2rem;
-                font-weight: bold;
-            }
-
-            .instagram-link {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                color: #ffffff;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 1.5rem;
             }
 
             .status-concurso {
@@ -647,33 +272,294 @@
                 color: #92400e;
             }
 
-            .status-ganhador {
-                background: #fee2e2;
-                color: #b91c1c;
+            .status-aguardando {
+                background: #e5e7eb;
+                color: #4b5563;
             }
 
-            .proximo-concurso {
+            .status-ganhador {
+                background: #dcfce7;
+                color: #166534;
+            }
+
+
+            /* ============= LOTERIA ATIVA (destaque) ============= */
+            .destaque-card {
+                background: white;
+                border-radius: 14px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+                overflow: hidden;
+            }
+
+            .cabecalho-loteria {
                 display: flex;
                 align-items: center;
-                gap: 5px;
-                font-size: 0.78rem;
-                font-weight: 600;
-                color: #666;
-                margin-top: 2px;
+                gap: 14px;
+                padding: 18px 22px;
+                background: var(--cor-loteria-fundo);
+                color: var(--cor-loteria-texto);
             }
 
-            .proximo-concurso.proximo-hoje {
+            .cabecalho-loteria img {
+                width: 52px;
+                height: 52px;
+                padding: 6px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.92);
+                flex-shrink: 0;
+            }
+
+            .cabecalho-loteria h1 {
+                margin: 0;
+                font-size: 1.6rem;
+                font-weight: 800;
+                line-height: 1.1;
+            }
+
+            .cabecalho-loteria .subtitulo {
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            .destaque-corpo {
+                padding: 20px 22px;
+                display: grid;
+                gap: 16px;
+            }
+
+            .destaque-topo {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .destaque-concurso {
+                font-size: 1.1rem;
+                font-weight: 800;
+                color: #1e1e2e;
+            }
+
+            .destaque-data {
+                font-weight: 500;
+                color: #666;
+            }
+
+            .destaque-card .status-concurso {
+                font-size: 0.85rem;
+                padding: 6px 14px;
+            }
+
+            .rotulo-sorteio {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #666;
+                text-transform: uppercase;
+                margin-bottom: 6px;
+            }
+
+            .bolas {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .bola {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 1.05rem;
+                background: var(--cor-loteria-fundo);
+                color: var(--cor-loteria-texto);
+                box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.15);
+            }
+
+            .bola.trevo {
+                background: #2e7d32;
+                color: white;
+            }
+
+            .extra-concurso {
+                font-weight: 600;
+                color: #333;
+            }
+
+            .premio-bloco {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: 10px;
+                background: var(--cor-loteria-clara);
+            }
+
+            .premio-rotulo {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #555;
+                text-transform: uppercase;
+            }
+
+            .premio-valor {
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: #1e1e2e;
+            }
+
+            .proximo-valor {
+                font-size: 1.15rem;
+                font-weight: 700;
+                color: #1e1e2e;
+            }
+
+            .proximo-valor.proximo-hoje {
                 color: #16a34a;
             }
 
+            .destaque-rodape {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .destaque-rodape .btn-ver-mais {
+                display: inline-block;
+                text-decoration: none;
+                text-align: center;
+                width: auto;
+                padding: 10px 18px;
+                background: var(--cor-loteria-fundo);
+                color: var(--cor-loteria-texto);
+            }
+
+            /* ============= ATALHOS ============= */
+            .secao-titulo {
+                color: #374151;
+                font-size: 1.2rem;
+                font-weight: 700;
+                margin: 28px 0 12px;
+            }
+
+            /* 8 atalhos: 4 colunas (2 linhas completas); 2 colunas em telas estreitas */
+            .atalhos-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+
+            .atalho {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 16px;
+                border-radius: 12px;
+                border-top: 4px solid var(--cor-loteria);
+                background: white;
+                color: #1e1e2e;
+                text-decoration: none;
+                font-weight: 600;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            .atalho:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+                color: #1e1e2e;
+            }
+
+            .atalho i {
+                font-size: 1.6rem;
+                color: var(--cor-loteria-escura);
+            }
+
+            .atalho.em-breve {
+                opacity: 0.6;
+                cursor: not-allowed;
+                border-top-color: #cbd5e1;
+            }
+
+            .atalho.em-breve:hover {
+                transform: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .atalho.em-breve i {
+                color: #94a3b8;
+            }
+
+            .atalho small {
+                font-size: 0.72rem;
+                font-weight: 500;
+                color: #64748b;
+            }
+
+            @media (max-width: 1000px) {
+                .atalhos-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media (max-width: 768px) {
+                .cabecalho-loteria h1 {
+                    font-size: 1.3rem;
+                }
+
+                .bola {
+                    width: 36px;
+                    height: 36px;
+                    font-size: 0.95rem;
+                }
+
+                .atalhos-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <!-- ============= MENU LATERAL (js/menu-lateral.js) ============= -->
+        <aside class="sidebar" id="sidebar">
+            <script src="/js/menu-lateral.js"></script>
+        </aside>
+
+        <!-- ============= TOP BAR ============= -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <!-- Botão hambúrguer apenas mobile -->
+                <button class="mobile-menu-btn" onclick="openMobileMenu()">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            <div class="top-bar-right">
+                <div class="user-info">
+                    <span id="nome-usuario"></span>
+                </div>
+                <a id="btn-admin" href="/admin/" class="btn-admin">
+                    <i class="bi bi-shield-fill-check"></i> Admin
+                </a>
+                <button class="btn-sair" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Sair
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== AVISO "100% GRATUITO" (temporário) =====
+             Para remover: apague tudo daqui até "FIM DO AVISO" (HTML + CSS).
+             A margem do conteúdo volta sozinha (o +40px só existe com a faixa). -->
+        <style>
             .news-bar {
                 position: fixed;
                 top: 60px;
-                /* abaixo da top-bar */
                 left: 0;
-                /* 🔥 começa do canto da tela */
                 width: 100%;
-                /* 🔥 largura total real */
                 height: 40px;
                 background: linear-gradient(90deg, #6a5acd, #8a2be2);
                 color: #fff;
@@ -686,10 +572,9 @@
             }
 
             .news-track {
-                padding-left: 100%;
-                padding-right: 50px;
                 display: inline-block;
                 padding-left: 100%;
+                padding-right: 50px;
                 animation: scrollText 30s linear infinite;
             }
 
@@ -703,372 +588,39 @@
                 }
             }
 
-            @media (min-width: 769px) and (max-width: 1100px) {
-                .loterias-grid { grid-template-columns: repeat(2, 1fr); }
-            }
-
-            @media (min-width: 1101px) and (max-width: 1400px) {
-                .loterias-grid { grid-template-columns: repeat(3, 1fr); }
-            }
-
-            @media (max-width: 380px) {
-                .loterias-grid { grid-template-columns: 1fr; }
+            /* espaço da faixa abaixo da top-bar */
+            .news-bar ~ .main-content {
+                margin-top: 110px;
             }
         </style>
-    </head>
-
-    <body>
-        <!-- ============= BACKDROP MOBILE ============= -->
-        <div
-            class="mobile-backdrop"
-            id="mobileBackdrop"
-            onclick="closeMobileMenu()"
-        ></div>
-
-        <!-- ============= SIDEBAR ============= -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <a href="/index.html" class="sidebar-brand">
-                    <img
-                        src="ROBERTO (3).png"
-                        alt="Roberto Loterias - Sua sorte, nossa missão"
-                        class="sidebar-brand-logo"
-                    />
-                </a>
-                <button class="toggle-btn" onclick="toggleSidebar()">
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>
-
-            <div class="sidebar-menu">
-                <!-- Home -->
-                <a href="/index.html" class="menu-item active">
-                    <i class="bi bi-house-fill"></i>
-                    <span>Início</span>
-                </a>
-
-                <div class="menu-divider"></div>
-
-                <!-- Gerar Jogos -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="
-                        verificarPlanoENavegar(
-                            '/ferramentas/gerador-combinacoes.html',
-                            event,
-                        )
-                    "
-                >
-                    <i class="bi bi-dice-3-fill"></i>
-                    <span>Gerar Jogos</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <!-- Meus Jogos -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="verificarPlanoENavegar('/jogos/meus-jogos.html', event)"
-                >
-                    <i class="bi bi-save-fill"></i>
-                    <span>Meus Jogos</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <!-- Conferir Jogo -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="verificarPlanoENavegar('/analise/conferir.html', event)"
-                >
-                    <i class="bi bi-check-circle-fill"></i>
-                    <span>Conferir Jogo</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <!-- Ciclo das Dezenas -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="
-                        verificarPlanoENavegar('/ferramentas/ciclo-dezenas.html', event)
-                    "
-                >
-                    <i class="bi bi-fire"></i>
-                    <span>Ciclo das Dezenas</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <div class="menu-divider"></div>
-
-                <!-- Mapa das Dezenas -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="verificarPlanoENavegar('/analise/mapa-dezenas.html', event)"
-                >
-                    <i class="bi bi-bar-chart-fill"></i>
-                    <span>Mapa das Dezenas</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <!-- Estatísticas -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="verificarPlanoENavegar('/analise/estatisticas.html', event)"
-                >
-                    <i class="bi bi-calculator-fill"></i>
-                    <span>Estatíticas</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <!-- Análise Dezenas -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="
-                        verificarPlanoENavegar('/analise/analise-dezenas.html', event)
-                    "
-                >
-                    <i class="bi bi-graph-up"></i>
-                    <span>Analise Dezenas</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <!-- Análise Combinações -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="
-                        verificarPlanoENavegar(
-                            '/analise/analise-combinacoes.html',
-                            event,
-                        )
-                    "
-                >
-                    <i class="bi bi-bullseye"></i>
-                    <span>Analise Combinações</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-
-                <!-- Notificações por Email -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="toggleNotificacoes(event)"
-                >
-                    <i class="bi bi-bell-fill" id="icon-notificacao"></i>
-                    <span id="label-notificacao">Ativar Notificações</span>
-                </a>
-
-                <div class="menu-divider"></div>
-
-                <!-- Configurações -->
-                <a
-                    href="#"
-                    class="menu-item"
-                    onclick="
-                        verificarPlanoENavegar('/auth/perfilusuario.html', event)
-                    "
-                >
-                    <i class="bi bi-gear-fill"></i>
-                    <span>Configurações</span>
-                    <span class="menu-badge badge-pro">PRO</span>
-                </a>
-            </div>
-
-            <div>
-                <li class="menu-footer">
-                    <a
-                        href="https://www.instagram.com/roberto.loterias"
-                        target="_blank"
-                        class="instagram-link"
-                    >
-                        <i class="bi bi-instagram"></i>
-                        <span>Instagram</span>
-                    </a>
-                </li>
-            </div>
-        </div>
-
-        <!-- ============= TOP BAR ============= -->
-        <div class="top-bar">
-            <div class="top-bar-left">
-                <!-- Botão hambúrguer apenas mobile -->
-                <button class="mobile-menu-btn" onclick="openMobileMenu()">
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>
-            <div class="top-bar-right">
-                <span id="badge-plano" class="badge-plano"></span>
-                <div class="user-info">
-                    <span id="nome-usuario"></span>
-                </div>
-                <a id="btn-admin" href="/admin/" class="btn-admin">
-                    <i class="bi bi-shield-fill-check"></i> Admin
-                </a>
-                <button class="btn-sair" onclick="logout()">
-                    <i class="bi bi-box-arrow-right"></i> Sair
-                </button>
-            </div>
-        </div>
-
         <div class="news-bar">
             <div class="news-track">
-                🎯 Confira os últimos resultados atualizados • 💰 Aumente suas
-                chances com análises inteligentes • 🚀 Usuários PRÓ têm acesso a
-                estatísticas avançadas •
+                🎉 Roberto Loterias agora é 100% gratuito • Ferramentas para todas as loterias •
             </div>
+        </div>
+        <!-- ===== FIM DO AVISO ===== -->
         </div>
 
         <!-- ============= MAIN CONTENT ============= -->
         <div class="main-content">
-            <div id="loterias-container" class="loterias-grid">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>📊 Carregando loterias...</p>
-                </div>
-            </div>
+            <!-- Loteria ativa: cabeçalho + último concurso (preenchido via JS) -->
+            <section id="loteria-destaque" class="destaque-card" aria-live="polite"></section>
+
+            <h2 class="secao-titulo" id="titulo-atalhos">Ferramentas</h2>
+            <nav id="atalhos-grid" class="atalhos-grid" aria-label="Ferramentas da loteria"></nav>
         </div>
 
-        <!-- ============= MODAL DE UPGRADE ============= -->
-        <div
-            class="modal fade"
-            id="modalUpgrade"
-            tabindex="-1"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div
-                        class="modal-body text-center p-5"
-                        id="modalUpgradeBody"
-                    >
-                        <div style="font-size: 4rem; margin-bottom: 20px">
-                            🔒
-                        </div>
-                        <h2>Recurso Exclusivo PRÓ</h2>
-                        <p>
-                            Este recurso está disponível apenas para usuários
-                            com plano PRÓ.
-                        </p>
-                        <button
-                            class="btn btn-warning btn-lg"
-                            onclick="fazerUpgrade()"
-                            style="
-                                background: linear-gradient(
-                                    135deg,
-                                    #ffd700 0%,
-                                    #ff6b6b 100%
-                                );
-                                border: none;
-                                font-weight: bold;
-                            "
-                        >
-                            ⭐ Fazer Upgrade Agora
-                        </button>
-                        <button
-                            class="btn btn-secondary btn-lg ms-2"
-                            data-bs-dismiss="modal"
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Bootstrap 5 JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/escape-html.js"></script>
 
-        <script src="/js/proximo-concurso.js"></script>
 
         <script>
-            const LOTERIAS = [
-                {
-                    id: "lotofacil",
-                    nome: "Lotofácil",
-                    icon: "image/favicon-lf-32.png",
-                    endpoint: "/lotofacil",
-                },
-                {
-                    id: "megasena",
-                    nome: "Mega-Sena",
-                    icon: "image/favicon-ms-32.png",
-                    endpoint: "/megasena",
-                },
-                {
-                    id: "quina",
-                    nome: "Quina",
-                    icon: "image/favicon-qu-32.png",
-                    endpoint: "/quina",
-                },
-                {
-                    id: "lotomania",
-                    nome: "Lotomania",
-                    icon: "image/favicon-lm-32.png",
-                    endpoint: "/lotomania",
-                },
-                {
-                    id: "duplasena",
-                    nome: "Dupla-Sena",
-                    icon: "image/favicon-ds-32.png",
-                    endpoint: "/duplasena",
-                },
-                {
-                    id: "timemania",
-                    nome: "Timemania",
-                    icon: "image/favicon-tm-32.png",
-                    endpoint: "/timemania",
-                },
-                {
-                    id: "diadasorte",
-                    nome: "Dia de Sorte",
-                    icon: "image/favicon-di-32.png",
-                    endpoint: "/diadasorte",
-                },
-                {
-                    id: "maismilionaria",
-                    nome: "+Milionária",
-                    icon: "image/favicon-mm-32.png",
-                    endpoint: "/maismilionaria",
-                },
-            ];
-
-            let planoUsuario = window.getPlanoCache();
-            let modalUpgrade;
-
             function getUsuario() {
                 try {
                     return JSON.parse(localStorage.getItem("usuario"));
                 } catch {
                     return null;
                 }
-            }
-
-            // ========== MENU MOBILE ==========
-            function openMobileMenu() {
-                document.getElementById("sidebar").classList.add("mobile-open");
-                document.getElementById("mobileBackdrop").classList.add("show");
-                document.body.style.overflow = "hidden"; // Prevenir scroll
-            }
-
-            function closeMobileMenu() {
-                document
-                    .getElementById("sidebar")
-                    .classList.remove("mobile-open");
-                document
-                    .getElementById("mobileBackdrop")
-                    .classList.remove("show");
-                document.body.style.overflow = ""; // Restaurar scroll
-            }
-
-            // ========== SIDEBAR DESKTOP ==========
-            function toggleSidebar() {
-                const sidebar = document.getElementById("sidebar");
-                sidebar.classList.toggle("collapsed");
             }
 
             // ========== PLANO ==========
@@ -1093,275 +645,157 @@
                     );
                     return JSON.parse(jsonPayload);
                 } catch (e) {
+                    if (e && e.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     return null;
                 }
             }
 
-            async function verificarPlanoUsuario() {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    planoUsuario = "free";
-                    atualizarBadgePlano("free");
-                    atualizarMenuBadges("free");
-                    return { plano: "free" };
-                }
-                try {
-                    const response = await fetch(
-                        `${API_URL}/api/planos/meu-plano`,
-                        {
-                            headers: { Authorization: `Bearer ${token}` },
-                        },
-                    );
-                    if (!response.ok)
-                        throw new Error(`HTTP ${response.status}`);
-
-                    const data = await response.json();
-                    if (data?.success && data.data?.plano) {
-                        planoUsuario = data.data.plano;
-                        localStorage.setItem("plano", planoUsuario);
-                        atualizarBadgePlano(planoUsuario);
-                        atualizarMenuBadges(planoUsuario);
-                        return data.data;
-                    }
-                } catch (error) {
-                    console.error("Erro ao verificar plano:", error);
-                }
-                return { plano: "free" };
-            }
-
-            function atualizarBadgePlano(plano) {
-                const badge = document.getElementById("badge-plano");
-                if (plano === "pro") {
-                    badge.textContent = "⭐ PRÓ";
-                    badge.className = "badge-plano badge-pro";
-                } else {
-                    badge.textContent = "FREE";
-                    badge.className = "badge-plano badge-free";
-                }
-            }
-
-            function atualizarMenuBadges(plano) {
-                const badges = document.querySelectorAll(".menu-badge");
-                const isPro = plano === "pro";
-                document.documentElement.classList.toggle("plano-pro", isPro);
-                badges.forEach((badge) => {
-                    badge.style.display = isPro ? "none" : "";
-                });
-            }
-
-            function mostrarModalUpgrade() {
-                if (modalUpgrade) modalUpgrade.show();
-            }
-
-            function verificarPlanoENavegar(url, event) {
-                event.preventDefault();
-                closeMobileMenu(); // Fechar menu ao clicar
-                if (planoUsuario === "free") {
-                    mostrarModalUpgrade();
-                    return false;
-                }
-                window.location.href = url;
-            }
-
-            function fazerUpgrade() {
-                const usuario = getUsuario();
-
-                if (!usuario) {
-                    alert(
-                        "❌ Erro: Usuário não encontrado. Faça login novamente.",
-                    );
-                    return;
-                }
-
-                const body = document.getElementById("modalUpgradeBody");
-
-                body.innerHTML = `
-          <div class="text-center">
-            <div style="font-size:3.5rem">💎</div>
-            <h2 class="mt-2 fw-bold">Seja PRÓ</h2>
-            <p class="text-muted">
-              Libere <strong>todas as funcionalidades</strong> do Sistema de Loterias
-            </p>
-          </div>
-
-          <!-- PLANO DESTAQUE -->
-          <div class="card border-0 shadow-sm mt-4"
-              style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;">
-            <div class="card-body text-center">
-              <span class="badge bg-warning text-dark mb-2">🔥 MELHOR OFERTA</span>
-              <h3 class="fw-bold mt-2">Plano Anual PRÓ</h3>
-
-              <div style="font-size:3rem;font-weight:bold">
-                R$ 29,90
-              </div>
-              <small>pagamento único • acesso por 12 meses</small>
-
-              <ul class="list-unstyled mt-3 text-start">
-                <li>✅ Gerador ilimitado de jogos</li>
-                <li>✅ Salvar e organizar jogos</li>
-                <li>✅ Conferência automática</li>
-                <li>✅ Estatísticas e mapas</li>
-                <li>✅ Atualizações em tempo real</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- COMO FUNCIONA -->
-          <div class="mt-4 text-muted text-start">
-            <p class="fw-bold mb-1">🔐 Como funciona</p>
-            <small>
-              1️⃣ Realize o pagamento do plano<br>
-              2️⃣ Envie o comprovante<br>
-              3️⃣ Ativação em até <strong>24 horas</strong>
-            </small>
-          </div>
-
-          <!-- PIX -->
-          <div class="mt-4">
-            <p class="fw-bold mb-2">💠 Pagamento via PIX</p>
-
-            <div class="d-flex justify-content-center gap-2">
-              <input
-                type="text"
-                id="pixKey"
-                class="form-control text-center"
-                style="max-width:260px"
-                value="21981092008"
-                readonly
-              />
-
-              <button class="btn btn-success" onclick="copiarPix()">
-                📋 Copiar
-              </button>
-            </div>
-
-            <small class="text-muted d-block mt-2">
-              Chave PIX • Celular
-            </small>
-          </div>
-
-            <!-- WHATSAPP -->
-            <div class="mt-4 text-center">
-              <a
-                href="https://wa.me/5521981092008"
-                target="_blank"
-                class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
-                style="border-radius: 12px;"
-              >
-                <i class="bi bi-whatsapp" style="font-size: 1.5rem;"></i>
-                Falar no WhatsApp
-              </a>
-
-              <small class="text-muted d-block mt-2">
-                Atendimento rápido após o pagamento
-              </small>
-            </div>
-
-            <button class="btn btn-outline-secondary"
-                    data-bs-dismiss="modal">
-              Agora não
-            </button>
-          </div>
-        `;
-            }
-
-            function copiarPix() {
-                const pixInput = document.getElementById("pixKey");
-                pixInput.select();
-                pixInput.setSelectionRange(0, 99999); // mobile
-
-                navigator.clipboard.writeText(pixInput.value);
-
-                alert(
-                    "✅ Chave PIX copiada!\n\nAgora cole no app do seu banco para realizar o pagamento.",
-                );
-            }
-
-            function verDetalhes(loteriaId) {
-                if (planoUsuario === "free") {
-                    mostrarModalUpgrade();
-                    return false;
-                }
-                window.location.href = `/loterias/${loteriaId}.html`;
-            }
-
             function logout() {
+                // preserva a última loteria escolhida
+                const loteriaAtiva = localStorage.getItem("loteriaAtiva");
                 localStorage.clear();
+                if (loteriaAtiva) localStorage.setItem("loteriaAtiva", loteriaAtiva);
                 location.href = "/auth/login.html";
             }
 
-            async function carregarStatusNotificacao() {
-                const token = localStorage.getItem("token");
-                if (!token) return;
+            // ========== LOTERIA ATIVA (destaque + atalhos) ==========
+            let ultimosResultados = null; // { slug: resultado } de /api/resultados/ultimos-todos
+            let erroResultados = false;
 
-                try {
-                    const res = await fetch(
-                        `${API_URL}/api/notificacoes/status`,
-                        {
-                            headers: { Authorization: `Bearer ${token}` },
-                        },
-                    );
-                    const data = await res.json();
-                    atualizarBotaoNotificacao(data.inscrito);
-                } catch (err) {
-                    console.error("Erro ao verificar notificações:", err);
-                }
+            function bolasHTML(dezenas, classe = "") {
+                return (dezenas || [])
+                    .map((d) => `<span class="bola ${classe}">${Loterias.formatarDezena(d)}</span>`)
+                    .join("");
             }
 
-            function atualizarBotaoNotificacao(inscrito) {
-                const icon = document.getElementById("icon-notificacao");
-                const label = document.getElementById("label-notificacao");
-
-                if (inscrito) {
-                    icon.className = "bi bi-bell-slash-fill";
-                    icon.style.color = "#ffd700";
-                    label.textContent = "Desativar Notificações";
-                } else {
-                    icon.className = "bi bi-bell-fill";
-                    icon.style.color = "";
-                    label.textContent = "Ativar Notificações";
+            function sorteiosHTML(loteria, resultado) {
+                if (loteria.sorteios === 2) {
+                    return `
+                <div><div class="rotulo-sorteio">1º sorteio</div><div class="bolas">${bolasHTML(resultado.dezenas)}</div></div>
+                <div><div class="rotulo-sorteio">2º sorteio</div><div class="bolas">${bolasHTML(resultado.dezenas_2)}</div></div>`;
                 }
+                let html = `<div class="bolas">${bolasHTML(resultado.dezenas)}</div>`;
+                const extra = loteria.extra;
+                if (extra && extra.tipo === "trevos" && (resultado.trevos || []).length) {
+                    html += `<div><div class="rotulo-sorteio">${extra.rotulo}</div><div class="bolas">${bolasHTML(resultado.trevos, "trevo")}</div></div>`;
+                } else if (extra && resultado[extra.campo]) {
+                    // texto vindo da Caixa: escapar
+                    html += `<div class="extra-concurso">${extra.rotulo}: ${escapeHtml(resultado[extra.campo])}</div>`;
+                }
+                return html;
             }
 
-            let isTogglingNotif = false;
+            function renderizarDestaque(loteria) {
+                const el = document.getElementById("loteria-destaque");
+                const resultado = ultimosResultados ? ultimosResultados[loteria.slug] : null;
 
-            async function toggleNotificacoes(event) {
-                event.preventDefault();
-                if (isTogglingNotif) return;
+                const cabecalho = `
+            <div class="cabecalho-loteria">
+                <img src="${loteria.icone}" alt="" width="52" height="52" />
+                <div>
+                    <h1>${loteria.nome}</h1>
+                    <div class="subtitulo">Último resultado</div>
+                </div>
+            </div>`;
 
-                const token = localStorage.getItem("token");
-                if (!token) return;
-
-                const label = document.getElementById("label-notificacao");
-                if (!label) return;
-                const inscrito = label.textContent.includes("Desativar");
-                const endpoint = inscrito
-                    ? "/api/notificacoes/cancelar"
-                    : "/api/notificacoes/inscrever";
-
-                isTogglingNotif = true;
-                try {
-                    const res = await fetch(`${API_URL}${endpoint}`, {
-                        method: "POST",
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-                    const data = await res.json();
-                    if (data?.success) {
-                        atualizarBotaoNotificacao(!inscrito);
-                        alert(
-                            inscrito
-                                ? "🔕 Notificações desativadas."
-                                : "🔔 Notificações ativadas! Você receberá avisos de novos resultados da Lotofácil.",
-                        );
-                    }
-                } catch (err) {
-                    console.error("Erro ao alterar notificações:", err);
-                } finally {
-                    isTogglingNotif = false;
+                if (!resultado) {
+                    const msg = erroResultados || ultimosResultados
+                        ? "❌ Resultado indisponível no momento"
+                        : "Carregando resultado...";
+                    el.innerHTML = `${cabecalho}<div class="destaque-corpo"><p class="text-muted m-0">${msg}</p></div>`;
+                    return;
                 }
+
+                const status = Loterias.statusConcurso(resultado);
+                const statusClasse = {
+                    acumulou: "status-acumulou",
+                    ganhadores: "status-ganhador",
+                    aguardando: "status-aguardando",
+                }[status.tipo];
+                const dataSorteio = Loterias.formatarData(resultado.data_sorteio); // NULL → não exibe
+                const proximo = Loterias.proximoSorteio(loteria.slug, resultado.data_proximo_concurso);
+                const proximoTexto = proximo
+                    ? proximo.ehHoje || proximo.ehAmanha
+                        ? `${proximo.texto}, ${proximo.dataTexto}`
+                        : proximo.texto
+                    : "—";
+
+                el.innerHTML = `${cabecalho}
+            <div class="destaque-corpo">
+                <div class="destaque-topo">
+                    <div class="destaque-concurso">
+                        Concurso ${resultado.concurso}${dataSorteio ? ` <span class="destaque-data">· ${dataSorteio}</span>` : ""}
+                    </div>
+                    <span class="status-concurso ${statusClasse}">${status.texto}</span>
+                </div>
+                ${sorteiosHTML(loteria, resultado)}
+                <div class="premio-bloco">
+                    <div>
+                        <div class="premio-rotulo">Prêmio estimado do próximo concurso</div>
+                        <div class="premio-valor">${Loterias.formatarPremio(resultado.valor_estimado_proximo)}</div>
+                    </div>
+                    <div>
+                        <div class="premio-rotulo">Próximo sorteio · Concurso ${Number(resultado.concurso) + 1}</div>
+                        <div class="proximo-valor ${proximo && proximo.ehHoje ? "proximo-hoje" : ""}">
+                            ${proximo && proximo.ehHoje ? '<i class="bi bi-clock-fill"></i> ' : ""}${proximoTexto}
+                        </div>
+                    </div>
+                </div>
+                <div class="destaque-rodape">
+                    <a class="btn-ver-mais" href="${Loterias.urlUltimosResultados(loteria.slug)}">
+                        Últimos resultados
+                    </a>
+                </div>
+            </div>`;
             }
+
+            function renderizarAtalhos(loteria) {
+                document.getElementById("titulo-atalhos").textContent =
+                    `Ferramentas ${Loterias.comArtigo(loteria.slug)}`;
+                document.getElementById("atalhos-grid").innerHTML = Loterias.FERRAMENTAS
+                    .filter((f) => f.id !== "inicio")
+                    .map((f) => {
+                        if (!Loterias.suporta(loteria.slug, f.id)) {
+                            return `
+                <span class="atalho em-breve" aria-disabled="true" title="Em breve para esta loteria">
+                    <i class="bi ${f.icone}"></i>${f.nome}<small>Em breve para esta loteria</small>
+                </span>`;
+                        }
+                        return `
+                <a class="atalho" href="${Loterias.urlFerramenta(f.id, loteria.slug)}">
+                    <i class="bi ${f.icone}"></i>${f.nome}
+                </a>`;
+                    })
+                    .join("") + atalhoMeusJogos(loteria);
+            }
+
+            // Meus Jogos é global, mas abre já filtrado pela loteria ativa
+            function atalhoMeusJogos(loteria) {
+                const meusJogos = Loterias.ITENS_GLOBAIS.find((g) => g.id === "meus-jogos");
+                return `
+                <a class="atalho" href="${Loterias.urlComLoteria(meusJogos.url, loteria.slug)}">
+                    <i class="bi ${meusJogos.icone}"></i>${meusJogos.nome}
+                </a>`;
+            }
+
+            function renderizarLoteriaAtiva() {
+                const loteria = Loterias.obter(Loterias.ativa());
+                document.title = `${loteria.nome} — Roberto Loterias`;
+                renderizarDestaque(loteria);
+                renderizarAtalhos(loteria);
+            }
+
+            // Troca pelo seletor do menu: atualiza sem recarregar
+            document.addEventListener("loteria-ativa-mudou", renderizarLoteriaAtiva);
+
+            // Atalho "Em breve" não navega
+            document.getElementById("atalhos-grid").addEventListener("click", (event) => {
+                const atalho = event.target.closest(".atalho");
+                if (!atalho) return;
+                if (atalho.classList.contains("em-breve")) {
+                    event.preventDefault();
+                }
+            });
 
             // ========== CARREGAR RESULTADOS (OTIMIZADO) ==========
             let isLoadingResultados = false;
@@ -1370,15 +804,10 @@
                 if (isLoadingResultados) return; // trava a corrida com o setInterval
                 isLoadingResultados = true;
 
-                const container = document.getElementById("loterias-container");
-                if (!container) {
-                    isLoadingResultados = false;
-                    return;
-                }
-
                 try {
                     const response = await fetch(
                         `${API_URL}/api/resultados/ultimos-todos`,
+                        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } },
                     );
                     if (!response.ok)
                         throw new Error(`HTTP ${response.status}`);
@@ -1391,102 +820,26 @@
                     console.log(`📦 Cache: ${data.cached ? "SIM ⚡" : "NÃO"}`);
 
                     const resultados = data.data;
-
-                    // monta tudo numa string só e troca o DOM uma única vez
-                    const html = LOTERIAS.map((loteria) => {
-                        const resultado = resultados[loteria.id];
-                        if (!resultado) return "";
-                        return criarCardLoteria(
-                            loteria,
-                            resultado,
-                            resultado.concurso,
-                        );
-                    }).join("");
-
-                    container.innerHTML = html;
+                    ultimosResultados = resultados;
+                    erroResultados = false;
+                    renderizarLoteriaAtiva();
                 } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                     console.error("❌ Erro ao carregar resultados:", error);
-                    // só mostra erro se ainda não tiver card na tela (não apaga dados bons)
-                    if (
-                        !container.children.length ||
-                        container.querySelector(".loading")
-                    ) {
-                        container.innerHTML = `<div class="loading">❌ Erro ao carregar resultados</div>`;
-                    }
+                    erroResultados = true;
+                    // não apaga um resultado bom já na tela
+                    if (!ultimosResultados) renderizarLoteriaAtiva();
                 } finally {
                     isLoadingResultados = false;
                 }
             }
 
-            function formatarPremio(valor) {
-                if (!valor || valor <= 0) return "—";
-                if (valor >= 1_000_000) {
-                    const m = valor / 1_000_000;
-                    return "R$ " + m.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 1,
-                        maximumFractionDigits: 1
-                    }) + " milhões";
-                }
-                if (valor >= 1_000) {
-                    return "R$ " + (valor / 1_000).toLocaleString("pt-BR", {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 1
-                    }) + " mil";
-                }
-                return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-            }
-
-            function criarCardLoteria(loteria, resultado, total) {
-                const acumulou = resultado.acumulou === true;
-                const statusClasse = acumulou ? "status-acumulou" : "status-ganhador";
-
-                const estimativa = Number(resultado.valor_estimado_proximo) || 0;
-                const prizeHTML = formatarPremio(estimativa);
-                const statusTexto = acumulou
-                    ? `Acumulou! ${prizeHTML}`
-                    : `Estimativa de ${prizeHTML}`;
-
-                const proximo = window.calcularProximoConcurso
-                    ? window.calcularProximoConcurso(loteria.id)
-                    : null;
-                const proximoConcursoHTML = proximo
-                    ? `<div class="proximo-concurso ${proximo.hoje ? "proximo-hoje" : ""}">
-        ${proximo.hoje ? '<i class="bi bi-clock-fill"></i> ' : ""}Próximo Concurso: ${proximo.texto}
-    </div>`
-                    : "";
-
-                const btnDetalhes =
-                    planoUsuario === "pro"
-                        ? `<button class="btn-ver-mais" onclick="verDetalhes('${loteria.id}')">Ver Detalhes</button>`
-                        : `<button class="btn-ver-mais bloqueado" onclick="mostrarModalUpgrade()">Ver Detalhes 🔒</button>`;
-
-                return `
-<div class="loteria-card ${loteria.id}">
-    <div class="card-top">
-        <img class="card-icon" src="${loteria.icon}" alt="${loteria.nome}" width="52" height="52" />
-        <div class="card-meta">
-            <div class="loteria-name">${loteria.nome}</div>
-            <div class="concurso-numero">Concurso ${resultado.concurso}</div>
-        </div>
-        <div class="status-concurso ${statusClasse}">${statusTexto}</div>
-    </div>
-    <div class="card-prize">${prizeHTML}</div>
-    ${proximoConcursoHTML}
-    ${btnDetalhes}
-</div>
-`;
-            }
-
             // ========== INICIALIZAÇÃO ==========
             window.addEventListener("DOMContentLoaded", async () => {
-                try {
-                    const modalEl = document.getElementById("modalUpgrade");
-                    if (window.bootstrap?.Modal && modalEl) {
-                        modalUpgrade = new bootstrap.Modal(modalEl);
-                    }
-                } catch (e) {
-                    console.error("Falha ao iniciar o modal:", e);
-                }
+                // Login obrigatório: sem sessão, auth-check redireciona e nada é buscado
+                if (!verificarAutenticacao()) return;
+
+                renderizarLoteriaAtiva(); // cabeçalho já aparece enquanto carrega
 
                 const user = getUsuario();
                 if (user) {
@@ -1502,17 +855,6 @@
                         if (adminEl) adminEl.style.display = "inline-block";
                     }
                 }
-
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get("upgrade") === "1") {
-                    setTimeout(() => mostrarModalUpgrade(), 400);
-                }
-
-                // plano e notificações são independentes → paralelo
-                await Promise.allSettled([
-                    verificarPlanoUsuario(),
-                    carregarStatusNotificacao(),
-                ]);
 
                 carregarResultados();
                 setInterval(carregarResultados, 5 * 60 * 1000);

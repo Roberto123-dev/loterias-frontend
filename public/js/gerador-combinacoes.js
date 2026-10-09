@@ -110,6 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Pré-seleciona a loteria ativa (?loteria= / última escolha); mudarLoteria roda logo abaixo
+    if (window.Loterias) Loterias.vincularSelect(selectLoteria);
+
     const loteriaInicial = selectLoteria?.value;
     if (loteriaInicial) mudarLoteria(loteriaInicial);
     else atualizarBotaoGerar();
@@ -168,6 +171,7 @@ async function carregarGruposPorLoteria(loteria) {
         selectGrupo.disabled = false;
         atualizarBotaoGerar();
     } catch (err) {
+        if (err && err.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
         console.error("❌ Erro ao carregar grupos:", err);
         selectGrupo.innerHTML = `<option value="">Erro ao carregar grupos</option>`;
         selectGrupo.disabled = true;

@@ -1,0 +1,359 @@
+/*
+ * Menu lateral compartilhado (renderizado por /js/menu-lateral.js).
+ * O <aside class="sidebar" id="sidebar"> já existe no HTML, então a largura
+ * fica reservada antes do JS rodar (sem "pisca" ao injetar o menu).
+ * Cores da loteria ativa: /css/tema-loteria.css + /js/loterias.js.
+ */
+
+/* ============= SIDEBAR ============= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background: #2c3e50;
+    color: white;
+    transition: width 0.3s, transform 0.3s;
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-recolhido .sidebar {
+    width: 70px;
+}
+
+.sidebar-header {
+    padding: 2px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand {
+    display: block;
+    flex: 1;
+}
+
+.sidebar-brand-logo {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.menu-recolhido .sidebar-brand {
+    display: none;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.3s;
+}
+
+.menu-recolhido .toggle-btn {
+    transform: rotate(180deg);
+    margin: 0 auto;
+}
+
+/* ============= SELETOR DA LOTERIA ATIVA ============= */
+.seletor-loteria {
+    position: relative;
+    padding: 12px 12px 4px;
+}
+
+.seletor-atual {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: 5px solid var(--cor-loteria);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+}
+
+.seletor-atual:hover,
+.seletor-atual[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.seletor-atual img,
+.seletor-lista img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.seletor-nome {
+    flex: 1;
+    min-width: 0;
+}
+
+.seletor-seta {
+    font-size: 0.85rem;
+    transition: transform 0.2s;
+}
+
+.seletor-atual[aria-expanded="true"] .seletor-seta {
+    transform: rotate(180deg);
+}
+
+.seletor-lista {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 6px;
+    background: #22313f;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.seletor-lista[hidden] {
+    display: none;
+}
+
+.seletor-lista button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: none;
+    border: none;
+    border-left: 4px solid var(--cor-item);
+    border-radius: 6px;
+    color: white;
+    font-size: 0.95rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.seletor-lista button:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.seletor-lista [aria-selected="true"] button {
+    background: rgba(255, 255, 255, 0.12);
+    font-weight: 700;
+}
+
+.seletor-lista .bi-check-lg {
+    margin-left: auto;
+}
+
+.menu-recolhido .seletor-loteria {
+    padding: 12px 8px 4px;
+}
+
+.menu-recolhido .seletor-atual {
+    justify-content: center;
+    padding: 8px 4px;
+}
+
+.menu-recolhido .seletor-nome,
+.menu-recolhido .seletor-seta {
+    display: none;
+}
+
+/* ============= ITENS ============= */
+.sidebar-menu {
+    padding: 10px 0;
+}
+
+.menu-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: white;
+    background: none;
+    border: none;
+    border-left: 4px solid transparent;
+    text-decoration: none;
+    text-align: left;
+    font-size: 1rem;
+    transition: background 0.2s;
+    cursor: pointer;
+    gap: 15px;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.menu-item.active {
+    background: var(--cor-loteria-fundo);
+    color: var(--cor-loteria-texto);
+    border-left-color: var(--cor-loteria-clara);
+    font-weight: 600;
+}
+
+.menu-item i {
+    font-size: 1.3rem;
+    min-width: 30px;
+    text-align: center;
+}
+
+.menu-texto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.menu-dica {
+    font-size: 0.72rem;
+    font-weight: 400;
+    opacity: 0.85;
+}
+
+/* Ferramenta que ainda não funciona para a loteria ativa */
+.menu-item.em-breve {
+    cursor: not-allowed;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.menu-item.em-breve:hover {
+    background: none;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.menu-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 10px 20px;
+}
+
+.menu-recolhido .menu-item span,
+.menu-recolhido .menu-texto {
+    display: none;
+}
+
+/* ============= RODAPÉ ============= */
+.menu-rodape {
+    margin-top: auto;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.link-instagram {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.link-instagram:hover {
+    color: white;
+}
+
+.menu-recolhido .link-instagram span {
+    display: none;
+}
+
+/* ============= MOBILE ============= */
+.mobile-backdrop {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar,
+    .menu-recolhido .sidebar {
+        transform: translateX(-100%);
+        width: 100%;
+        max-width: 300px;
+        z-index: 9999;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .mobile-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 9998;
+    }
+
+    .mobile-backdrop.show {
+        display: block;
+    }
+
+    /* No celular não existe modo recolhido */
+    .sidebar-header .toggle-btn {
+        display: none;
+    }
+}
+
+/* ============= PÁGINAS COM O MENU INJETADO ============= */
+/*
+ * <html class="com-menu-lateral">: páginas antigas (ferramentas, loterias/*.html)
+ * que não têm layout próprio para o menu. O espaço é reservado no <html> (não no
+ * <body>, que em várias páginas tem padding/max-width próprios), já no CSS — sem
+ * "pisca" quando o JS injeta o menu.
+ * --largura-menu fica disponível para elementos position: fixed da página.
+ */
+html.com-menu-lateral {
+    --largura-menu: 260px;
+    padding-left: var(--largura-menu);
+    transition: padding-left 0.3s;
+}
+
+html.com-menu-lateral.menu-recolhido {
+    --largura-menu: 70px;
+}
+
+/* Faixa do topo na cor da loteria ativa */
+html.com-menu-lateral body {
+    border-top: 4px solid var(--cor-loteria);
+}
+
+/* Celular: aba na borda esquerda para abrir o menu (as páginas antigas não
+   têm botão de menu; o topo-esquerdo já tem "Voltar") */
+html.com-menu-lateral .btn-menu-flutuante {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    html.com-menu-lateral {
+        --largura-menu: 0px;
+    }
+
+    html.com-menu-lateral .btn-menu-flutuante {
+        display: flex;
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 34px;
+        height: 52px;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 0 10px 10px 0;
+        background: var(--cor-loteria-fundo);
+        color: var(--cor-loteria-texto);
+        font-size: 1.4rem;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        z-index: 998;
+    }
+}

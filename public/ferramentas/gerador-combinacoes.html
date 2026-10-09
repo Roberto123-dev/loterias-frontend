@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="com-menu-lateral">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>🎲 Gerador de Combinações - Sistema de Loterias</title>
         <script src="/js/config.js"></script>
+        <script src="/js/loterias.js"></script>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -23,7 +24,7 @@
 
             body {
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--fundo-pagina, #f3f4f6);
                 min-height: 100vh;
                 padding: 0;
             }
@@ -603,8 +604,8 @@
             .jogos-acoes {
                 position: fixed;
                 bottom: 0;
-                left: 0;
-                width: 100%;
+                left: var(--largura-menu, 0px); /* não fica sob o menu lateral */
+                right: 0;
                 background: #ffffff;
                 padding: 12px 14px;
                 display: flex;
@@ -830,9 +831,16 @@
                 color: #fff;
             }
         </style>
+        <!-- Menu lateral compartilhado + tema da loteria ativa -->
+        <link rel="stylesheet" href="/css/tema-loteria.css" />
+        <link rel="stylesheet" href="/css/menu-lateral.css" />
     </head>
 
     <body>
+        <aside class="sidebar" id="sidebar">
+            <script src="/js/menu-lateral.js"></script>
+        </aside>
+
         <div class="top-bar">
             <div class="header-content">
                 <h1
@@ -1044,9 +1052,7 @@
         <script src="/js/gerador-combinacoes.js"></script>
         <script src="/js/auth-check.js"></script>
         <script>
-            if (verificarAutenticacao()) {
-                verificarPlanoPro();
-            }
+            verificarAutenticacao();
         </script>
     </body>
 </html>

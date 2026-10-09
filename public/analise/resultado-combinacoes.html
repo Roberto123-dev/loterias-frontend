@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="com-menu-lateral">
 
 <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--fundo-pagina, #f3f4f6);
             min-height: 100vh;
             padding: 0;
             margin: 0;
@@ -128,9 +128,18 @@
             overflow-x: auto;
         }
     </style>
+    <!-- Menu lateral compartilhado + tema da loteria ativa -->
+    <script src="/js/loterias.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="/css/tema-loteria.css" />
+    <link rel="stylesheet" href="/css/menu-lateral.css" />
 </head>
 
 <body>
+    <aside class="sidebar" id="sidebar">
+        <script src="/js/menu-lateral.js"></script>
+    </aside>
+
     <!-- Header -->
     <header>
         <div class="header-content">
@@ -216,10 +225,7 @@
     <script src="/js/auth-check.js"></script>
     <script>
         // Autenticação básica
-        if (verificarAutenticacao()) {
-            // 🚫 Verificação do plano
-            verificarPlanoPro();
-        }
+        verificarAutenticacao();
     </script>
 </body>
 

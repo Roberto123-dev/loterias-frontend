@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="com-menu-lateral">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>📊 Mapa das Dezenas - Sistema de Loterias</title>
         <script src="/js/config.js"></script>
+        <script src="/js/loterias.js"></script>
 
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -25,7 +26,7 @@
             :root {
                 --cor-loteria: #667eea;
                 --titulo-loteria-cor: var(--cor-loteria);
-                --bg-body: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --bg-body: var(--fundo-pagina, #f3f4f6);
                 --bg-header: #f5f5f5;
                 --card-bg: #ffffff;
                 --card-border: rgba(0, 0, 0, 0.08);
@@ -250,8 +251,8 @@
 
             .btn-atualizar {
                 padding: 12px 30px;
-                background: var(--cor-loteria, #667eea);
-                color: white;
+                background: var(--cor-loteria-fundo, var(--cor-loteria, #667eea));
+                color: var(--cor-loteria-texto, white);
                 border: none;
                 border-radius: 8px;
                 font-size: 1rem;
@@ -366,8 +367,8 @@
             }
 
             thead {
-                background: var(--cor-loteria, #667eea);
-                color: white;
+                background: var(--cor-loteria-fundo, var(--cor-loteria, #667eea));
+                color: var(--cor-loteria-texto, white);
             }
 
             thead th {
@@ -422,8 +423,8 @@
             }
 
             .numero-cell.sorteado {
-                background: var(--cor-loteria, #667eea);
-                color: white;
+                background: var(--cor-loteria-fundo, var(--cor-loteria, #667eea));
+                color: var(--cor-loteria-texto, white);
             }
 
             .numero-cell.nao-sorteado {
@@ -546,9 +547,16 @@
                 flex: 1;
             }
         </style>
+        <!-- Menu lateral compartilhado + tema da loteria ativa -->
+        <link rel="stylesheet" href="/css/tema-loteria.css" />
+        <link rel="stylesheet" href="/css/menu-lateral.css" />
     </head>
 
     <body>
+        <aside class="sidebar" id="sidebar">
+            <script src="/js/menu-lateral.js"></script>
+        </aside>
+
         <!-- Header -->
         <div class="header-content">
             <h1
@@ -957,7 +965,7 @@
                             return;
                         } else if (response.status === 403) {
                             alert(
-                                "Este recurso está disponível apenas para usuários PRÓ.",
+                                "Você não tem permissão para acessar este recurso.",
                             );
                             window.location.href = "/index.html";
                             return;
@@ -975,6 +983,11 @@
                     loading.style.display = "none";
                     tabela.style.display = "table";
                 } catch (error) {
+                    if (error && error.limiteAtingido) {
+                        // aviso de limite já mostrado (js/config.js); esconde o "carregando"
+                        document.getElementById("tabela-container").style.display = "none";
+                        return;
+                    }
                     console.error("Erro:", error);
                     loading.textContent = "❌ Erro ao carregar dados";
                 }
@@ -1107,7 +1120,12 @@
                     atraso[i] = count;
                 }
 
-                const media = (totalConcursos * 15) / totalDezenas;
+                // Cada linha é um sorteio (a Dupla Sena tem 2 linhas por concurso),
+                // então a média esperada usa as dezenas sorteadas por sorteio.
+                const sorteadas = Loterias.obter(
+                    document.getElementById("loteria-select").value,
+                ).sorteadas;
+                const media = (totalConcursos * sorteadas) / totalDezenas;
                 const temperatura = freq.map((f) => {
                     if (f >= media + 2) return "Q";
                     if (f <= media - 2) return "F";
@@ -1122,6 +1140,7 @@
                 localStorage.setItem(
                     "estatisticasMapa",
                     JSON.stringify({
+                        slug: document.getElementById("loteria-select").value,
                         loteria: loteriaAtual.nome,
                         min: loteriaAtual.min,
                         max: loteriaAtual.max,
@@ -1221,9 +1240,12 @@
                 ).matches;
                 aplicarTema(temaSalvo || (prefereEscuro ? "dark" : "light"));
 
-                if (verificarAutenticacao()) {
-                    verificarPlanoPro();
-                }
+                verificarAutenticacao();
+
+                Loterias.vincularSelect(
+                    document.getElementById("loteria-select"),
+                    mudarLoteria,
+                );
             });
         </script>
         <script src="/js/cores-bolas.js"></script>

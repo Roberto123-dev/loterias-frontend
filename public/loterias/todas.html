@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Todas as Loterias — Roberto Loterias</title>
+
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+
+        <script src="/js/config.js"></script>
+        <!-- Loteria ativa + tema (antes de qualquer CSS, evita "pisca" de cor) -->
+        <script src="/js/loterias.js"></script>
+
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+        />
+        <link rel="stylesheet" href="/css/tema-loteria.css" />
+        <link rel="stylesheet" href="/css/menu-lateral.css" />
+        <link rel="stylesheet" href="/css/layout.css" />
+
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            .intro {
+                color: #374151;
+                margin: 0 0 18px;
+                font-size: 0.95rem;
+                opacity: 0.9;
+            }
+
+            .grade-loterias {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 16px;
+            }
+
+            .card-loteria {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding: 20px 18px 16px;
+                border-radius: 14px;
+                background: white;
+                color: #1e1e2e;
+                text-decoration: none;
+                overflow: hidden;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+                transition: transform 0.25s, box-shadow 0.25s;
+            }
+
+            .card-loteria::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 5px;
+                background: var(--cor-card);
+            }
+
+            .card-loteria:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+                color: #1e1e2e;
+            }
+
+            .card-loteria.ativa {
+                outline: 3px solid var(--cor-card);
+                outline-offset: -3px;
+            }
+
+            .card-topo {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .card-topo img {
+                width: 48px;
+                height: 48px;
+                object-fit: contain;
+                flex-shrink: 0;
+            }
+
+            .card-meta {
+                flex: 1;
+                min-width: 0;
+            }
+
+            /* Nome completo: quebra linha em vez de cortar com "…" */
+            .card-nome {
+                font-size: 1.05rem;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .card-concurso {
+                font-size: 0.8rem;
+                color: #777;
+                margin-top: 3px;
+            }
+
+            .card-concurso span {
+                white-space: nowrap;
+            }
+
+            .card-rotulo {
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: #777;
+                text-transform: uppercase;
+            }
+
+            .card-premio {
+                font-size: 1.4rem;
+                font-weight: 800;
+                line-height: 1.2;
+            }
+
+            .card-proximo {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #555;
+            }
+
+            .card-proximo.proximo-hoje {
+                color: #16a34a;
+            }
+
+            .tag-ativa {
+                align-self: flex-start;
+                padding: 2px 10px;
+                border-radius: 12px;
+                font-size: 0.7rem;
+                font-weight: 700;
+                background: var(--cor-card-fundo);
+                color: var(--cor-card-texto);
+            }
+
+            .aviso {
+                color: #374151;
+                text-align: center;
+                padding: 40px;
+            }
+        </style>
+    </head>
+
+    <body class="com-menu">
+        <aside class="sidebar" id="sidebar">
+            <script src="/js/menu-lateral.js"></script>
+        </aside>
+
+        <header class="topo-pagina">
+            <button class="btn-menu-mobile" onclick="openMobileMenu()" aria-label="Abrir menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <h1>Todas as Loterias</h1>
+            <button class="btn-sair" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Sair
+            </button>
+        </header>
+
+        <main class="conteudo-pagina">
+            <p class="intro">Toque em uma loteria para abrir a página dela.</p>
+            <div id="grade-loterias" class="grade-loterias">
+                <div class="aviso">📊 Carregando loterias...</div>
+            </div>
+        </main>
+
+        <script>
+            let ultimosResultados = null;
+
+            function criarCard(loteria, resultado) {
+                const ativa = loteria.slug === Loterias.ativa();
+                const href = Loterias.urlFerramenta("inicio", loteria.slug);
+                const cores = Loterias.coresTexto(loteria.slug);
+                // --cor-card: borda/contorno; --cor-card-fundo/texto: selo "Loteria ativa" (tem texto)
+                const estilo = `--cor-card: ${loteria.cor}; --cor-card-fundo: ${cores.fundo}; --cor-card-texto: ${cores.texto}`;
+
+                if (!resultado) {
+                    return `
+                <a class="card-loteria${ativa ? " ativa" : ""}" href="${href}" style="${estilo}">
+                    <div class="card-topo">
+                        <img src="${loteria.icone}" alt="" width="48" height="48" />
+                        <div class="card-meta"><div class="card-nome">${loteria.nome}</div>
+                        <div class="card-concurso">Resultado indisponível</div></div>
+                    </div>
+                </a>`;
+                }
+
+                // Badge só com o status (o valor já aparece em destaque logo abaixo)
+                const status = Loterias.statusConcurso(resultado);
+                const statusClasse = {
+                    acumulou: "status-acumulou",
+                    ganhadores: "status-ganhador",
+                    aguardando: "status-aguardando",
+                }[status.tipo];
+                const dataSorteio = Loterias.formatarData(resultado.data_sorteio); // NULL → sem data
+                const proximo = Loterias.proximoSorteio(loteria.slug, resultado.data_proximo_concurso);
+                // Mesmo padrão em todos: "Hoje, 08/10" / "Amanhã, 09/10" / "Domingo, 11/10"
+                const proximoTexto = proximo
+                    ? proximo.ehHoje || proximo.ehAmanha
+                        ? `${proximo.texto}, ${proximo.dataTexto}`
+                        : proximo.texto
+                    : "—";
+
+                return `
+                <a class="card-loteria${ativa ? " ativa" : ""}" href="${href}" style="${estilo}"${ativa ? ' aria-current="true"' : ""}>
+                    <div class="card-topo">
+                        <img src="${loteria.icone}" alt="" width="48" height="48" />
+                        <div class="card-meta">
+                            <div class="card-nome">${loteria.nome}</div>
+                            <div class="card-concurso"><span>Concurso ${resultado.concurso}</span>${dataSorteio ? ` <span>· ${dataSorteio}</span>` : ""}</div>
+                        </div>
+                        <span class="status-concurso ${statusClasse}">${status.texto}</span>
+                    </div>
+                    <div>
+                        <div class="card-rotulo">Prêmio estimado</div>
+                        <div class="card-premio">${Loterias.formatarPremio(resultado.valor_estimado_proximo)}</div>
+                    </div>
+                    <div class="card-proximo${proximo && proximo.ehHoje ? " proximo-hoje" : ""}">
+                        <i class="bi ${proximo && proximo.ehHoje ? "bi-clock-fill" : "bi-calendar-event"}"></i>
+                        Próximo sorteio: ${proximoTexto}
+                    </div>
+                    ${ativa ? '<span class="tag-ativa">Loteria ativa</span>' : ""}
+                </a>`;
+            }
+
+            function renderizar() {
+                const grade = document.getElementById("grade-loterias");
+                if (!ultimosResultados) return;
+                grade.innerHTML = Loterias.lista()
+                    .map((l) => criarCard(l, ultimosResultados[l.slug]))
+                    .join("");
+            }
+
+            async function carregarResultados() {
+                try {
+                    const response = await fetch(`${API_URL}/api/resultados/ultimos-todos`, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    if (!data || !data.success || !data.data) {
+                        throw new Error("Resposta inválida do servidor");
+                    }
+                    ultimosResultados = data.data;
+                    renderizar();
+                } catch (error) {
+                    if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
+                    console.error("❌ Erro ao carregar resultados:", error);
+                    if (!ultimosResultados) {
+                        document.getElementById("grade-loterias").innerHTML =
+                            '<div class="aviso">❌ Erro ao carregar resultados</div>';
+                    }
+                }
+            }
+
+            // Clicar no card define a loteria ativa (o ?loteria= do link também define)
+            document.getElementById("grade-loterias").addEventListener("click", (event) => {
+                const card = event.target.closest(".card-loteria");
+                if (!card) return;
+                const slug = new URL(card.href).searchParams.get("loteria");
+                if (slug) Loterias.definirAtiva(slug);
+            });
+
+            // Troca pelo seletor do menu: destaca o card da nova loteria ativa
+            document.addEventListener("loteria-ativa-mudou", renderizar);
+
+            // Login obrigatório: sem sessão, auth-check redireciona e nada é buscado
+            window.addEventListener("DOMContentLoaded", () => {
+                if (!verificarAutenticacao()) return;
+                carregarResultados();
+                setInterval(carregarResultados, 5 * 60 * 1000);
+            });
+        </script>
+        <script src="/js/auth-check.js"></script>
+    </body>
+</html>

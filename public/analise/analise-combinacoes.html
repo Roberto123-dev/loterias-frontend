@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="com-menu-lateral">
 
 <head>
     <meta charset="UTF-8" />
@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="/js/config.js"></script>
+    <script src="/js/loterias.js"></script>
     <style>
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--fundo-pagina, #f3f4f6);
             min-height: 100vh;
             padding: 0;
             margin: 0;
@@ -99,9 +100,16 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
     </style>
+    <!-- Menu lateral compartilhado + tema da loteria ativa -->
+    <link rel="stylesheet" href="/css/tema-loteria.css" />
+    <link rel="stylesheet" href="/css/menu-lateral.css" />
 </head>
 
 <body>
+    <aside class="sidebar" id="sidebar">
+        <script src="/js/menu-lateral.js"></script>
+    </aside>
+
     <!-- Header -->
     <header>
         <div class="header-content">
@@ -227,6 +235,7 @@
                 const data = await res.json();
 
                 if (!data.success) {
+                    pararBarraProgresso();
                     alert(data.message || "Erro na análise.");
                     return;
                 }
@@ -244,9 +253,19 @@
 
                 window.location.href = "/analise/resultado-combinacoes.html";
             } catch (error) {
+                // Sem isso a barra seguia e redirecionava para o resultado mesmo com erro
+                pararBarraProgresso();
+                if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
                 console.error("Erro ao analisar combinações:", error);
                 alert("Erro ao analisar combinações.");
             }
+        }
+
+        let animacaoProgresso = null;
+
+        function pararBarraProgresso() {
+            clearInterval(animacaoProgresso);
+            document.getElementById("progressContainer").style.display = "none";
         }
 
         function iniciarBarraProgresso() {
@@ -261,7 +280,8 @@
             const intervalo = 100; // a cada 100ms
             let tempoDecorrido = 0;
 
-            const animacao = setInterval(() => {
+            clearInterval(animacaoProgresso);
+            const animacao = (animacaoProgresso = setInterval(() => {
                 tempoDecorrido += intervalo;
 
                 let progresso = Math.min((tempoDecorrido / duracaoTotal) * 100, 100);
@@ -272,17 +292,16 @@
                     clearInterval(animacao);
                     window.location.href = "/analise/resultado-combinacoes.html"; // redireciona
                 }
-            }, intervalo);
+            }, intervalo));
         }
 
     </script>
     <script src="/js/auth-check.js"></script>
     <script>
         // Autenticação básica
-        if (verificarAutenticacao()) {
-            // 🚫 Verificação do plano
-            verificarPlanoPro();
-        }
+        verificarAutenticacao();
+
+        Loterias.vincularSelect(document.getElementById("inputLoteria"));
     </script>
 
 </body>

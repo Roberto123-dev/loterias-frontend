@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="com-menu-lateral">
 
 <head>
   <meta charset="UTF-8" />
@@ -22,7 +22,7 @@
 
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--fundo-pagina, #f3f4f6);
       min-height: 100vh;
       padding: 0;
       margin: 0
@@ -240,7 +240,7 @@
     .loading {
       text-align: center;
       padding: 60px 20px;
-      color: white;
+      color: #374151;
       font-size: 1.5rem;
     }
 
@@ -312,9 +312,17 @@
       }
     }
   </style>
+    <!-- Menu lateral compartilhado + tema da loteria ativa -->
+    <script src="/js/loterias.js"></script>
+    <link rel="stylesheet" href="/css/tema-loteria.css" />
+    <link rel="stylesheet" href="/css/menu-lateral.css" />
 </head>
 
 <body>
+    <aside class="sidebar" id="sidebar">
+        <script src="/js/menu-lateral.js"></script>
+    </aside>
+
   <!-- Header -->
   <header>
     <div class="header-content">
@@ -429,39 +437,64 @@
           "titulo-loteria"
         ).textContent = `Resultado - ${jogo.nomeLoteria}`;
 
-        // ✅ Buscar concursos da API COM TOKEN
-        const response = await fetch(
-          `${API_URL}${jogo.endpoint}?limit=10000`,
-          {
-            headers: getHeaders(),
-          }
-        );
-
-        // ✅ Verificar se a resposta é OK
-        if (!response.ok) {
-          if (response.status === 401) {
-            throw new Error("Sessão expirada. Faça login novamente.");
-          } else if (response.status === 403) {
-            throw new Error("Recurso disponível apenas para usuários PRÓ.");
-          }
-          throw new Error(`Erro ${response.status}: ${response.statusText}`);
-        }
-        const data = await response.json();
-
-        if (!data.success) {
-          throw new Error(data.message || "Erro ao buscar concursos");
-        }
+        // ✅ Buscar o histórico completo da API COM TOKEN (paginado)
+        const concursos = await buscarHistoricoCompleto(jogo.endpoint);
 
         // Processar resultados
-        const resultados = conferirAcertos(jogo.numeros, data.data, jogo.min);
+        const resultados = conferirAcertos(jogo.numeros, concursos, jogo.min);
 
         // Mostrar resultado
         mostrarResultado(jogo, resultados);
       } catch (error) {
+          if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
         console.error("Erro:", error);
         document.getElementById("loading").style.display = "none";
         document.getElementById("erro-container").style.display = "block";
       }
+    }
+
+    // A API devolve no máximo 500 concursos por página (backend: utils/paginacao.js).
+    // A 1ª página traz o total; as demais são buscadas em paralelo.
+    const POR_PAGINA = 500;
+
+    async function buscarPaginaConcursos(endpoint, offset) {
+      const response = await fetch(
+        `${API_URL}${endpoint}?limit=${POR_PAGINA}&offset=${offset}`,
+        {
+          headers: getHeaders(),
+        }
+      );
+
+      // ✅ Verificar se a resposta é OK
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Sessão expirada. Faça login novamente.");
+        } else if (response.status === 403) {
+          throw new Error("Você não tem permissão para acessar este recurso.");
+        }
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Erro ao buscar concursos");
+      }
+      return data;
+    }
+
+    async function buscarHistoricoCompleto(endpoint) {
+      const primeira = await buscarPaginaConcursos(endpoint, 0);
+      const total = Number(primeira.total) || primeira.data.length;
+
+      const offsets = [];
+      for (let offset = POR_PAGINA; offset < total; offset += POR_PAGINA) {
+        offsets.push(offset);
+      }
+      const demais = await Promise.all(
+        offsets.map((offset) => buscarPaginaConcursos(endpoint, offset))
+      );
+
+      return primeira.data.concat(...demais.map((pagina) => pagina.data));
     }
 
     function conferirAcertos(meuJogo, concursos, min) {
@@ -589,10 +622,7 @@
   <script src="/js/auth-check.js"></script>
   <script>
     // Autenticação básica
-    if (verificarAutenticacao()) {
-      // 🚫 Verificação do plano
-      verificarPlanoPro();
-    }
+    verificarAutenticacao();
   </script>
 </body>
 

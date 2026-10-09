@@ -243,13 +243,6 @@ window.addEventListener("DOMContentLoaded", () => {
                     JSON.stringify(data.data.usuario),
                 );
 
-                if (data.data.usuario.plano) {
-                    localStorage.setItem(
-                        "plano",
-                        data.data.usuario.plano.toLowerCase(),
-                    );
-                }
-
                 // 🚀 REDIRECIONAR
                 window.location.href = "/index.html";
             } else {
@@ -262,26 +255,3 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Verificar se o usuário tem plano PRÓ
-function verificarPlanoPro() {
-    const usuario = getUsuarioLogado();
-
-    if (!usuario || !usuario.plano || usuario.plano.toLowerCase() !== "pro") {
-        // Exibe modal de upgrade
-        const modal = document.createElement("div");
-        modal.innerHTML = `
-      <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;">
-        <div style="background:white;padding:40px;border-radius:20px;text-align:center;max-width:400px">
-          <div style="font-size:3rem">🔒</div>
-          <h2>Recurso PRÓ</h2>
-          <p>Este recurso está disponível apenas para usuários com plano <strong>PRÓ</strong>.</p>
-          <button onclick="window.location.href='/index.html?upgrade=1'" style="padding:10px 20px;margin-top:15px;background:#ff9800;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">⭐ Fazer Upgrade</button>
-        </div>
-      </div>
-    `;
-        document.body.appendChild(modal);
-        return false;
-    }
-
-    return true;
-}

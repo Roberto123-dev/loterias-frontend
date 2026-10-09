@@ -124,7 +124,6 @@ function mudarLoteria() {
 // ===============================
 async function carregarCiclo() {
     if (!verificarAutenticacao()) return;
-    verificarPlanoPro();
 
     const limit = document.getElementById("qtd-concursos").value;
     const tbody = document.getElementById("tbody-ciclo");
@@ -226,4 +225,9 @@ function renderizarResumo(ausentes, ciclosQtd) {
     <p><strong>Ciclo Médio:</strong> ${media} concursos</p>
     <p><strong>Total de Ciclos:</strong> ${ciclosQtd.length}</p>
   `;
+}
+
+// Pré-seleciona a loteria ativa (?loteria= / última escolha)
+if (window.Loterias) {
+    Loterias.vincularSelect(document.getElementById("loteria-select"), mudarLoteria);
 }
