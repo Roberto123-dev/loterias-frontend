@@ -979,25 +979,7 @@
                 setLoading(true, "Carregando seus jogos...");
 
                 try {
-                    const url = `${API_URL}/api/jogos/meus-jogos?limit=10000`;
-
-                    const res = await fetch(url, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-
-                    if (!res.ok) {
-                        throw new Error(`Erro HTTP: ${res.status}`);
-                    }
-
-                    const data = await res.json();
-
-                    if (!data.success) {
-                        throw new Error(
-                            data.message || "Erro ao carregar jogos",
-                        );
-                    }
-
-                    jogosOriginais = Array.isArray(data.data) ? data.data : [];
+                    jogosOriginais = await buscarTodosOsJogos(token);
                     jogos = [...jogosOriginais];
 
                     atualizarContador();
@@ -1304,7 +1286,32 @@
             // EXCLUIR
             // =========================================================
 
-            /** Exclui os jogos selecionados (lote) pela API */
+            // A API devolve no máximo 500 jogos por página (backend: utils/paginacao.js) e
+            // exclui no máximo 500 por requisição. A 1ª página traz o total; as demais vêm em paralelo.
+            const POR_PAGINA_JOGOS = 500;
+
+            async function buscarPaginaJogos(token, offset) {
+                const res = await fetch(
+                    `${API_URL}/api/jogos/meus-jogos?limit=${POR_PAGINA_JOGOS}&offset=${offset}`,
+                    { headers: { Authorization: `Bearer ${token}` } },
+                );
+                if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message || "Erro ao carregar jogos");
+                return data;
+            }
+
+            async function buscarTodosOsJogos(token) {
+                const primeira = await buscarPaginaJogos(token, 0);
+                const lista = Array.isArray(primeira.data) ? primeira.data : [];
+                const total = Number(primeira.total) || lista.length;
+                const offsets = [];
+                for (let o = POR_PAGINA_JOGOS; o < total; o += POR_PAGINA_JOGOS) offsets.push(o);
+                const demais = await Promise.all(offsets.map((o) => buscarPaginaJogos(token, o)));
+                return lista.concat(...demais.map((p) => (Array.isArray(p.data) ? p.data : [])));
+            }
+
+            /** Exclui os jogos selecionados (lote) pela API, em lotes de até 500 */
             async function excluirSelecionados() {
                 if (jogosSelecionados.size === 0) return;
 
@@ -1316,25 +1323,28 @@
                 try {
                     const token = localStorage.getItem("token");
 
-                    const response = await fetch(
-                        `${API_URL}/api/jogos/excluir-lote`,
-                        {
-                            method: "DELETE",
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                                "Content-Type": "application/json",
+                    const ids = Array.from(jogosSelecionados);
+                    let excluidos = 0;
+                    let data = { success: true };
+                    for (let i = 0; i < ids.length && data.success; i += POR_PAGINA_JOGOS) {
+                        const response = await fetch(
+                            `${API_URL}/api/jogos/excluir-lote`,
+                            {
+                                method: "DELETE",
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    ids: ids.slice(i, i + POR_PAGINA_JOGOS),
+                                }),
                             },
-                            body: JSON.stringify({
-                                ids: Array.from(jogosSelecionados),
-                            }),
-                        },
-                    );
-
-                    const data = await response.json();
+                        );
+                        data = await response.json();
+                        if (data.success) excluidos += Array.isArray(data.data) ? data.data.length : 0;
+                    }
 
                     if (data.success) {
-                        const excluidos =
-                            data?.data?.excluidos ?? jogosSelecionados.size;
                         mostrarToast(
                             `✅ ${excluidos} jogo(s) excluído(s)!`,
                             "success",
