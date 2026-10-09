@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Bancas Parceiras — Roberto Loterias</title>
+
+        <link rel="icon" href="/favicon.ico" />
+        <script src="/js/config.js"></script>
+        <script src="/js/loterias.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap" />
+        <link rel="stylesheet" href="/css/tema-loteria.css" />
+        <link rel="stylesheet" href="/css/menu-lateral.css" />
+        <link rel="stylesheet" href="/css/layout.css" />
+
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            /* ===== Aviso fixo (sempre visível ao rolar) ===== */
+            .aviso-terceiros {
+                position: sticky;
+                top: 64px;
+                z-index: 5;
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
+                margin: 0 0 20px;
+                padding: 12px 16px;
+                border-radius: 10px;
+                background: #fff7ed;
+                border: 1px solid #fdba74;
+                color: #7c2d12;
+                font-size: 0.92rem;
+                font-weight: 600;
+                line-height: 1.4;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            .aviso-terceiros i {
+                font-size: 1.2rem;
+                line-height: 1.2;
+            }
+
+            .aviso-carregando {
+                grid-column: 1 / -1;
+                color: #374151;
+                margin: 0;
+            }
+
+            .grade-bancas {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 18px;
+            }
+
+            @media (max-width: 1100px) {
+                .grade-bancas {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media (max-width: 640px) {
+                .grade-bancas {
+                    grid-template-columns: 1fr;
+                }
+
+                .aviso-terceiros {
+                    top: 64px;
+                    font-size: 0.85rem;
+                }
+            }
+
+            .card-banca {
+                display: flex;
+                flex-direction: column;
+                border-radius: 16px;
+                overflow: hidden;
+            }
+
+            .logo-banca {
+                height: 110px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 16px;
+            }
+
+            .logo-banca img {
+                max-height: 70px;
+                max-width: 85%;
+                object-fit: contain;
+            }
+
+            /* Nome em texto estilizado (bancas sem logo), como os "wordmarks" do link da bio */
+            .marca {
+                font-family: "Sora", "Segoe UI", sans-serif;
+                text-align: center;
+                line-height: 1;
+            }
+
+            .marca .l1 {
+                display: block;
+                font-weight: 800;
+                font-size: 1.45rem;
+                letter-spacing: 0.5px;
+                background: linear-gradient(180deg, #ffe9a8, #f5a623);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .marca .l2 {
+                display: block;
+                margin-top: 4px;
+                font-weight: 700;
+                font-size: 0.85rem;
+                letter-spacing: 3px;
+                color: #c9a24a;
+            }
+
+            .corpo-banca {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                padding: 14px 18px 18px;
+                flex: 1;
+            }
+
+            .nome-banca {
+                font-size: 1.05rem;
+                font-weight: 700;
+            }
+
+            .descricao-banca {
+                font-size: 0.9rem;
+            }
+
+            .btn-acessar {
+                margin-top: auto;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px 14px;
+                border-radius: 10px;
+                font-weight: 700;
+                text-decoration: none;
+                transition: transform 0.15s, filter 0.15s;
+            }
+
+            .btn-acessar:hover {
+                transform: translateY(-1px);
+                filter: brightness(1.06);
+            }
+
+            /* ===== Padrão claro do site; o logo fica numa faixa escura (os logos foram feitos para fundo escuro) ===== */
+            .card-banca {
+                background: #fff;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            }
+
+            .logo-banca {
+                background: linear-gradient(135deg, #2d1b5e, #1a0f3d);
+            }
+
+            .nome-banca {
+                color: #1e1e2e;
+            }
+
+            .descricao-banca {
+                color: #4b5563;
+            }
+
+            .btn-acessar {
+                margin-top: 10px;
+                background: #2c3e50;
+                color: #fff;
+            }
+
+        </style>
+    </head>
+
+    <body class="com-menu">
+        <aside class="sidebar" id="sidebar">
+            <script src="/js/menu-lateral.js"></script>
+        </aside>
+
+        <header class="topo-pagina">
+            <button class="btn-menu-mobile" onclick="openMobileMenu()" aria-label="Abrir menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <h1>Bancas Parceiras</h1>
+            <button class="btn-sair" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Sair
+            </button>
+        </header>
+
+        <main class="conteudo-pagina">
+            <div class="aviso-terceiros" role="note">
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <span>Sites de terceiros, sem vínculo com a Caixa Econômica Federal. Proibido para menores de 18 anos. Jogue com responsabilidade.</span>
+            </div>
+
+            <div id="grade-bancas" class="grade-bancas" aria-live="polite">
+                <p class="aviso-carregando">Carregando…</p>
+            </div>
+        </main>
+
+        <script src="/js/escape-html.js"></script>
+        <script>
+            function cardBanca(b) {
+                const visual = b.logo
+                    ? `<img src="${escapeHtml(b.logo)}" alt="${escapeHtml(b.nome)}" loading="lazy" />`
+                    : `<span class="marca"><span class="l1">${escapeHtml(b.marca[0])}</span><span class="l2">${escapeHtml(b.marca[1])}</span></span>`;
+                return `
+                <article class="card-banca">
+                    <div class="logo-banca">${visual}</div>
+                    <div class="corpo-banca">
+                        <div class="nome-banca">${escapeHtml(b.nome)}</div>
+                        <div class="descricao-banca">${escapeHtml(b.descricao)}</div>
+                        <a class="btn-acessar" href="${escapeHtml(b.link)}" target="_blank" rel="sponsored noopener noreferrer" data-banca="${escapeHtml(b.id)}">
+                            Acessar <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </article>`;
+            }
+
+            // Conta o clique sem atrasar a abertura da banca (o link abre normalmente em nova aba).
+            // keepalive: a requisição termina mesmo se a aba atual for trocada. Falhas são ignoradas.
+            // A banca vai no corpo (nunca no endereço): o log de acesso do servidor registra o
+            // caminho junto do IP.
+            function registrarClique(idBanca) {
+                try {
+                    fetch(`${API_URL}/api/bancas/clique`, {
+                        method: "POST",
+                        keepalive: true,
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ banca: idBanca }),
+                    }).catch(() => {});
+                } catch (e) {}
+            }
+
+            async function carregarBancas() {
+                const grade = document.getElementById("grade-bancas");
+                try {
+                    const resp = await fetch("/data/bancas.json", { cache: "no-cache" });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const { bancas } = await resp.json();
+                    const ativas = bancas.filter((b) => b.ativo).sort((a, b) => a.ordem - b.ordem);
+                    grade.innerHTML = ativas.length
+                        ? ativas.map(cardBanca).join("")
+                        : '<p class="aviso-carregando">Nenhuma banca no momento.</p>';
+                } catch (error) {
+                    console.error("Erro ao carregar bancas:", error);
+                    grade.innerHTML = '<p class="aviso-carregando">Não foi possível carregar as bancas.</p>';
+                }
+            }
+
+            document.getElementById("grade-bancas").addEventListener("click", (event) => {
+                const botao = event.target.closest(".btn-acessar");
+                if (botao) registrarClique(botao.dataset.banca);
+            });
+
+            window.addEventListener("DOMContentLoaded", () => {
+                if (!verificarAutenticacao()) return;
+                carregarBancas();
+            });
+        </script>
+        <script src="/js/auth-check.js"></script>
+    </body>
+</html>

@@ -27,11 +27,11 @@
 
     // ========== HELPERS ==========
 
-    // "/analise/conferir.html", "/analise/conferir" (cleanUrls) → "/analise/conferir"; "/index.html" → "/"
+    // "/analise/conferir.html", "/analise/conferir" (cleanUrls) → "/analise/conferir";
+    // "/index.html" e "/" → "/"; "/bancas/index.html", "/bancas/" e "/bancas" → "/bancas"
     function normalizarCaminho(caminho) {
-        let p = String(caminho || "/").replace(/\.html$/, "").replace(/\/+$/, "");
-        if (p === "" || p === "/index") p = "/";
-        return p;
+        const p = String(caminho || "/").replace(/\.html$/, "").replace(/\/index$/, "").replace(/\/+$/, "");
+        return p || "/";
     }
 
     const caminhoAtual = normalizarCaminho(window.location.pathname);

@@ -428,6 +428,7 @@
       <button class="tab" onclick="mudarTab('historico')">
         📜 Histórico de upgrades
       </button>
+      <button class="tab" onclick="mudarTab('bancas')">🏪 Bancas</button>
     </div>
 
     <!-- ========== DASHBOARD ========== -->
@@ -445,6 +446,20 @@
           </div>
         </div>
         <div id="usuarios-lista"></div>
+      </div>
+    </div>
+
+    <!-- ========== BANCAS PARCEIRAS (cliques) ========== -->
+    <div id="bancas-section" class="content-section">
+      <div class="table-container">
+        <div class="table-header">
+          <h2>Cliques nas Bancas Parceiras</h2>
+        </div>
+        <p style="margin: 0; padding: 12px 20px; color: #666; font-size: 0.9rem">
+          Contagem de cliques em "Acessar" (não identifica quem clicou). A lista de bancas
+          fica em <code>public/data/bancas.json</code>.
+        </p>
+        <div id="bancas-lista"></div>
       </div>
     </div>
 
@@ -573,6 +588,7 @@
       if (tab === "dashboard") carregarDashboard();
       else if (tab === "usuarios") carregarUsuarios();
       else if (tab === "historico") carregarHistorico();
+      else if (tab === "bancas") carregarCliquesBancas();
     }
 
     // ========== DASHBOARD ==========
@@ -761,6 +777,55 @@
         }
       });
     });
+
+    // ========== BANCAS PARCEIRAS: CLIQUES ==========
+    async function carregarCliquesBancas() {
+      const container = document.getElementById("bancas-lista");
+      container.innerHTML =
+        '<div class="loading"><div class="spinner"></div>Carregando cliques...</div>';
+
+      try {
+        const [respCliques, respBancas] = await Promise.all([
+          fetch(`${API_URL}/api/admin/bancas/cliques`, { headers }),
+          fetch("/data/bancas.json", { cache: "no-cache" }),
+        ]);
+        const cliques = await respCliques.json();
+        const { bancas } = await respBancas.json();
+        if (!cliques.success) throw new Error(cliques.message || "Falha ao buscar cliques");
+
+        const porId = Object.fromEntries(cliques.data.map((c) => [c.banca_id, c]));
+        // Todas as bancas do JSON (mesmo sem clique) + ids que só existem nos cliques
+        const linhas = bancas
+          .slice()
+          .sort((a, b) => a.ordem - b.ordem)
+          .map((b) => ({ nome: b.nome + (b.ativo ? "" : " (inativa)"), ...(porId[b.id] || {}) }));
+        cliques.data
+          .filter((c) => !bancas.some((b) => b.id === c.banca_id))
+          .forEach((c) => linhas.push({ nome: `${c.banca_id} (fora da lista)`, ...c }));
+
+        let html = `
+              <table>
+                <thead>
+                  <tr><th>Banca</th><th>Últimos 7 dias</th><th>Últimos 30 dias</th><th>Total</th></tr>
+                </thead>
+                <tbody>`;
+        linhas.forEach((l) => {
+          html += `
+                  <tr>
+                    <td>${escapeHtml(l.nome)}</td>
+                    <td>${l.ultimos_7_dias || 0}</td>
+                    <td>${l.ultimos_30_dias || 0}</td>
+                    <td><strong>${l.total || 0}</strong></td>
+                  </tr>`;
+        });
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      } catch (error) {
+        if (error && error.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
+        console.error("Erro:", error);
+        container.innerHTML = '<div class="loading">❌ Erro ao carregar cliques</div>';
+      }
+    }
 
     // ========== HISTÓRICO ==========
     async function carregarHistorico() {

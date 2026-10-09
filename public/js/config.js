@@ -155,7 +155,8 @@ window.mostrarAvisoLimite = function (mensagem) {
     if (resposta.status !== 429) return resposta;
 
     const url = typeof recurso === "string" ? recurso : (recurso && recurso.url) || "";
-    if (!url.startsWith(API_URL) || url.startsWith(`${API_URL}/api/auth/`)) return resposta;
+    // /api/auth: a tela mostra a mensagem; /api/bancas: contador de cliques, silencioso
+    if (!url.startsWith(API_URL) || url.startsWith(`${API_URL}/api/auth/`) || url.startsWith(`${API_URL}/api/bancas/`)) return resposta;
 
     let segundos = 60;
     try {
