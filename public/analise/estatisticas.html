@@ -235,7 +235,7 @@
               O Score é um índice estatístico de tendência calculado com base
               em:
               <br />• Frequência da dezena <br />• Sequência de aparições
-              <br />• Atraso nos concursos <br /><br />
+              <br />• Atraso nos <span class="unidade-atraso">concursos</span> <br /><br />
               Fórmula utilizada:<br />
               <code>(Freq × 2) + (Seq × 3) − (Atraso × 2)</code>
               <br /><br />
@@ -291,6 +291,13 @@
         return;
       }
 
+      // Dupla Sena: o Mapa conta cada sorteio como um evento (2 por concurso)
+      if (est.slug === "duplasena") {
+        document.querySelectorAll(".unidade-atraso").forEach((el) => {
+          el.textContent = "sorteios (Dupla Sena: 2 por concurso)";
+        });
+      }
+
       return est;
     }
 
@@ -321,7 +328,7 @@
         const div = document.createElement("div");
         div.className = "linha-estat";
         div.innerHTML = `
-            <div class="bolinha forte">${d.dezena}</div>
+            <div class="bolinha forte">${Loterias.formatarDezena(d.dezena)}</div>
             <div class="dados">
               <span>Score <strong>${d.score}</strong></span>
               <span>Freq <strong>${d.freq}</strong></span>
@@ -340,7 +347,7 @@
         const div = document.createElement("div");
         div.className = "linha-estat";
         div.innerHTML = `
-            <div class="bolinha fraca">${d.dezena}</div>
+            <div class="bolinha fraca">${Loterias.formatarDezena(d.dezena)}</div>
             <div class="dados">
               <span>Score <strong>${d.score}</strong></span>
               <span>Freq <strong>${d.freq}</strong></span>
@@ -378,7 +385,7 @@
         const div = document.createElement("div");
         div.className = "linha-estat";
         div.innerHTML = `
-            <div class="bolinha atraso">${d.dezena}</div>
+            <div class="bolinha atraso">${Loterias.formatarDezena(d.dezena)}</div>
             <div class="dados">
               <span>Atraso <strong>${d.atraso}</strong></span>
               <span>Freq <strong>${d.freq}</strong></span>

@@ -246,6 +246,8 @@
                     JSON.stringify({
                         loteria,
                         concursos,
+                        totalAnalisado: data.totalConcursos,
+                        unidade: data.unidade || "concursos",
                         totalCombinacoes: combinacoes.length,
                         dataAnalise: new Date().toISOString(),
                     })

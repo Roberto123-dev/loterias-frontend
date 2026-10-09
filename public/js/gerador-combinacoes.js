@@ -33,9 +33,10 @@ const LOTERIAS_CONFIG = {
     lotomania: {
         nome: "Lotomania",
         cor: "#F78100",
+        inicio: 0, // volante 00 a 99 (regra oficial)
         totalDezenas: 100,
         minDezenas: 50,
-        maxDezenas: 100,
+        maxDezenas: 50, // aposta da Lotomania: exatamente 50 dezenas
         dezenasObrigatorias: 50,
         colunas: 10,
     },
@@ -52,9 +53,9 @@ const LOTERIAS_CONFIG = {
         nome: "Timemania",
         cor: "#00FF48",
         totalDezenas: 80,
-        minDezenas: 7,
-        maxDezenas: 80,
-        dezenasObrigatorias: 7,
+        minDezenas: 10, // aposta da Timemania: exatamente 10 dezenas
+        maxDezenas: 10,
+        dezenasObrigatorias: 10,
         colunas: 10,
     },
     diadasorte: {
@@ -249,7 +250,8 @@ function inicializarGrid(loteria) {
     dezenasFixas.clear();
     grid.innerHTML = "";
 
-    for (let i = 1; i <= config.totalDezenas; i++) {
+    const inicio = config.inicio ?? 1;
+    for (let i = inicio; i < inicio + config.totalDezenas; i++) {
         const num = i.toString().padStart(2, "0");
         const btn = document.createElement("div");
         btn.className = "dezena-btn";
@@ -599,11 +601,28 @@ function gerarCombinacoes() {
             totalDezenas: dezenasSelecionadas.size,
             totalFixas: fixasArray.length,
             dezenas,
+            ...sortearExtras(loteriaSelecionada),
         };
     });
 
     exibirJogos();
     fecharModal();
+}
+
+// Extras de cada jogo, sorteados ao acaso:
+// +Milionária → 2 trevos (1 a 6); Dia de Sorte → 1 Mês da Sorte.
+// Timemania: o Time do Coração fica para quando a lista oficial de clubes for conferida.
+function sortearExtras(loteria) {
+    if (loteria === "maismilionaria") {
+        const trevos = [1, 2, 3, 4, 5, 6];
+        const a = trevos.splice(Math.floor(Math.random() * trevos.length), 1)[0];
+        const b = trevos[Math.floor(Math.random() * trevos.length)];
+        return { trevos: [a, b].sort((x, y) => x - y) };
+    }
+    if (loteria === "diadasorte") {
+        return { mes_sorte: Loterias.MESES[Math.floor(Math.random() * 12)] };
+    }
+    return {};
 }
 
 function gerarCombinacoesAleatorias(elementos, tamanho, quantidade) {
@@ -674,6 +693,17 @@ function criarCardJogo(jogoObj, index) {
 
     card.appendChild(descricao);
     card.appendChild(dezenasDiv);
+
+    // Trevos (+Milionária) e Mês da Sorte (Dia de Sorte)
+    const extras = [];
+    if (jogoObj.trevos) extras.push(`🍀 Trevos: ${jogoObj.trevos.join(" e ")}`);
+    if (jogoObj.mes_sorte) extras.push(`📅 Mês da Sorte: ${jogoObj.mes_sorte}`);
+    if (extras.length) {
+        const extrasDiv = document.createElement("div");
+        extrasDiv.className = "jogo-extras";
+        extrasDiv.textContent = extras.join(" · ");
+        card.appendChild(extrasDiv);
+    }
     return card;
 }
 
@@ -696,7 +726,12 @@ function getNomeGrupoParaSalvar() {
 
 async function salvarJogosNoBackend() {
     const token = localStorage.getItem("token");
-    const jogosString = jogosGerados.map((j) => j.dezenas.join(" "));
+    // Formato novo: { dezenas, trevos?, mes_sorte? } (Lotomania com 00 = 0)
+    const jogosParaSalvar = jogosGerados.map((j) => ({
+        dezenas: j.dezenas.map(Number),
+        ...(j.trevos ? { trevos: j.trevos } : {}),
+        ...(j.mes_sorte ? { mes_sorte: j.mes_sorte } : {}),
+    }));
     const labelFinal = getNomeGrupoParaSalvar();
 
     const response = await fetch(`${API_URL}/api/jogos/salvar-lote`, {
@@ -707,7 +742,7 @@ async function salvarJogosNoBackend() {
         },
         body: JSON.stringify({
             loteria: loteriaSelecionada,
-            jogos: jogosString,
+            jogos: jogosParaSalvar,
             label: labelFinal,
         }),
     });

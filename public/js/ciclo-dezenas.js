@@ -139,7 +139,19 @@ async function carregarCiclo() {
     const json = await res.json();
     if (!json.success) return;
 
-    const concursos = json.data.reverse(); // 🔥 antigo → recente
+    // Antigo → recente, um item por sorteio.
+    // Dupla Sena: cada sorteio é um evento (1º e 2º sorteio em sequência, sem misturar).
+    const slug = document.getElementById("loteria-select").value;
+    const porSorteio = loteriaAtual.doisSorteios;
+    const concursos = json.data.reverse().flatMap((c) =>
+        Loterias.sorteiosDoConcurso(slug, c).map((s) => ({
+            rotulo: s.sorteio ? `${c.concurso} (${s.sorteio}º)` : String(c.concurso),
+            dezenas: s.dezenas,
+        }))
+    );
+    const unidade = porSorteio ? "sorteios" : "concursos";
+    document.getElementById("th-evento").textContent = porSorteio ? "Sorteio" : "Concurso";
+    document.getElementById("th-qtd-eventos").textContent = porSorteio ? "Sorteios" : "Concursos";
 
     const universo = Array.from(
         { length: loteriaAtual.max - loteriaAtual.min + 1 },
@@ -167,14 +179,14 @@ async function carregarCiclo() {
         if (dezenasNoCiclo.size === universo.length) {
             textoAusentes = `
                 <strong>Fim Ciclo</strong><br>
-                Concursos: ${concursosNoCiclo}
+                ${porSorteio ? "Sorteios" : "Concursos"}: ${concursosNoCiclo}
             `;
             qtdAusentes = 0;
         }
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-      <td>${c.concurso}</td>
+      <td>${c.rotulo}</td>
       <td>${dezenas.map(pad2).join(" ")}</td>
       <td>${textoAusentes}</td>
       <td>${ausentes.length}</td>
@@ -192,13 +204,13 @@ async function carregarCiclo() {
         }
     });
 
-    renderizarResumo(ausentesAtuais, ciclosQtd);
+    renderizarResumo(ausentesAtuais, ciclosQtd, unidade);
 }
 
 // ===============================
 // RESUMO
 // ===============================
-function renderizarResumo(ausentes, ciclosQtd) {
+function renderizarResumo(ausentes, ciclosQtd, unidade = "concursos") {
     const bolinhas = document.getElementById("bolinhas-ausentes");
     const medias = document.getElementById("medias-ciclo");
 
@@ -220,9 +232,9 @@ function renderizarResumo(ausentes, ciclosQtd) {
         (ciclosQtd.reduce((a, b) => a + b, 0) / ciclosQtd.length).toFixed(1);
 
     medias.innerHTML = `
-    <p><strong>Menor Ciclo:</strong> ${menor} concursos</p>
-    <p><strong>Maior Ciclo:</strong> ${maior} concursos</p>
-    <p><strong>Ciclo Médio:</strong> ${media} concursos</p>
+    <p><strong>Menor Ciclo:</strong> ${menor} ${unidade}</p>
+    <p><strong>Maior Ciclo:</strong> ${maior} ${unidade}</p>
+    <p><strong>Ciclo Médio:</strong> ${media} ${unidade}</p>
     <p><strong>Total de Ciclos:</strong> ${ciclosQtd.length}</p>
   `;
 }
