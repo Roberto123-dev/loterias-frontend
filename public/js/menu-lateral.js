@@ -60,10 +60,8 @@
 
     function itemGlobal(g, slug, jaMarcouAtivo) {
         const ativo = !jaMarcouAtivo && ehPaginaAtual(g.url);
-        // Meus Jogos já abre filtrado pela loteria ativa
-        const href = g.id === "meus-jogos" ? L.urlComLoteria(g.url, slug) : g.url;
         return `
-            <a href="${href}" class="menu-item${ativo ? " active" : ""}"${ativo ? ' aria-current="page"' : ""} title="${g.nome}">
+            <a href="${g.url}" class="menu-item${ativo ? " active" : ""}"${ativo ? ' aria-current="page"' : ""} title="${g.nome}">
                 <i class="bi ${g.icone}"></i>
                 <span class="menu-texto">${g.nome}</span>
             </a>`;
@@ -146,8 +144,7 @@
     // Páginas cujo conteúdo depende da loteria: recarrega com ?loteria=
     function paginaDependeDaLoteria() {
         return (
-            L.FERRAMENTAS.some((f) => f.id !== "inicio" && ehPaginaAtual(f.url)) ||
-            L.ITENS_GLOBAIS.some((g) => g.id === "meus-jogos" && ehPaginaAtual(g.url))
+            L.FERRAMENTAS.some((f) => f.id !== "inicio" && ehPaginaAtual(f.url))
         );
     }
 

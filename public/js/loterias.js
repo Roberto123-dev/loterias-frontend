@@ -186,7 +186,6 @@
     // Ferramentas que dependem da loteria ativa (recebem ?loteria=<slug>)
     const FERRAMENTAS = [
         { id: "inicio", nome: "Início", icone: "bi-house-fill", url: "/index.html" },
-        { id: "gerar", nome: "Gerar Jogos", icone: "bi-dice-3-fill", url: "/ferramentas/gerador-combinacoes.html" },
         { id: "conferir", nome: "Conferir Jogo", icone: "bi-check-circle-fill", url: "/analise/conferir.html" },
         { id: "ciclo", nome: "Ciclo das Dezenas", icone: "bi-fire", url: "/ferramentas/ciclo-dezenas.html" },
         { id: "mapa", nome: "Mapa das Dezenas", icone: "bi-bar-chart-fill", url: "/analise/mapa-dezenas.html" },
@@ -197,10 +196,8 @@
 
     // Itens globais do menu (não dependem da loteria ativa)
     const ITENS_GLOBAIS = [
-        { id: "meus-jogos", nome: "Meus Jogos", icone: "bi-save-fill", url: "/jogos/meus-jogos.html" },
         { id: "todas", nome: "Todas as Loterias", icone: "bi-grid-3x3-gap-fill", url: "/loterias/todas.html" },
         { id: "bancas", nome: "Bancas Parceiras", icone: "bi-shop", url: "/bancas/index.html" },
-        { id: "perfil", nome: "Meu perfil", icone: "bi-person-fill", url: "/auth/perfilusuario.html" },
     ];
 
     // Ferramentas ainda quebradas para a loteria (anotações internas).
@@ -361,7 +358,7 @@
     }
 
     // ========== REGRAS DE PREMIAÇÃO ==========
-    // Espelho de backend/src/config/loterias.js (faixaPremio) e services/conferencia.js.
+    // Fonte única das regras de conferência e das faixas de prêmio (o backend não confere mais jogos).
     // Faixas OFICIAIS (listaRateioPremio da Caixa, conferidas em 2026-10).
 
     /**

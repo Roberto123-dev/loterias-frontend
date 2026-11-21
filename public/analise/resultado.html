@@ -390,7 +390,7 @@
   <header>
     <div class="header-content">
       <h1 id="titulo-loteria">Resultado da Conferência</h1>
-      <a href="#" class="btn-voltar" id="btn-voltar-dinamico">
+      <a href="/analise/conferir.html" class="btn-voltar" id="btn-voltar-dinamico">
         ← Voltar
       </a>
     </div>
@@ -406,7 +406,7 @@
       <h2>❌ Erro ao Carregar</h2>
       <p>Não foi possível carregar o resultado da conferência.</p>
       <br />
-      <a href="#" class="btn-voltar" id="btn-voltar-dinamico">
+      <a href="/analise/conferir.html" class="btn-voltar" id="btn-voltar-dinamico">
         ← Voltar
       </a>
     </div>
@@ -442,27 +442,17 @@
 
         if (!dadosJogo) {
           alert("Nenhum jogo selecionado.");
-          window.location.href = "/jogos/meus-jogos.html";
+          window.location.href = "/analise/conferir.html";
           return;
         }
 
         // ✅ PRIMEIRO parseia
         const jogo = JSON.parse(dadosJogo);
 
-        // 🔥 AGORA pode usar jogo.origem
+        // Botão Voltar do cabeçalho: sempre para uma nova conferência
         const btnVoltar = document.getElementById("btn-voltar-dinamico");
-
-        if (jogo.origem === "meus-jogos") {
-          btnVoltar.innerHTML = `
-    <i class="bi bi-arrow-left"></i>
-  `;
-          btnVoltar.href = "/jogos/meus-jogos.html";
-        } else {
-          btnVoltar.innerHTML = `
-    <i class="bi bi-arrow-left"></i> Nova Consulta
-  `;
-          btnVoltar.href = "/analise/conferir.html";
-        }
+        btnVoltar.innerHTML = `<i class="bi bi-arrow-left"></i> Nova Consulta`;
+        btnVoltar.href = "/analise/conferir.html";
 
 
         // 🔥 MUITO IMPORTANTE: remover para não reutilizar

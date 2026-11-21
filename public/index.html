@@ -714,16 +714,7 @@
                     <i class="bi ${f.icone}"></i>${f.nome}
                 </a>`;
                     })
-                    .join("") + atalhoMeusJogos(loteria);
-            }
-
-            // Meus Jogos é global, mas abre já filtrado pela loteria ativa
-            function atalhoMeusJogos(loteria) {
-                const meusJogos = Loterias.ITENS_GLOBAIS.find((g) => g.id === "meus-jogos");
-                return `
-                <a class="atalho" href="${Loterias.urlComLoteria(meusJogos.url, loteria.slug)}">
-                    <i class="bi ${meusJogos.icone}"></i>${meusJogos.nome}
-                </a>`;
+                    .join("");
             }
 
             function renderizarLoteriaAtiva() {
