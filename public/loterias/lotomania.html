@@ -228,20 +228,8 @@
                 };
             }
 
-            // ✅ Verificar se está autenticado
-            function verificarAutenticacao() {
-                const token = getToken();
-                if (!token) {
-                    alert("Você precisa fazer login!");
-                    window.location.href = "/auth/login.html";
-                    return false;
-                }
-                return true;
-            }
-
             // Carregar dados iniciais
             async function carregarDados() {
-                if (!verificarAutenticacao()) return;
                 await carregarResultados();
             }
 
@@ -319,13 +307,8 @@
                 });
             }
 
-            // ✅ Carregar ao iniciar (após verificar auth)
+            // ✅ Carregar ao iniciar
             carregarDados();
-        </script>
-        <script src="/js/auth-check.js"></script>
-        <script>
-            // Autenticação básica
-            verificarAutenticacao();
         </script>
     </body>
 </html>

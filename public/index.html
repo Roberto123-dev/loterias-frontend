@@ -539,15 +539,6 @@
                 </button>
             </div>
             <div class="top-bar-right">
-                <div class="user-info">
-                    <span id="nome-usuario"></span>
-                </div>
-                <a id="btn-admin" href="/admin/" class="btn-admin">
-                    <i class="bi bi-shield-fill-check"></i> Admin
-                </a>
-                <button class="btn-sair" onclick="logout()">
-                    <i class="bi bi-box-arrow-right"></i> Sair
-                </button>
             </div>
         </div>
 
@@ -615,49 +606,6 @@
 
 
         <script>
-            function getUsuario() {
-                try {
-                    return JSON.parse(localStorage.getItem("usuario"));
-                } catch {
-                    return null;
-                }
-            }
-
-            // ========== PLANO ==========
-            function parseJwt(token) {
-                try {
-                    const base64Url = token.split(".")[1];
-                    const base64 = base64Url
-                        .replace(/-/g, "+")
-                        .replace(/_/g, "/");
-                    const jsonPayload = decodeURIComponent(
-                        window
-                            .atob(base64)
-                            .split("")
-                            .map(
-                                (c) =>
-                                    "%" +
-                                    ("00" + c.charCodeAt(0).toString(16)).slice(
-                                        -2,
-                                    ),
-                            )
-                            .join(""),
-                    );
-                    return JSON.parse(jsonPayload);
-                } catch (e) {
-                    if (e && e.limiteAtingido) return; // aviso de limite já mostrado (js/config.js)
-                    return null;
-                }
-            }
-
-            function logout() {
-                // preserva a última loteria escolhida
-                const loteriaAtiva = localStorage.getItem("loteriaAtiva");
-                localStorage.clear();
-                if (loteriaAtiva) localStorage.setItem("loteriaAtiva", loteriaAtiva);
-                location.href = "/auth/login.html";
-            }
-
             // ========== LOTERIA ATIVA (destaque + atalhos) ==========
             let ultimosResultados = null; // { slug: resultado } de /api/resultados/ultimos-todos
             let erroResultados = false;
@@ -836,30 +784,12 @@
 
             // ========== INICIALIZAÇÃO ==========
             window.addEventListener("DOMContentLoaded", async () => {
-                // Login obrigatório: sem sessão, auth-check redireciona e nada é buscado
-                if (!verificarAutenticacao()) return;
 
                 renderizarLoteriaAtiva(); // cabeçalho já aparece enquanto carrega
-
-                const user = getUsuario();
-                if (user) {
-                    const nomeEl = document.getElementById("nome-usuario");
-                    if (nomeEl) nomeEl.textContent = `👤 ${user.nome}`;
-                }
-
-                const token = localStorage.getItem("token");
-                if (token) {
-                    const payload = parseJwt(token);
-                    if (payload && payload.role === "admin") {
-                        const adminEl = document.getElementById("btn-admin");
-                        if (adminEl) adminEl.style.display = "inline-block";
-                    }
-                }
 
                 carregarResultados();
                 setInterval(carregarResultados, 5 * 60 * 1000);
             });
         </script>
-        <script src="/js/auth-check.js"></script>
     </body>
 </html>

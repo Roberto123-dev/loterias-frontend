@@ -163,9 +163,6 @@
                 <i class="bi bi-list"></i>
             </button>
             <h1>Todas as Loterias</h1>
-            <button class="btn-sair" onclick="logout()">
-                <i class="bi bi-box-arrow-right"></i> Sair
-            </button>
         </header>
 
         <main class="conteudo-pagina">
@@ -275,13 +272,10 @@
             // Troca pelo seletor do menu: destaca o card da nova loteria ativa
             document.addEventListener("loteria-ativa-mudou", renderizar);
 
-            // Login obrigatório: sem sessão, auth-check redireciona e nada é buscado
             window.addEventListener("DOMContentLoaded", () => {
-                if (!verificarAutenticacao()) return;
                 carregarResultados();
                 setInterval(carregarResultados, 5 * 60 * 1000);
             });
         </script>
-        <script src="/js/auth-check.js"></script>
     </body>
 </html>

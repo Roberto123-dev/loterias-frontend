@@ -195,9 +195,6 @@
                 <i class="bi bi-list"></i>
             </button>
             <h1>Bancas Parceiras</h1>
-            <button class="btn-sair" onclick="logout()">
-                <i class="bi bi-box-arrow-right"></i> Sair
-            </button>
         </header>
 
         <main class="conteudo-pagina">
@@ -270,10 +267,8 @@
             });
 
             window.addEventListener("DOMContentLoaded", () => {
-                if (!verificarAutenticacao()) return;
                 carregarBancas();
             });
         </script>
-        <script src="/js/auth-check.js"></script>
     </body>
 </html>

@@ -449,20 +449,7 @@
       };
     }
 
-    // ✅ Verificar autenticação
-    function verificarAutenticacao() {
-      const token = getToken();
-      if (!token) {
-        alert("Você precisa fazer login!");
-        window.location.href = "/auth/login.html";
-        return false;
-      }
-      return true;
-    }
-
     async function carregarResultado() {
-      // ✅ Verificar autenticação
-      if (!verificarAutenticacao()) return;
       try {
         // Pegar dados do localStorage
         const dadosJogo = localStorage.getItem("conferencia_jogo");
@@ -736,13 +723,8 @@
       document.getElementById("detalhes-container").style.display = "block";
     }
 
-    // ✅ Carregar ao iniciar (após verificar auth)
+    // ✅ Carregar ao iniciar
     carregarResultado();
-  </script>
-  <script src="/js/auth-check.js"></script>
-  <script>
-    // Autenticação básica
-    verificarAutenticacao();
   </script>
 </body>
 

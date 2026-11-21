@@ -755,15 +755,6 @@
                     "Content-Type": "application/json",
                 };
             }
-            function verificarAutenticacao() {
-                if (!getToken()) {
-                    alert("Você precisa fazer login para acessar esta página!");
-                    window.location.href = "/auth/login.html";
-                    return false;
-                }
-                return true;
-            }
-
             // ===== MUDAR LOTERIA =====
             function mudarLoteria() {
                 const select = document.getElementById("loteria-select");
@@ -938,7 +929,6 @@
 
             // ===== CARREGAR TABELA =====
             async function carregarTabela() {
-                if (!verificarAutenticacao()) return;
 
                 const tabelaContainer =
                     document.getElementById("tabela-container");
@@ -1230,7 +1220,6 @@
                 });
         </script>
 
-        <script src="/js/auth-check.js"></script>
 
         <script>
             window.addEventListener("DOMContentLoaded", () => {
@@ -1239,8 +1228,6 @@
                     "(prefers-color-scheme: dark)",
                 ).matches;
                 aplicarTema(temaSalvo || (prefereEscuro ? "dark" : "light"));
-
-                verificarAutenticacao();
 
                 Loterias.vincularSelect(
                     document.getElementById("loteria-select"),
