@@ -745,16 +745,6 @@
 
             let loteriaAtual = null;
 
-            // ===== AUTH =====
-            function getToken() {
-                return localStorage.getItem("token");
-            }
-            function getHeaders() {
-                return {
-                    Authorization: `Bearer ${getToken()}`,
-                    "Content-Type": "application/json",
-                };
-            }
             // ===== MUDAR LOTERIA =====
             function mudarLoteria() {
                 const select = document.getElementById("loteria-select");
@@ -945,15 +935,10 @@
                 try {
                     const response = await fetch(
                         `${API_URL}${loteriaAtual.endpoint}?limit=${qtdConcursos}`,
-                        { headers: getHeaders() },
                     );
 
                     if (!response.ok) {
-                        if (response.status === 401) {
-                            alert("Sessão expirada. Faça login novamente.");
-                            window.location.href = "/auth/login.html";
-                            return;
-                        } else if (response.status === 403) {
+                        if (response.status === 403) {
                             alert(
                                 "Você não tem permissão para acessar este recurso.",
                             );

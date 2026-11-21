@@ -214,20 +214,6 @@
 
             const LIMITE = 10;
 
-            // ✅ Pegar token do localStorage
-            function getToken() {
-                return localStorage.getItem("token");
-            }
-
-            // ✅ Criar headers com autenticação
-            function getHeaders() {
-                const token = getToken();
-                return {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                };
-            }
-
             // Carregar dados iniciais
             async function carregarDados() {
                 await carregarResultados();
@@ -241,10 +227,8 @@
                 cards.style.display = "none";
 
                 try {
-                    // ✅ Adicionar token na requisição
                     const response = await fetch(
                         `${API_URL}${ENDPOINT}?limit=${LIMITE}`,
-                        { headers: getHeaders() },
                     );
 
                     const data = await response.json();

@@ -175,7 +175,6 @@
             const loteria = document.getElementById("loteria").value;
             const dezenasInput = document.getElementById("dezenas").value;
             const dezenas = dezenasInput.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
-            const token = localStorage.getItem("token");
 
             const tabela = document.getElementById("tabela-resultado");
             const corpo = document.getElementById("resultado-analise");
@@ -189,8 +188,7 @@
                 const res = await fetch(`${API_URL}/api/analise/dezenas`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify({ loteria, dezenas })
                 });

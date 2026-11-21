@@ -215,15 +215,12 @@
             }
 
             try {
-                const token = localStorage.getItem("token");
-
                 iniciarBarraProgresso();
 
                 const res = await fetch(`${API_URL}/api/analise/combinacoes`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
                         loteria,

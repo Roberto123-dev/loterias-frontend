@@ -435,20 +435,6 @@
 
   <script src="/js/escape-html.js"></script>
   <script>
-    // ✅ Pegar token
-    function getToken() {
-      return localStorage.getItem("token");
-    }
-
-    // ✅ Criar headers
-    function getHeaders() {
-      const token = getToken();
-      return {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      };
-    }
-
     async function carregarResultado() {
       try {
         // Pegar dados do localStorage
@@ -512,17 +498,12 @@
 
     async function buscarPaginaConcursos(endpoint, offset) {
       const response = await fetch(
-        `${API_URL}${endpoint}?limit=${POR_PAGINA}&offset=${offset}`,
-        {
-          headers: getHeaders(),
-        }
+        `${API_URL}${endpoint}?limit=${POR_PAGINA}&offset=${offset}`
       );
 
       // ✅ Verificar se a resposta é OK
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Sessão expirada. Faça login novamente.");
-        } else if (response.status === 403) {
+        if (response.status === 403) {
           throw new Error("Você não tem permissão para acessar este recurso.");
         }
         throw new Error(`Erro ${response.status}: ${response.statusText}`);

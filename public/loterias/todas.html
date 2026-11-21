@@ -241,9 +241,7 @@
 
             async function carregarResultados() {
                 try {
-                    const response = await fetch(`${API_URL}/api/resultados/ultimos-todos`, {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                    });
+                    const response = await fetch(`${API_URL}/api/resultados/ultimos-todos`);
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const data = await response.json();
                     if (!data || !data.success || !data.data) {

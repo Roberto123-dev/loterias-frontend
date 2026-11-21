@@ -29,89 +29,42 @@ console.log("Hostname:", window.location.hostname);
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
 // ============================================
+// LIMPEZA DO LOGIN ANTIGO
+// ============================================
+// O site não tem mais login: apaga as chaves que o login antigo gravava.
+// Só estas três — as demais (loteriaAtiva, temaMapaDezenas, estatisticasMapa,
+// conferencia_jogo, resultadoCombinacoes, metaCombinacoes, coresBolas_*) são das ferramentas.
+["token", "usuario", "plano"].forEach((chave) => {
+  try {
+    localStorage.removeItem(chave);
+  } catch (e) {} // armazenamento bloqueado (ex.: navegação privada): nada a limpar
+});
+
+// ============================================
 // HELPERS ÚTEIS:
 // ============================================
 
-// Verificar se está logado
-window.isAuthenticated = function () {
-  const token = localStorage.getItem("token");
-  if (!token) return false;
-
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const agora = Date.now() / 1000;
-
-    if (payload.exp && payload.exp < agora) {
-      console.warn("⚠️ Token expirado");
-      return false;
-    }
-
-    return true;
-  } catch (e) {
-    console.error("❌ Token inválido:", e);
-    return false;
-  }
-};
-
-// Obter dados do usuário
-window.getUser = function () {
-  const token = localStorage.getItem("token");
-  if (!token) return null;
-
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return {
-      id: payload.id,
-      email: payload.email,
-      nome: payload.nome,
-      role: payload.role,
-    };
-  } catch (e) {
-    console.error("❌ Erro ao obter usuário:", e);
-    return null;
-  }
-};
-
-// Fazer request autenticada (com token automático)
-window.fetchAuth = async function (url, options = {}) {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    throw new Error("Token não encontrado. Faça login novamente.");
+// Request para a API. O site é público: sem token.
+// Content-Type JSON só quando há corpo: GET sem esse header não precisa do preflight de CORS.
+window.fetchApi = async function (url, options = {}) {
+  const headers = { ...options.headers };
+  if (options.body !== undefined && options.body !== null) {
+    headers["Content-Type"] = "application/json";
   }
 
-  const headers = {
-    ...options.headers,
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-
-  const response = await fetch(url, {
+  return fetch(url, {
     ...options,
     headers,
   });
-
-  // Se 401 (Unauthorized), redirecionar para login
-  if (response.status === 401) {
-    console.warn("⚠️ Sessão expirada. Redirecionando para login...");
-    const loteriaAtiva = localStorage.getItem("loteriaAtiva"); // preserva a última loteria escolhida
-    localStorage.clear();
-    if (loteriaAtiva) localStorage.setItem("loteriaAtiva", loteriaAtiva);
-    window.location.href = "/auth/login.html";
-    throw new Error("Sessão expirada");
-  }
-
-  return response;
 };
 
 // ============================================
 // LIMITE DE CONSULTAS (HTTP 429)
 // ============================================
-// O backend limita consultas por usuário e responde 429 com tenteNovamenteEm (segundos)
+// O backend limita consultas por IP e responde 429 com tenteNovamenteEm (segundos)
 // e uma message que já diz o tempo de espera.
-// - Rotas de /api/auth: a resposta segue normal (as telas de login/cadastro mostram a message).
-// - Demais rotas da API: mostra um aviso amigável com o tempo de espera e rejeita a chamada
-//   com erro.limiteAtingido = true; os catch das páginas ignoram esse erro (aviso já mostrado).
+// Em qualquer rota da API: mostra um aviso amigável com o tempo de espera e rejeita a chamada
+// com erro.limiteAtingido = true; os catch das páginas ignoram esse erro (aviso já mostrado).
 window.formatarEspera = function (segundos) {
   const s = Math.max(1, Math.round(Number(segundos) || 60));
   if (s < 60) return `${s} segundo${s === 1 ? "" : "s"}`;
@@ -155,8 +108,7 @@ window.mostrarAvisoLimite = function (mensagem) {
     if (resposta.status !== 429) return resposta;
 
     const url = typeof recurso === "string" ? recurso : (recurso && recurso.url) || "";
-    // /api/auth: a tela mostra a mensagem; /api/bancas: contador de cliques, silencioso
-    if (!url.startsWith(API_URL) || url.startsWith(`${API_URL}/api/auth/`) || url.startsWith(`${API_URL}/api/bancas/`)) return resposta;
+    if (!url.startsWith(API_URL)) return resposta;
 
     let segundos = 60;
     try {
@@ -175,18 +127,3 @@ window.mostrarAvisoLimite = function (mensagem) {
 
 // Log inicial
 console.log("✅ config.js carregado com sucesso!");
-
-// Verificar autenticação (se não estiver em login)
-if (
-  window.location.pathname !== "/auth/login.html" &&
-  window.location.pathname !== "/auth/registro.html" &&
-  window.location.pathname !== "/index.html" &&
-  window.location.pathname !== "/"
-) {
-  if (isAuthenticated()) {
-    const user = getUser();
-    console.log("👤 Usuário:", user?.nome || "Anônimo");
-  } else {
-    console.warn("⚠️ Usuário não autenticado");
-  }
-}
