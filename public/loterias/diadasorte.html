@@ -228,34 +228,8 @@
 
             const LIMITE = 10;
 
-            // ✅ Pegar token do localStorage
-            function getToken() {
-                return localStorage.getItem("token");
-            }
-
-            // ✅ Criar headers com autenticação
-            function getHeaders() {
-                const token = getToken();
-                return {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                };
-            }
-
-            // ✅ Verificar se está autenticado
-            function verificarAutenticacao() {
-                const token = getToken();
-                if (!token) {
-                    alert("Você precisa fazer login para acessar esta página!");
-                    window.location.href = "/auth/login.html";
-                    return false;
-                }
-                return true;
-            }
-
             // Carregar dados iniciais
             async function carregarDados() {
-                if (!verificarAutenticacao()) return;
                 await carregarResultados();
             }
 
@@ -267,10 +241,8 @@
                 cards.style.display = "none";
 
                 try {
-                    // ✅ Adicionar token na requisição
                     const response = await fetch(
                         `${API_URL}${ENDPOINT}?limit=${LIMITE}`,
-                        { headers: getHeaders() },
                     );
 
                     const data = await response.json();
@@ -334,13 +306,8 @@
                 });
             }
 
-            // ✅ Carregar ao iniciar (após verificar auth)
+            // ✅ Carregar ao iniciar
             carregarDados();
-        </script>
-        <script src="/js/auth-check.js"></script>
-        <script>
-            // Autenticação básica
-            verificarAutenticacao();
         </script>
     </body>
 </html>

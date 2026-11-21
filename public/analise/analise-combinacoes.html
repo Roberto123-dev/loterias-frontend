@@ -215,15 +215,12 @@
             }
 
             try {
-                const token = localStorage.getItem("token");
-
                 iniciarBarraProgresso();
 
                 const res = await fetch(`${API_URL}/api/analise/combinacoes`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
                         loteria,
@@ -298,11 +295,7 @@
         }
 
     </script>
-    <script src="/js/auth-check.js"></script>
     <script>
-        // Autenticação básica
-        verificarAutenticacao();
-
         Loterias.vincularSelect(document.getElementById("inputLoteria"));
     </script>
 

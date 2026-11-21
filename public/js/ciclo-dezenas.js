@@ -66,14 +66,6 @@ let loteriaAtual = null;
 // ===============================
 // HELPERS
 // ===============================
-function getHeaders() {
-    const token = localStorage.getItem("token");
-    return {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-    };
-}
-
 function pad2(n) {
     return n.toString().padStart(2, "0");
 }
@@ -132,8 +124,7 @@ async function carregarCiclo() {
     tbody.innerHTML = "";
 
     const res = await fetch(
-        `${API_URL}${loteriaAtual.endpoint}?limit=${limit}`,
-        { headers: getHeaders() }
+        `${API_URL}${loteriaAtual.endpoint}?limit=${limit}`
     );
 
     const json = await res.json();

@@ -195,9 +195,6 @@
                 <i class="bi bi-list"></i>
             </button>
             <h1>Bancas Parceiras</h1>
-            <button class="btn-sair" onclick="logout()">
-                <i class="bi bi-box-arrow-right"></i> Sair
-            </button>
         </header>
 
         <main class="conteudo-pagina">
@@ -223,29 +220,11 @@
                     <div class="corpo-banca">
                         <div class="nome-banca">${escapeHtml(b.nome)}</div>
                         <div class="descricao-banca">${escapeHtml(b.descricao)}</div>
-                        <a class="btn-acessar" href="${escapeHtml(b.link)}" target="_blank" rel="sponsored noopener noreferrer" data-banca="${escapeHtml(b.id)}">
+                        <a class="btn-acessar" href="${escapeHtml(b.link)}" target="_blank" rel="sponsored noopener noreferrer">
                             Acessar <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
                         </a>
                     </div>
                 </article>`;
-            }
-
-            // Conta o clique sem atrasar a abertura da banca (o link abre normalmente em nova aba).
-            // keepalive: a requisição termina mesmo se a aba atual for trocada. Falhas são ignoradas.
-            // A banca vai no corpo (nunca no endereço): o log de acesso do servidor registra o
-            // caminho junto do IP.
-            function registrarClique(idBanca) {
-                try {
-                    fetch(`${API_URL}/api/bancas/clique`, {
-                        method: "POST",
-                        keepalive: true,
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ banca: idBanca }),
-                    }).catch(() => {});
-                } catch (e) {}
             }
 
             async function carregarBancas() {
@@ -264,16 +243,9 @@
                 }
             }
 
-            document.getElementById("grade-bancas").addEventListener("click", (event) => {
-                const botao = event.target.closest(".btn-acessar");
-                if (botao) registrarClique(botao.dataset.banca);
-            });
-
             window.addEventListener("DOMContentLoaded", () => {
-                if (!verificarAutenticacao()) return;
                 carregarBancas();
             });
         </script>
-        <script src="/js/auth-check.js"></script>
     </body>
 </html>

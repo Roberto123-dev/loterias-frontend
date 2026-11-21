@@ -5,11 +5,11 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/login",                 "destination": "/auth/login",                   "permanent": true },
-    { "source": "/registro",              "destination": "/auth/registro",                "permanent": true },
-    { "source": "/forgot-password",       "destination": "/auth/forgot-password",         "permanent": true },
-    { "source": "/reset-password",        "destination": "/auth/reset-password",          "permanent": true },
-    { "source": "/perfilusuario",         "destination": "/auth/perfilusuario",           "permanent": true },
+    { "source": "/login",                 "destination": "/",                             "permanent": false },
+    { "source": "/registro",              "destination": "/",                             "permanent": false },
+    { "source": "/forgot-password",       "destination": "/",                             "permanent": false },
+    { "source": "/reset-password",        "destination": "/",                             "permanent": false },
+    { "source": "/perfilusuario",         "destination": "/",                             "permanent": false },
     { "source": "/megasena",              "destination": "/loterias/megasena",            "permanent": true },
     { "source": "/lotofacil",             "destination": "/loterias/lotofacil",           "permanent": true },
     { "source": "/quina",                 "destination": "/loterias/quina",               "permanent": true },
@@ -25,10 +25,17 @@
     { "source": "/analise-dezenas",       "destination": "/analise/analise-dezenas",      "permanent": true },
     { "source": "/analise-combinacoes",   "destination": "/analise/analise-combinacoes",  "permanent": true },
     { "source": "/mapa-dezenas",          "destination": "/analise/mapa-dezenas",         "permanent": true },
-    { "source": "/gerador-combinacoes",   "destination": "/ferramentas/gerador-combinacoes", "permanent": true },
+    { "source": "/gerador-combinacoes",   "destination": "/",                                "permanent": false },
     { "source": "/ciclo-dezenas",         "destination": "/ferramentas/ciclo-dezenas",    "permanent": true },
-    { "source": "/gerenciar-grupos",      "destination": "/grupos/gerenciar-grupos",      "permanent": true },
-    { "source": "/meus-jogos",            "destination": "/jogos/meus-jogos",             "permanent": true }
+    { "source": "/gerenciar-grupos",      "destination": "/",                             "permanent": false },
+    { "source": "/meus-jogos",            "destination": "/",                             "permanent": false },
+    { "source": "/auth/:path*",                         "destination": "/", "permanent": false },
+    { "source": "/admin",                               "destination": "/", "permanent": false },
+    { "source": "/admin/:path*",                        "destination": "/", "permanent": false },
+    { "source": "/jogos/:path*",                        "destination": "/", "permanent": false },
+    { "source": "/grupos/:path*",                       "destination": "/", "permanent": false },
+    { "source": "/ferramentas/gerador-combinacoes",     "destination": "/", "permanent": false },
+    { "source": "/ferramentas/gerador-combinacoes.html", "destination": "/", "permanent": false }
   ],
   "headers": [
     {
