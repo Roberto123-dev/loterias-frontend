@@ -92,68 +92,10 @@
                 left: 70px;
             }
 
-            h1.brand-logo {
-                margin: 0;
-                line-height: 0; /* tira o espaço extra que o h1 cria */
-                display: flex;
-                align-items: center;
-            }
-
-            .brand-logo a {
-                display: flex;
-                align-items: center;
-                text-decoration: none;
-            }
-
-            .brand-logo-img {
-                width: 32px;
-                height: 32px;
-                display: block;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 2px solid #000000;
-            }
-
             .top-bar-right {
                 display: flex;
                 align-items: center;
                 gap: 15px;
-            }
-
-            .user-info {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .btn-admin {
-                padding: 8px 16px;
-                background: #2c3e50;
-                color: white;
-                text-decoration: none;
-                border-radius: 6px;
-                font-size: 0.85rem;
-                font-weight: bold;
-                display: none;
-            }
-
-            .btn-admin:hover {
-                background: #1a252f;
-                color: white;
-            }
-
-            .btn-sair {
-                padding: 8px 20px;
-                background: #f44336;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                font-weight: 600;
-            }
-
-            .btn-sair:hover {
-                background: #d32f2f;
             }
 
             /* ============= MAIN CONTENT ============= */
@@ -226,20 +168,6 @@
                     gap: 8px;
                 }
 
-                .user-info span {
-                    display: none;
-                }
-
-                .btn-admin {
-                    padding: 6px 12px;
-                    font-size: 0.75rem;
-                }
-
-                .btn-sair {
-                    padding: 6px 12px;
-                    font-size: 0.85rem;
-                }
-
                 /* Main content mobile */
                 .main-content {
                     margin-left: 0 !important;
@@ -250,10 +178,18 @@
 
             }
 
-            /* Desktop: ocultar botão mobile */
+            /* Desktop: ocultar botão mobile e a top-bar (sem o ☰ ela fica vazia) */
             @media (min-width: 769px) {
                 .mobile-menu-btn {
                     display: none;
+                }
+
+                .top-bar {
+                    display: none;
+                }
+
+                .main-content {
+                    margin-top: 10px; /* 70 - 60 da top-bar oculta */
                 }
             }
 
@@ -582,6 +518,17 @@
             /* espaço da faixa abaixo da top-bar */
             .news-bar ~ .main-content {
                 margin-top: 110px;
+            }
+
+            /* Desktop: sem top-bar, a faixa sobe para o topo */
+            @media (min-width: 769px) {
+                .news-bar {
+                    top: 0;
+                }
+
+                .news-bar ~ .main-content {
+                    margin-top: 50px; /* 110 - 60 da top-bar oculta */
+                }
             }
         </style>
         <div class="news-bar">
